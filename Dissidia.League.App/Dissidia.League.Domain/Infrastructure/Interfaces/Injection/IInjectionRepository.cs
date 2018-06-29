@@ -1,0 +1,11 @@
+﻿using Dissidia.League.Domain.Repositories.Interfaces;
+using Dissidia.League.Domain.Repositories.Interfaces.Gamification;
+
+namespace Dissidia.League.Domain.Infrastructure.Interfaces.Injection
+{
+    public interface IInjectionRepository
+    {
+        IMatchRepository MatchRepository { get; }
+        IPlayerResultsRepository PlayersResultsRepository { get; }
+    }
+}

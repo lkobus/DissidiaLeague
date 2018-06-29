@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2000
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.App", "Dissidia.League.App\Dissidia.League.App.csproj", "{FC75FAD9-6CD4-4094-9590-75D9588940BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.Domain", "Dissidia.League.Domain\Dissidia.League.Domain.csproj", "{D9657170-F02A-47EF-9CF5-E79A073A706C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.Domain.Tests", "Dissidia.League.Domain.Tests\Dissidia.League.Domain.Tests.csproj", "{FA0161C6-6F25-4BC6-A61B-563EE972FABE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.Domain.MongoDB", "Dissidia.League.Domain.MongoDB\Dissidia.League.Domain.MongoDB.csproj", "{29402112-F568-46D5-846B-873721A8EE38}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.App.OCR", "Dissidia.League.App.OCR\Dissidia.League.App.OCR.csproj", "{AF002F6B-D83D-4128-AFBB-CE7BDCC28579}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.Bootstrap", "Dissidia.League.Bootstrap\Dissidia.League.Bootstrap.csproj", "{47C50FE2-B3CC-4C9A-A13A-7B2DA9E6A61B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC75FAD9-6CD4-4094-9590-75D9588940BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC75FAD9-6CD4-4094-9590-75D9588940BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC75FAD9-6CD4-4094-9590-75D9588940BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC75FAD9-6CD4-4094-9590-75D9588940BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9657170-F02A-47EF-9CF5-E79A073A706C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9657170-F02A-47EF-9CF5-E79A073A706C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9657170-F02A-47EF-9CF5-E79A073A706C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9657170-F02A-47EF-9CF5-E79A073A706C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA0161C6-6F25-4BC6-A61B-563EE972FABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA0161C6-6F25-4BC6-A61B-563EE972FABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA0161C6-6F25-4BC6-A61B-563EE972FABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA0161C6-6F25-4BC6-A61B-563EE972FABE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29402112-F568-46D5-846B-873721A8EE38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29402112-F568-46D5-846B-873721A8EE38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29402112-F568-46D5-846B-873721A8EE38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29402112-F568-46D5-846B-873721A8EE38}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF002F6B-D83D-4128-AFBB-CE7BDCC28579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF002F6B-D83D-4128-AFBB-CE7BDCC28579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF002F6B-D83D-4128-AFBB-CE7BDCC28579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF002F6B-D83D-4128-AFBB-CE7BDCC28579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47C50FE2-B3CC-4C9A-A13A-7B2DA9E6A61B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47C50FE2-B3CC-4C9A-A13A-7B2DA9E6A61B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47C50FE2-B3CC-4C9A-A13A-7B2DA9E6A61B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47C50FE2-B3CC-4C9A-A13A-7B2DA9E6A61B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0B12486D-9999-4C2E-9BE9-ACE715115E66}
+	EndGlobalSection
+EndGlobal

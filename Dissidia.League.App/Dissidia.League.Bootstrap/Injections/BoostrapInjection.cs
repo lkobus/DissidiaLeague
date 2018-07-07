@@ -8,8 +8,7 @@ namespace Dissidia.League.Bootstrap.Injections
     public class BoostrapInjection : IBootstrapInjection
     {
         public IInjectionService Services { get; set; }
-        public IInjectionRepository Repositories { get; set; }
-        public IAuthenticationService AuthenticationService { get; set; }
+        public IInjectionRepository Repositories { get; set; }        
 
         public BoostrapInjection() { }
 
@@ -18,13 +17,7 @@ namespace Dissidia.League.Bootstrap.Injections
             var mongoClient = new MongoClient(globalConfiguration.Database.Host);
             Repositories = new InjectionRepository(mongoClient.GetDatabase(globalConfiguration.Database.Name));
             Services = new ServicesInjection(globalConfiguration, Repositories);
-        }
-
-        public void RegisterAuthenticationService(IAuthenticationService authenticationService)
-        {
-            AuthenticationService = authenticationService;
-        }
-
+        }        
 
     }
 }

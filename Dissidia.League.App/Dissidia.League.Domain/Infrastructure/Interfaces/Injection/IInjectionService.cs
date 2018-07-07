@@ -10,5 +10,7 @@ namespace Dissidia.League.Domain.Infrastructure.Interfaces.Injection
         IOCRService OCRService { get; }
         IPlayerPontuationService PlayerPontuationService { get; }
         IAuthenticationService AuthenticationService { get; }
+
+        void RegisterAuthentication(IAuthenticationService authenticationService);
     }
 }

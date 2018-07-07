@@ -3,11 +3,7 @@ using Dissidia.League.Domain.DataTransferObject.Matches;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Dissidia.League.Domain.Services.Interfaces;
 using Nancy;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dissidia.League.App.Nancy.Modules.League
 {
@@ -18,7 +14,6 @@ namespace Dissidia.League.App.Nancy.Modules.League
         public MatchModule(IBootstrapInjection injection)
         {
             _matcheService = injection.Services.MatchService;
-
 
             Get[EndpointConfigurationEnum.GET_ALL_MATCHES] = p =>
             {

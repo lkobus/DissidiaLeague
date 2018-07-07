@@ -5,6 +5,7 @@ namespace Dissidia.League.Domain.Services.Interfaces.Authentication
     public interface IAuthenticationService
     {
         UserSession GetLoggedUser();
-        bool AuthUser();
+        bool AuthUser(string username, string password);
+        void RegisterUser(string username, string password, string email);
     }
 }

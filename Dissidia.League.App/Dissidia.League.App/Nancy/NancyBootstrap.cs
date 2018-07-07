@@ -1,13 +1,16 @@
-﻿using Dissidia.League.Bootstrap.Configuration;
+﻿using Dissidia.League.App.Nancy.Services;
+using Dissidia.League.Bootstrap.Configuration;
 using Dissidia.League.Bootstrap.Injections;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Conventions;
+using Nancy.Responses;
 using Nancy.TinyIoc;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,13 +25,42 @@ namespace Dissidia.League.App.Nancy
         {
             base.ApplicationStartup(container, pipelines);
 
+            pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx =>
+            {
+                try
+                {
+                    if (!(ctx.Request.Url.ToString().Contains("/login.html") ||
+                        ctx.Request.Url.ToString().Contains("dissidia/login") ||
+                        ctx.Request.Url.ToString().Contains("/canAccess") ||
+                        ctx.Request.Url.ToString().Contains("dissidia/user/register"))
+                    )
+                   {                        
+                        var logged = Convert.ToBoolean(ctx.Request.Session["logged"]);
+                        if (logged)
+                        {
+                            return null;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    return new RedirectResponse("http://localhost:8999/forbidden", RedirectResponse.RedirectType.Temporary);
+                }
+                return null;
+            });
+
+
+
             var configurationGlobal = new GlobalConfiguration(
                 new DatabaseConfiguration("Dissidia", "mongodb://localhost"),
                 new OCRConfiguration(@"C:\temp\OCR\Dissidia", @"C:\Users\leonardo.kobus\Desktop\lobby\input"));
             var i  = new BoostrapInjection(configurationGlobal);
-            Injection = i;                
+            i.Services.RegisterAuthentication(new AuthenticationService(i.Repositories.UserRepository));
+            Injection = i;              
+            
             container.Register<IBootstrapInjection, BoostrapInjection>(i);            
         }
+
 
         protected override void ConfigureConventions(NancyConventions nancyConventions)
         {

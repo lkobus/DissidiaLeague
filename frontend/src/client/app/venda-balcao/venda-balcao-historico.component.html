@@ -1,0 +1,131 @@
+<div class="container-fluid main-container">
+
+  <div class="row">
+    <div class="content-head type-2">
+      <venda-balcao-menu></venda-balcao-menu>
+    </div>
+  </div>
+
+  <div class="content-head">
+    <h3 class="content-title">
+      Histórico
+    </h3>
+
+    <div class="col-md-2 col-xs-4">
+      <select [autofocus] [(ngModel)]="filterPeriodo" name="periodo" id="periodo" (change)="onPeriodoFilter()">
+        <option value="1">Hoje</option>
+        <option value="2">Semana atual</option>
+        <option value="3">Mês atual</option>
+        <option value="4">Últimos três meses</option>
+        <option value="5">Ano atual</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-9">
+        <h3 class="toolbar-title">
+          Vendas efetuadas
+        </h3>
+      </div>
+
+      <div class="col-md-3">
+        <select [(ngModel)]="filterStatus" name="status" id="status" (change)="onStatusFilter()">
+          <option value="0" selected>Filtrar...</option>
+          <option *ngFor="let s of listStatusConfirmacao" [value]="s.Codigo">
+            {{s.Valor}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <table *ngIf="listVendas" class="table order-table">
+      <tr>
+        <th (click)="SortList(listVendas, 'Codigo')" [ngClass]="{ 'asc': sortingDesc['Codigo'], 'desc': !sortingDesc['Codigo'], 'active': selectTableRow == 'Codigo' }">
+          <label>Código</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listVendas, 'Valor')" [ngClass]="{ 'asc': sortingDesc['Valor'], 'desc': !sortingDesc['Valor'], 'active': selectTableRow == 'Valor' }" class="txt-r">
+          <label>Valor</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listVendas, 'Data')" [ngClass]="{ 'asc': sortingDesc['Data'], 'desc': !sortingDesc['Data'], 'active': selectTableRow == 'Data' }">
+          <label>Data</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listVendas, 'Status')" [ngClass]="{ 'asc': sortingDesc['Status'], 'desc': !sortingDesc['Status'], 'active': selectTableRow == 'Status' }">
+          <label>Status</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+
+      <tr *ngIf="isLoadingVendas">
+        <td>
+          <div>
+            <label>Carregando ...</label>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngFor="let venda of listVendas | paginate: { itemsPerPage: 10, currentPage: p }" [class.selected]="venda === selectedVenda">
+        <td>{{venda.Codigo}}</td>
+        <td class="txt-r">
+          R$ {{venda.Valor.toFixed(2)}}
+        </td>
+        <td>{{ venda.Data | date:'dd'}}/{{ venda.Data | date:'MM'}}/{{ venda.Data | date:'yyyy'}} {{ venda.Data | date:'HH'}}:{{
+          venda.Data | date:'mm'}}:{{ venda.Data | date:'ss'}}</td>
+        <td *ngIf="venda.Status == 1">
+          <p class="status c-ok">
+            <span class="status-txt">Ok</span>
+            <i class="icon-checked"></i>
+          </p>
+        </td>
+        <td *ngIf="venda.Status == 2">
+          <p class="status c-error">
+            <span class="status-txt">Rejeitada</span>
+            <i class="icon-minus-o"></i>
+          </p>
+        </td>
+        <td *ngIf="venda.Status == 3">
+          <p class="status c-warning">
+            <span class="status-txt">Em progresso</span>
+            <i class="icon-clock"></i>
+          </p>
+        </td>
+        <td *ngIf="venda.Status == 4">
+          <p class="status c-error">
+            <span class="status-txt">Cancelada</span>
+            <i class="icon-minus-o"></i>
+          </p>
+        </td>
+        <td>
+          <a *ngIf="venda.Status == 1" href="" [routerLink]="['/venda-balcao-cancelar', venda.Id]" title="Cancelar venda" class="c-error">
+            <span>Cancelar</span>
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR">
+      </pagination-controls>
+    </div>
+  </div>
+
+</div>

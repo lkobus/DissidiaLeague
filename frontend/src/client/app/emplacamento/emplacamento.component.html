@@ -1,0 +1,239 @@
+<div class="container-fluid main-container cards-2">
+
+  <div class="col-md-6 no-padding-r">
+    <div class="card card-transparent">
+      <div class="toolbar">
+        <div class="col-md-4">
+          <h3 class="toolbar-title">
+            Titulo
+
+            <span class="tooltip-help">
+                <span class="tooltip-item">
+                  <i class="fa fa-question-circle"></i>
+                </span>
+                <span class="tooltip-content tooltip-content-big">
+                    <span class="tooltip-text">
+                        Descrição de ajuda
+                    </span>
+                </span>
+            </span>
+
+          </h3>
+        </div>
+
+        <div class="col-md-5">
+          <div class="input-with-btn">
+            <input type="text" placeholder="Buscar"/>
+            <button>
+              <i class="icon-loupe"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <select name="status" id="">
+            <option value="0" selected>Filtrar...</option>
+          </select>
+        </div>
+
+      </div>
+
+      <table class="table">
+        <tr>
+          <th>Titulo</th>
+          <th>Titulo</th>
+          <th>Titulo</th>
+          <th>Ação</th>
+        </tr>
+        <tr>
+          <td>Conteudo</td>
+          <td>Conteudo</td>
+          <td>Conteudo</td>
+          <td>
+            <i class="fa fa-arrow-right c-ok"></i>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card card-transparent">
+      <div class="toolbar">
+        <div class="col-md-6">
+          <h3 class="toolbar-title">
+            Titulo
+
+            <span class="tooltip-help">
+                <span class="tooltip-item">
+                  <i class="fa fa-question-circle"></i>
+                </span>
+                <span class="tooltip-content tooltip-content-big">
+                    <span class="tooltip-text">
+                        Descrição de ajuda
+                    </span>
+                </span>
+            </span>
+
+          </h3>
+        </div>
+
+        <div class="col-md-6 txt-r">
+
+        </div>
+
+      </div>
+
+      <table class="table">
+        <tr>
+          <th>Titulo</th>
+          <th>Titulo</th>
+          <th>Titulo</th>
+          <th>Ação</th>
+        </tr>
+        <tr>
+          <td>Conteudo</td>
+          <td>Conteudo</td>
+          <td>Conteudo</td>
+          <td>
+            <i class="fa fa-arrow-left c-error"></i>
+          </td>
+        </tr>
+      </table>
+
+    </div>
+  </div>
+
+  <div class="map-wrapper" *ngIf="show" [@myAnimation]>
+    <ngui-map
+      #mapa
+      minZoom="3"
+      zoom="13"
+      styles='[
+    {
+        "featureType": "all",
+        "elementType": "all",
+        "stylers": [
+            {
+                "hue": "#008eff"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "0"
+            },
+            {
+                "lightness": "0"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "saturation": "-60"
+            },
+            {
+                "lightness": "-20"
+            }
+        ]
+    }
+]'
+      mapTypeControl="true"
+      [zoomControlOptions]="{position: 'LEFT_CENTER'}"
+      [streetViewControlOptions]="{position: 'LEFT_BOTTOM'}"
+      center="37.775, -122.434"
+      (mapReady$)="onMapReady($event)"
+      (mapClick)="onMapClick($event)"
+      (idle)="onIdle($event)"
+      mapTypeId="roadmap">
+      <marker *ngFor="let pos of positions"
+              [position]="pos.position"
+              [icon]="pos.icon"
+              (initialized$)="onMarkerInit($event)">
+      </marker>
+    </ngui-map>
+  </div>
+
+  <div class="button-wrapper" style="position: relative; z-index: 99999;">
+    <button class="btn-action" (click)="show = !show">
+      <i class="fa fa-globe"></i>
+    </button>
+    <button class="btn-action">
+      Salvar
+    </button>
+  </div>
+
+</div>
+
+
+<!-- Tela Conforme layout da agencia -->
+<div class="container-fluid main-container hidden">
+
+  <div class="card">
+
+    <table class="table txt-l">
+      <tr>
+        <th>
+          Dados do pedido
+        </th>
+        <th>Data entrega</th>
+        <th>Caminhão</th>
+        <th>Danfe</th>
+      </tr>
+      <tr *ngFor="let number of [0,1,2,3,4,5,6,7,9]">
+        <td>
+          #4567 - Bar do João<br/>
+          R$12.000,00
+        </td>
+        <td>
+          01/06/17
+        </td>
+        <td>
+          <select name="" id="">
+            <option value="">Selecione</option>
+          </select>
+        </td>
+        <td>
+          <button class="btn-secondary">
+            Gerar Danfe
+          </button>
+        </td>
+      </tr>
+    </table>
+
+    <div class="button-wrapper">
+      <button class="btn-action">
+        Salvar emplacamento
+      </button>
+    </div>
+  </div>
+
+</div>

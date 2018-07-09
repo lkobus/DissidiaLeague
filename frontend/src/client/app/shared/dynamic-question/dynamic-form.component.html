@@ -1,0 +1,22 @@
+<div>
+  <form (ngSubmit)="onSubmit()" [formGroup]="form">
+
+    <ul class="icos-list" *ngFor="let question of questions">
+      <df-question [question]="question" [form]="form"></df-question>
+    </ul>
+
+    <div class="container-floating">
+      <div class="floating-button">
+        <span class="letter">
+          <div class="t-left t-sm" data-tooltip="Salvar">
+            <button type="submit" class="btn-clean" [disabled]="!form.valid">
+              <span class="letter">
+                <span class="fa fa-floppy-o"></span>
+              </span>
+            </button>
+          </div>
+        </span>
+      </div>
+    </div>
+  </form>
+</div>

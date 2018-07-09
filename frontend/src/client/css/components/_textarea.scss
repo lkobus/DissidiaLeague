@@ -1,0 +1,14 @@
+textarea {
+  width: 100%;
+  outline: none!important;
+  box-sizing: border-box;
+  padding: 9px 5px 10px 5px;
+  margin-bottom: 26px;
+  color: color(txt,dark);
+  border: 1px solid color(input,border);
+  background-color: color(backgroundLight);
+
+  &:focus {
+    border-color: color(primary, base);
+  }
+}

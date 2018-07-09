@@ -1,0 +1,132 @@
+<div class="container-fluid main-container order-page">
+
+    <div class="card">
+
+        <div class="toolbar">
+
+            <div class="col-md-10">
+                <h3 class="toolbar-title">
+                    Resumo Nota Fiscal [{{notaFiscal.ChaveAcesso}}]
+                </h3>
+            </div>
+
+            <div class="col-md-2">
+                <select name="" id="" disabled>
+                    <option value="">{{notaFiscal.StatusValor}}</option>
+                </select>
+            </div>
+        </div>
+
+        <table class="table">
+            <tr>
+                <th>Data da Emissão</th>
+                <th>Número</th>
+                <th>Operação</th>
+                <th>Cliente</th>
+                <th>Pagamento</th>
+                <th>Valor total
+                    <span class="tooltip-help">
+                        <span class="tooltip-item">
+                            <i class="fa fa-question-circle"></i>
+                        </span>
+                        <span class="tooltip-content tooltip-content-big">
+                            <span class="tooltip-text">
+                                Sem desconto: {{notaFiscal.Valor + notaFiscal.Desconto | currencyFormat}}
+                            </span>
+                        </span>
+                    </span>
+                </th>
+                <th>Desconto</th>
+                <th>Mapa</th>
+                <th>Entrega</th>
+            </tr>
+            <tr>
+                <td>{{notaFiscal.DataEmissao}}</td>
+                <td>{{notaFiscal.NumeroNota}} - {{notaFiscal.SerieNota}}</td>
+                <td>{{notaFiscal.Operacao}}</td>
+                <td>{{notaFiscal.ClienteNomeFantasia}}</td>
+                <td>{{notaFiscal.FormaPagamento}}<br><small *ngIf="notaFiscal.DataVencimentoBoleto != ''">Venc: {{notaFiscal.DataVencimentoBoleto}}</small></td>
+                <td>{{notaFiscal.Valor | currencyFormat}}</td>
+                <td>{{notaFiscal.Desconto | currencyFormat}}</td>
+                <td>{{notaFiscal.Mapa}}<br><small [class]="getStateMapa(notaFiscal.StatusMapa)">{{notaFiscal.StatusMapa}}</small></td>
+                <td>{{notaFiscal.DataEntrega}}</td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div class="col-md-12">
+        <tp-accordion-group>
+            <tp-accordion [title]="['Produtos']" [active]="true">
+                <div class="products-grid-container">
+                    <ul class="itens">
+                        <li class="item" *ngFor="let produto of notaFiscal.Itens">
+                            <div class="heading-container">
+                                <span class="select-name-txt" [title]="produto.NomeProduto">
+                                  <span class="txt">{{produto.CodigoProduto}} - {{produto.NomeProduto}}</span>
+                                </span>
+                            </div>
+
+                            <div class="content">
+                                <span class="fa" title="{{produto.NomeProduto}}"></span>
+
+                                <div class="values">
+                                    <span class="unitary-price unitarioP1745" title="" *ngIf="produto.PrecoUnitario > 0">Un: {{produto.PrecoUnitario | currencyFormat}}</span>
+                                    <span class="unitary-price unitarioP1745" title="" *ngIf="produto.Desconto > 0">Desc: {{produto.Desconto | currencyFormat}}</span>
+                                    <span class=" unitary-price unitarioP1745" title="">Total: {{produto.PrecoTotal | currencyFormat}}</span>
+                                </div>
+                                <div class="item-image">
+                                    <img class="mCS_img_loaded" [src]="getProdutoImageURL(produto.Id)">
+                                </div>
+                            </div>
+
+                            <div class="qty-bar">
+                                <div class="qty-status">
+                                    <span class="tooltip-help">
+                                        <span class="tooltip-item">
+                                            <input class="qty qty-product" type="text" [(ngModel)]="produto.Quantidade" disabled>
+                                            <span class="qty-span" title="">{{produto.UnidadeMedida}}</span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </tp-accordion>
+        </tp-accordion-group>
+    </div>
+</div>
+
+<div class="container-floating left">
+  <div class="floating-button">
+    <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+    </div>
+  </div>
+</div>
+
+<div class="container-floating" [hidden]="!allowCancel">
+  <div class="floating-button">
+    <span class="letter">
+      <button (click)="cancelarNotaFiscal()" class="btn-clean">
+        <div class="t-left t-sm" data-tooltip="Cancelar nota fiscal">
+          <span class="letter">
+            C
+          </span>
+        </div>
+      </button>
+    </span>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

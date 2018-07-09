@@ -90,6 +90,7 @@
     <Compile Include="Tools\Enums\IBaseEnum.cs" />
     <Compile Include="ValueObjects\Authentication\Credentials.cs" />
     <Compile Include="ValueObjects\Authentication\UserSession.cs" />
+    <Compile Include="ValueObjects\Gamification\Pontuation\PlayerPontuation.cs" />
     <Compile Include="ValueObjects\Match\PlayerInfo.cs" />
   </ItemGroup>
   <ItemGroup>

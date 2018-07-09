@@ -1,0 +1,329 @@
+<div class="container-fluid main-container">
+
+  <div class="content-head">
+    <h3 class="content-title">
+      Ver notas
+    </h3>
+
+    <div class="col-md-2">
+      <select name="filterTipoNota" id="filterTipoNota" [(ngModel)]="filterTipoNota" (change)="onTipoNotaFilter()">
+        <option value="1">Saída</option>
+        <option value="2">Entrada</option>
+        <option value="0">Todas</option>
+      </select>
+    </div>
+
+    <button class="btn-slim-icon" [class.active]=true (click)="onTipoNotaFilter()">
+      <span>Recarregar</span>
+      <img src="assets/svg/return.svg" alt="Virar" title="Clique para atualizar" width="18px" height="18px">
+    </button>
+  </div>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-5">
+        <h3 class="toolbar-title">
+          Lista de notas fiscais
+        </h3>
+      </div>
+
+      <div class="col-md-2 mdp-with-lb">
+        <label>
+          De
+        </label>
+        <my-date-picker name="dataInicio" [locale]="pt-br" (dateChanged)="onDateInicialChanged($event)" [selDate]="selectedDateDe"
+          [options]="myDatePickerOptions">
+        </my-date-picker>
+      </div>
+
+      <div class="col-md-2 mdp-with-lb">
+        <label>
+          Até
+        </label>
+        <my-date-picker name="dataFim" [locale]="pt-br" (dateChanged)="onDateFinalChanged($event)" [selDate]="selectedDateAte" [options]="myDatePickerOptions">
+        </my-date-picker>
+      </div>
+
+      <div class="col-md-3">
+        <select name="status" id="status" (change)="onOtherFilter()" [(ngModel)]="filterStatus">
+          <option value="0">Status</option>
+          <option value="1">Autorizada</option>
+          <option value="2">Rejeitada</option>
+          <option value="3">Cancelada</option>
+          <option value="4">Inutilizada</option>
+        </select>
+      </div>
+
+    </div>
+
+    <table class="table order-table type-3">
+      <tr>
+        <th (click)="SortList(listNotasFiscais, 'DataEmissao')" [ngClass]="{ 'asc': sortingDesc['DataEmissao'], 'desc': !sortingDesc['DataEmissao'], 'active': selectTableRow == 'DataEmissao' }">
+          <label>Data</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'NumeroNota')" [ngClass]="{ 'asc': sortingDesc['NumeroNota'], 'desc': !sortingDesc['NumeroNota'], 'active': selectTableRow == 'NumeroNota' }">
+          <div>
+            <label>Número</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'Operacao')" [ngClass]="{ 'asc': sortingDesc['Operacao'], 'desc': !sortingDesc['Operacao'], 'active': selectTableRow == 'Operacao' }">
+
+          <div>
+            <label>Operação</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'ClienteNomeFantasia')" [ngClass]="{ 'asc': sortingDesc['ClienteFantasia'], 'desc': !sortingDesc['ClienteFantasia'], 'active': selectTableRow == 'ClienteFantasia' }">
+          <div>
+            <label>Cliente</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'FormaPagamento')" [ngClass]="{ 'asc': sortingDesc['FormaPagamento'], 'desc': !sortingDesc['FormaPagamento'], 'active': selectTableRow == 'FormaPagamento' }"
+          style="width: 82px;">
+          <div>
+            <label>Pagamento</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+
+        <th style='width:75px;' (click)="SortList(listNotasFiscais, 'Valor')" [ngClass]="{ 'asc': sortingDesc['Valor'], 'desc': !sortingDesc['Valor'], 'active': selectTableRow == 'Valor' }"
+          class="txt-r">
+          <div>
+            <label>Valor</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'Desconto')" [ngClass]="{ 'asc': sortingDesc['Desconto'], 'desc': !sortingDesc['Desconto'], 'active': selectTableRow == 'Desconto' }"
+          class="txt-r">
+
+          <div>
+            <label>Desconto</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'Mapa')" [ngClass]="{ 'asc': sortingDesc['Mapa'], 'desc': !sortingDesc['Mapa'], 'active': selectTableRow == 'Mapa' }">
+          <div>
+            <label>Mapa</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listNotasFiscais, 'DataEntrega')" [ngClass]="{ 'asc': sortingDesc['DataEntrega'], 'desc': !sortingDesc['DataEntrega'], 'active': selectTableRow == 'DataEntrega' }">
+          <div>
+            <label>Entrega</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+
+        <th style='width:70px;' (click)="SortList(listNotasFiscais, 'Status')" [ngClass]="{ 'asc': sortingDesc['Status'], 'desc': !sortingDesc['Status'], 'active': selectTableRow == 'Status' }">
+          <div>
+            <label>Status</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style='width:57px;'></th>
+      </tr>
+      <tr *ngFor="let notaFiscal of listNotasFiscais | paginate: { itemsPerPage: 10, currentPage: p }" [class.selected]="notaFiscal === selectedNotaFiscal"
+        (click)="onSelect(notaFiscal)" (dblclick)="viewDetalheNota(notaFiscal)">
+        <td>{{notaFiscal.DataEmissao}}</td>
+        <td>{{notaFiscal.NumeroNota}} - {{notaFiscal.SerieNota}}</td>
+        <td>{{notaFiscal.Operacao}}</td>
+        <td>{{notaFiscal.ClienteNomeFantasia}}</td>
+        <td>
+          {{notaFiscal.FormaPagamento}}
+          <br>
+          <small *ngIf="notaFiscal.DataVencimentoBoleto != ''">Venc: {{notaFiscal.DataVencimentoBoleto}}</small>
+        </td>
+        <td class="txt-r">{{notaFiscal.Valor | currencyFormat}}</td>
+        <td class="txt-r">{{notaFiscal.Desconto | currencyFormat}}</td>
+        <td>
+          <span class="mapa-name" [title]="notaFiscal.Mapa">{{notaFiscal.Mapa}}</span>
+          <br>
+          <small [class]="getStateMapa(notaFiscal.StatusMapa)">{{notaFiscal.StatusMapa}}</small>
+        </td>
+        <td>{{notaFiscal.DataEntrega}}</td>
+        <td title="{{ notaFiscal.DataCancelamento != '' ? notaFiscal.DataCancelamento : ''}}">
+          <p class="status">
+            <span [class]="'status-txt ' + getStateClass(notaFiscal.StatusCodigo)">
+              {{notaFiscal.StatusValor}}
+              <i [class]="getStateIcon(notaFiscal.StatusCodigo)"></i>
+            </span>
+            <br>
+            <small *ngIf="notaFiscal.StatusEvento != ''">{{notaFiscal.StatusEvento}}</small>
+            <span class="tooltip-help" *ngIf="notaFiscal.StatusCodigo == 2">
+              <span class="tooltip-item">
+                <i class="fa fa-question-circle"></i>
+              </span>
+              <span class="tooltip-content tooltip-content-big" style="cursor: pointer">
+                <span (click)="toInventti()" class="tooltip-text">
+                  {{notaFiscal.AlertDetail}}
+                </span>
+              </span>
+            </span>
+          </p>
+
+        </td>
+        <td>
+          <i class="fa fa-file-code-o c-ok" (click)="baixarXml(notaFiscal.Id)" title="Baixar XML">
+          </i>
+
+          <i class="fa fa-file-pdf-o c-pdf" *ngIf="notaFiscal.StatusCodigo == 1 && notaFiscal.TipoNota == 1" (click)="baixarDanfe(notaFiscal.Id)"
+            title="Baixar DANFe">
+          </i>
+
+          <img src="assets/logo-bb.png" alt="Boleto" title="Gerar boleto" class="ico-img" *ngIf="isBoletoEnabled(notaFiscal)" (click)="gerarBoleto(notaFiscal.Id)" />
+
+
+          <i class="icon-x c-error" (click)="openModalConfirmacao(notaFiscal)" *ngIf="HabilitaCancelarNota(notaFiscal)"
+            title="Cancelar/Devolver">
+          </i>
+
+        </td>
+      </tr>
+    </table>
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR">
+      </pagination-controls>
+
+      <div class="container-floating">
+        <div class="floating-button">
+          <span class="letter">
+            <div class="t-left t-sm" data-tooltip="Exportar">
+              <button (click)="modalExportar.open()" class="btn-clean">
+                <span class="letter">
+                  <span class="fa fa-download"></span>
+                </span>
+              </button>
+            </div>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <modal #modalExportar title="Exportar Notas Fiscais" [closeOnOutsideClick]="false">
+      <modal-header>
+        <span>Exportar Notas Fiscais</span>
+      </modal-header>
+
+      <modal-content>
+
+        <div class="row">
+          <div class="col-md-4 mdp-with-lb">
+            <label>Tipo</label>
+            <select name="filterTipoNotaExport" id="filterTipoNotaExport" [(ngModel)]="filterTipoNotaExport">
+              <option value="1">Saída</option>
+              <option value="2">Entrada</option>
+              <option value="0">Todas</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mdp-with-lb">
+            <label>Vendedor</label>
+            <select name="filterVendedor" id="filterVendedor" [(ngModel)]="filterVendedorExport">
+              <option value="0">Todos</option>
+              <optgroup label="EXTERNO" *ngIf="vdeList.ToArray().length > 0">
+                <option *ngFor="let vde of vdeList.ToArray()" [value]="vde.id">{{vde.nome}}</option>
+              </optgroup>
+              <optgroup label="INTERNO" *ngIf="vdiList.ToArray().length > 0">
+                <option *ngFor="let vdi of vdiList.ToArray()" [value]="vdi.id">{{vdi.nome}}</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="col-md-4 mdp-with-lb">
+            <label>Cliente</label>
+            <select name="filterCliente" id="filterCliente" [(ngModel)]="filterClienteExport">
+              <option value="0">Todos</option>
+              <option *ngFor="let cliente of clientesList.ToArray()" [value]="cliente.Id">{{cliente.NomeFantasia}}</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mdp-with-lb">
+            <label>De</label>
+            <br>
+            <my-date-picker name="dataInicio" id="dataInicio" [locale]="pt-br" (dateChanged)="onDateInicialExportChanged($event)" [selDate]="selectedDateDeExport"
+              [options]="myDatePickerOptions">
+            </my-date-picker>
+          </div>
+
+          <div class="col-md-4 mdp-with-lb">
+            <label>Até</label>
+            <br>
+            <my-date-picker name="dataFim" [locale]="pt-br" (dateChanged)="onDateFinalExportChanged($event)" [selDate]="selectedDateAteExport"
+              [options]="myDatePickerOptions">
+            </my-date-picker>
+          </div>
+        </div>
+      </modal-content>
+
+      <modal-footer>
+        <button class="btn btn-primary" [disabled]="isLoading" (click)="exportarXML()">Exportar XML</button>
+        <button class="btn btn-primary" [disabled]="isLoading" (click)="exportarCSV()">Exportar CSV</button>
+      </modal-footer>
+
+    </modal>
+
+    <modal #modalConfirmacao title="Cancelar Nota Fiscal" [closeOnOutsideClick]="false">
+      <modal-header>
+        <span>Cancelar Nota Fiscal</span>
+      </modal-header>
+
+      <modal-content>
+        <h2 style="color: black">Confirma o cancelamento da nota fiscal {{selectedNotaFiscal?.NumeroNota}} - {{selectedNotaFiscal?.SerieNota}}?</h2>
+        <h3 style="color: black">*Os títulos da nota fiscal serão cancelados.</h3>
+      </modal-content>
+
+      <modal-footer>
+        <button class="btn btn-primary" (click)="closeModalConfirmacao()">Não</button>
+        <button class="btn btn-primary" (click)="cancelarNotaFiscal(selectedNotaFiscal)">Sim</button>
+      </modal-footer>
+    </modal>
+
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

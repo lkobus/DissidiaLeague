@@ -27,6 +27,9 @@ namespace Dissidia.League.App.Nancy
 
             pipelines.BeforeRequest.AddItemToEndOfPipeline(ctx =>
             {
+#if DEBUG
+
+#else
                 try
                 {
                     if (!(ctx.Request.Url.ToString().Contains("/login.html") ||
@@ -46,6 +49,8 @@ namespace Dissidia.League.App.Nancy
                 {
                     return new RedirectResponse("http://localhost:8999/forbidden", RedirectResponse.RedirectType.Temporary);
                 }
+#endif
+
                 return null;
             });
 

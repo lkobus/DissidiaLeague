@@ -1,0 +1,74 @@
+body {
+	font-family: $base-f;
+	font-size: $base-fs;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: color(txt,light);
+	font-weight: normal;
+}
+
+.main-title {
+  display: inline-block;
+  float: left;
+  padding: 0 32px 0 33px;
+  margin-right: 27px;
+  font-size: 30px;
+  min-height: 60px;
+  line-height: 52px;
+  background-color: darken(color(primary,base),8%);
+  position: relative;
+
+  small {
+    font-size: 10px;
+    position: absolute;
+    color: color(txt,light);
+    right: 33px;
+    bottom: 10px;
+    z-index: 2;
+    @include truncate;
+    max-width: 122px;
+    min-height: 10px;
+    line-height: 10px;
+  }
+
+  @include breakpoint(xs) {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  img {
+    &:last-child {
+      margin-bottom: -2px;
+    }
+  }
+
+  .divider {
+    margin-left: 5px;
+    margin-right: 7px;
+  }
+}
+
+.main-content-title {
+  margin-top: 36px;
+  margin-bottom: 16px;
+  font-size: em(20px);
+  color: color(txt,base);
+}
+
+a {
+	text-decoration: none;
+	color: color(primary,base);
+
+	&:active {
+		color: color(primary,base);
+	}
+
+}

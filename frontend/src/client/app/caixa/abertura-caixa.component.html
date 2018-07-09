@@ -1,0 +1,55 @@
+<div class="container-fluid">
+
+  <div class="no-padding">
+    <div *ngIf="restError" class="alert alert-danger">
+      <span>{{restError}}</span>
+    </div>
+  </div>
+
+  <div class="container no-padding txt-c" *ngIf="!(statusCaixa?.CaixaDisponivel) && (!checklistAbertura)">
+    <h3 class="main-content-title">Você precisa abrir o caixa antes de iniciar suas vendas</h3>
+    <button (click)="IniciarAberturaCaixa()">Abrir o caixa e iniciar vendas do dia</button>
+  </div>
+
+  <form #form="ngForm" name="form" (ngSubmit)="form.form.valid && AbrirCaixa();$event.stopPropagation()">
+
+    <div *ngIf="!(statusCaixa?.CaixaDisponivel) && checklistAbertura" class="card">
+      <div class="toolbar">
+        <h3 class="toolbar-title">Checklist de abertura</h3>
+      </div>
+
+      <div class="container-fluid">
+        <h4 class="subtitle">Antes de começar a vender vamos conferir algumas coisas?</h4>
+
+        <ul class="icos-list">
+          <li class="icos-list-item-header" [class.active]="1 === 2">
+            <i class="icon flation-checked"></i>
+            <span class="title">Qual o valor da abertura de caixa?</span>
+          </li>
+
+          <li class="icos-list-item">
+            <div class="">
+              <span class="subtitle" *ngIf="ultimoCaixa?.Saldo > 0">
+                Sobrou {{ultimoCaixa.Saldo | currencyFormat}} do fechamento anterior? Confirma?
+              </span>
+            </div>
+
+            <div class="col-md-9">
+              <div class="col-md-5">
+                <input [autofocus] type="text" class="form-control" name="valorAbertura" id="valorAbertura" #abertura="ngModel" placeholder="0,00" max="5000"
+                  min="1" minlength="0" maxlength="15" [(ngModel)]="valorAbertura" [kzMaskCurrency]="{prefixo:''}"
+                />
+              </div>
+            </div>
+          </li>
+        </ul>
+
+
+        <dynamic-form (onButtonClicked)="AbrirCaixa()" [questions]="checklistAbertura"></dynamic-form>
+
+      </div>
+
+    </div>
+
+  </form>
+</div>

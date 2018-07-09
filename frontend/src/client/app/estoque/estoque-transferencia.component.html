@@ -1,0 +1,167 @@
+<div class="container-fluid main-container flexbox cards-2">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="toolbar">
+          <div class="col-md-6">
+            <h3 class="toolbar-title">
+              Origem
+              <span class="tooltip-help">
+                <span class="tooltip-item">
+                  <i class="fa fa-question-circle"></i>
+                </span>
+                <span class="tooltip-content tooltip-content-big">
+                    <span class="tooltip-text">
+                        Selecione o estoque de origem,<br/>
+                        Informe a quantidade desejada,<br/>
+                        Clique na seta para transferir o produto.
+                    </span>
+                </span>
+              </span>
+            </h3>
+          </div>
+          <div class="col-md-6">
+            <select name="origem" id="origem" (change)="onChangeOrigem($event.target.value)">
+              <option value="2">Estoque Externo</option>
+              <option value="1">Estoque Balcão</option>              
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar">
+
+          <div class="col-md-4">
+            <h3 class="toolbar-title">
+              Produtos
+            </h3>
+          </div>
+
+          <div class="col-md-8">
+            <div class="input-with-btn">
+              <input type="text" placeholder="Buscar" ngui-auto-complete min-chars=1 max-num-list=5 value-formatter="nome" list-formatter="codigo - nome"
+                     match-formatted=true display-property-name="nome" no-match-found-text="Produto não encontrado"
+                     [(ngModel)]="inputSearchOrigem" (keyup)="inputSearchOrigemOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        <table class="table">
+          <tr>
+            <th (click)="sortOrigemItem('Codigo')" [ngClass]="{ 'asc': origemSortingDesc, 'desc': !origemSortingDesc }">Código</th>
+            <th (click)="sortOrigemItem('Nome')" [ngClass]="{ 'asc': origemSortingDesc, 'desc': !origemSortingDesc }">Nome</th>
+            <th (click)="sortOrigem('Quantidade')" [ngClass]="{ 'asc': origemSortingDesc, 'desc': !origemSortingDesc }">Qtde</th>
+            <th>Transferir</th>
+            <th></th>
+          </tr>
+          <tr *ngFor="let estoque of origemList | paginate: { id: 'paginationOrigem', itemsPerPage: 10, currentPage: p1 }">
+            <td>{{estoque.Item.Codigo}}</td>
+            <td>{{estoque.Item.Nome}}</td>
+            <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}</td>
+            <td><input type="number" style="margin-bottom: 0" (change)="onChangeQuantidade($event.target.value)"
+            /></td>
+            <td>
+              <a href="" title="Transferir produto" [routerLink]=""><span (click)="transferirEstoque(estoque.Item.Id)"><i class="fa fa-arrow-right" aria-hidden="true"></i></span></a>
+            </td>
+          </tr>
+        </table>
+
+        <div class="toolbar-bottom">
+          <pagination-controls id="paginationOrigem" (pageChange)="p1 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+                               previousLabel="ANTERIOR" #paginationOrigem>
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="toolbar">
+          <div class="col-md-6">
+            <h3 class="toolbar-title" *ngIf="destino == 1">
+              Destino:
+            </h3>
+          </div>
+          <div class="col-md-6">
+            <h3 class="toolbar-title txt-r" *ngIf="destino == 1">
+              Estoque Balcão
+            </h3>
+          </div>
+          <div class="col-md-6">
+            <h3 class="toolbar-title" *ngIf="destino == 2">
+              Destino:
+            </h3>
+          </div>
+          <div class="col-md-6">
+            <h3 class="toolbar-title txt-r" *ngIf="destino == 2">
+              Estoque Externo
+            </h3>
+          </div>
+        </div>
+
+        <div class="toolbar">
+
+          <div class="col-md-4">
+            <h3 class="toolbar-title">
+              Produtos
+            </h3>
+          </div>
+          <div class="col-md-8">
+            <div class="input-with-btn">
+              <input type="text" placeholder="Buscar" ngui-auto-complete min-chars=1 max-num-list=5 value-formatter="nome" list-formatter="codigo - nome"
+                     match-formatted=true display-property-name="nome" no-match-found-text="Produto não encontrado"
+                     [(ngModel)]="inputSearchDestino" (keyup)="inputSearchDestinoOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <table class="table">
+          <tr>
+            <th (click)="sortDestinoItem('Codigo')" [ngClass]="{ 'asc': destinoSortingDesc, 'desc': !destinoSortingDesc }">Código</th>
+            <th (click)="sortDestinoItem('Nome')" [ngClass]="{ 'asc': destinoSortingDesc, 'desc': !destinoSortingDesc }">Nome</th>
+            <th (click)="sortDestino('Quantidade')" [ngClass]="{ 'asc': destinoSortingDesc, 'desc': !destinoSortingDesc }">Qtde</th>
+            <th (click)="sortDestino('EstoqueMinimo')" [ngClass]="{ 'asc': destinoSortingDesc, 'desc': !destinoSortingDesc }">Mínimo</th>
+          </tr>
+          <tr *ngFor="let estoque of destinoList | paginate: { id: 'paginationDestino', itemsPerPage: 10, currentPage: p }">
+            <td>{{estoque.Item.Codigo}}</td>
+            <td>{{estoque.Item.Nome}}</td>
+            <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}</td>
+            <td *ngIf="destino == 1">{{estoque.EstoqueMinimo}} UN</td>
+            <td *ngIf="destino == 2">{{estoque.EstoqueMinimo}} {{estoque.Item.UnidadeMedida}}</td>
+          </tr>
+        </table>
+
+        <div class="toolbar-bottom">
+          <pagination-controls id="paginationDestino" (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+                               previousLabel="ANTERIOR" #paginationDestino>
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-floating left">
+  <div class="floating-button">
+    <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

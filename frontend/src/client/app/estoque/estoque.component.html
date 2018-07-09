@@ -1,0 +1,431 @@
+<div class="container-fluid main-container flexbox cards-2">
+  <div class="row">
+    <div [ngClass]="{ 'col-md-6': acessoVendaBalcao, 'col-md-12': !acessoVendaBalcao }" *ngIf="acessoVendaExterna">
+      <div class="card">
+
+        <div class="toolbar">
+          <div class="col-md-6">
+            <h3 class="toolbar-title">
+              Externo
+            </h3>
+          </div>
+
+          <div class="col-md-6">
+            <select name="filtro-externo" id="filtro-externo" (change)="onChangeFiltroExterno($event.target.value)">
+              <option selected value="0">Esgotados</option>
+              <option value="1">Estoque baixo</option>
+              <option value="2">Estoque alto</option>
+              <option value="3">Todos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="products-grid2-container tiny-cards" *ngIf="filtroExterno != 3">
+          <ul class="products-list">
+            <li class="product" [ngClass]="{ 'minus': estoque.Quantidade < 1, 'plus': estoque.Quantidade > 0  }" *ngFor="let estoque of getListDetailExterno()">
+
+              <div class="card-flip" [class.active]="isParaActive">
+                <div class="front">
+                  <a href="" [routerLink]="" (click)="editarEstoqueProduto(estoque.Id, 2)" class="product-container">
+                    <div class="product-image">
+                      <img [src]='getImagemProduto(estoque)' height="128" width="128" />
+                    </div>
+                    <p class="product-name" title="{{estoque.Item.Nome}}">
+                      {{estoque.Item.Nome}}
+                    </p>
+                    <span class="product-un-price">
+                      {{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}
+                    </span>
+                  </a>
+                </div>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+
+        <div class="toolbar">
+          <div class="col-md-6">
+            <h4 class="toolbar-subtitle" *ngIf="filtroExterno == 0">Produtos esgotados</h4>
+            <h4 class="toolbar-subtitle" *ngIf="filtroExterno == 1">Produtos com estoque baixo</h4>
+            <h4 class="toolbar-subtitle" *ngIf="filtroExterno == 2">Produtos com estoque alto</h4>
+            <h4 class="toolbar-subtitle" *ngIf="filtroExterno == 3">Estoque completo</h4>
+          </div>
+
+          <div class="col-md-6">
+            <div class="input-with-btn">
+              <input type="text" placeholder="Buscar" ngui-auto-complete min-chars=1 max-num-list=5 value-formatter="nome" list-formatter="codigo - nome"
+                match-formatted=true display-property-name="nome" no-match-found-text="Produto não encontrado" [(ngModel)]="inputSearchExterno"
+                (keyup)="inputSearchExternoOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <table class="table order-table type-3">
+          <tr>
+            <th style="width: 50px" (click)="SortList(listExterno, 'Item.Codigo')" [ngClass]="{ 'asc': sortingExternoDesc['Item.Codigo'], 'desc': !sortingExternoDesc['Item.Codigo'], 'active': selectTableRowExterno == 'Item.Codigo' }">
+              <label>Código</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th (click)="SortList(listExterno, 'Item.Nome')" [ngClass]="{ 'asc': sortingExternoDesc['Item.Nome'], 'desc': !sortingExternoDesc['Item.Nome'], 'active': selectTableRowExterno == 'Item.Nome' }">
+              <label>Nome</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 70px" (click)="SortList(listExterno, 'Quantidade')" [ngClass]="{ 'asc': sortingExternoDesc['Quantidade'], 'desc': !sortingExternoDesc['Quantidade'], 'active': selectTableRowExterno == 'Quantidade' }">
+              <label>Qtde</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 70px" (click)="SortList(listExterno, 'EstoqueMinimo')" [ngClass]="{ 'asc': sortingExternoDesc['EstoqueMinimo'], 'desc': !sortingExternoDesc['EstoqueMinimo'], 'active': selectTableRowExterno == 'EstoqueMinimo' }">
+              <label>Mínimo</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 70px" (click)="SortList(listExterno, 'DiasPrevisao')" [ngClass]="{ 'asc': sortingExternoDesc['DiasPrevisao'], 'desc': !sortingExternoDesc['DiasPrevisao'], 'active': selectTableRowExterno == 'DiasPrevisao' }">
+              <label>Previsão</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 10px"></th>
+          </tr>
+
+          <tr *ngFor="let estoque of listExterno | paginate: { id: 'paginationExterno', itemsPerPage: ((!visaoExtendidaExterno) ? 9 : 15), currentPage: p2 }">
+            <td>{{estoque.Item.Codigo}}</td>
+            <td>{{estoque.Item.Nome}}</td>
+            <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}</td>
+            <td>{{estoque.EstoqueMinimo}} {{estoque.Item.UnidadeMedida}}</td>
+            <td *ngIf="estoque.DiasPrevisao >= 0">{{estoque.DiasPrevisao}} dia(s)</td>
+            <td *ngIf="estoque.DiasPrevisao < 0" title="Previsão indisponível">--</td>
+            <td>
+              <a href="" title="Visualizar" [routerLink]="" (click)="editarEstoqueProduto(estoque.Id, 2)">
+                <i class="icon-loupe"></i>
+              </a>
+            </td>
+          </tr>
+        </table>
+        <div class="toolbar-bottom" *ngIf="visaoExtendidaExterno || filtroExterno == 3">
+          <pagination-controls id="paginationExterno" (pageChange)="p2 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+            previousLabel="ANTERIOR" #paginationExterno>
+          </pagination-controls>
+        </div>
+
+        <div class="button-wrapper" *ngIf="sourceExterno.length > 9 && inputSearchExterno == '' && filtroExterno != 3">
+          <button class="btn-secondary" (click)="setVisaoExterno()">
+            <span *ngIf="!visaoExtendidaExterno">Ver mais</span>
+            <span *ngIf="visaoExtendidaExterno">Ver menos</span>
+          </button>
+        </div>
+        <div class="toolbar-bottom" *ngIf="filtroExterno == 3">
+          <button class="btn-action" [disabled]='isExporting' (click)="exportarExterno()">
+            <span>Exportar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div [ngClass]="{ 'col-md-6 no-padding-l': acessoVendaExterna, 'col-md-12': !acessoVendaExterna }" *ngIf="acessoVendaBalcao">
+      <div class="card">
+
+        <div class="toolbar">
+          <div class="col-md-6">
+            <h3 class="toolbar-title">
+              Balcão
+            </h3>
+          </div>
+
+          <div class="col-md-6">
+            <select name="filtro-balcao" id="filtro-balcao" (change)="onChangeFiltroBalcao($event.target.value)">
+              <option selected value="0">Esgotados</option>
+              <option value="1">Estoque baixo</option>
+              <option value="2">Estoque alto</option>
+              <option value="3">Todos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="products-grid2-container tiny-cards" *ngIf="filtroBalcao != 3">
+          <ul class="products-list">
+            <li class="product" [ngClass]="{ 'minus': estoque.Quantidade < 1, 'plus': estoque.Quantidade > 0  }" *ngFor="let estoque of getListDetailBalcao()">
+
+              <div class="card-flip" [class.active]="isParaActive">
+                <div class="front">
+                  <a href="" [routerLink]="" (click)="editarEstoqueProduto(estoque.Id, 1)" class="product-container">
+                    <div class="product-image">
+                      <img [src]='getImagemProduto(estoque)' height="128" width="128" />
+                    </div>
+                    <p class="product-name" title="{{estoque.Item.Nome}}">
+                      {{estoque.Item.Nome}}
+                    </p>
+                    <span class="product-un-price">
+                      {{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}
+                    </span>
+                  </a>
+                </div>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+
+        <div class="toolbar">
+          <div class="col-md-6">
+            <h4 class="toolbar-subtitle" *ngIf="filtroBalcao == 0">Produtos esgotados</h4>
+            <h4 class="toolbar-subtitle" *ngIf="filtroBalcao == 1">Produtos com estoque baixo</h4>
+            <h4 class="toolbar-subtitle" *ngIf="filtroBalcao == 2">Produtos com estoque alto</h4>
+            <h4 class="toolbar-subtitle" *ngIf="filtroBalcao == 3">Estoque completo</h4>
+          </div>
+
+          <div class="col-md-6">
+            <div class="input-with-btn">
+              <input type="text" placeholder="Buscar" ngui-auto-complete min-chars=1 max-num-list=5 value-formatter="nome" list-formatter="codigo - nome"
+                match-formatted=true display-property-name="nome" no-match-found-text="Produto não encontrado" [(ngModel)]="inputSearchBalcao"
+                (keyup)="inputSearchBalcaoOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <table class="table type-3 order-table table-responsive">
+          <tr>
+            <th style="width: 50px" (click)="SortList(listBalcao, 'Codigo')" [ngClass]="{ 'asc': sortingBalcaoDesc['Codigo'], 'desc': !sortingBalcaoDesc['Codigo'], 'active': selectTableRowBalcao == 'Codigo' }">
+              <label>Código</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th (click)="SortList(listBalcao, 'Nome')" [ngClass]="{ 'asc': sortingBalcaoDesc['Nome'], 'desc': !sortingBalcaoDesc['Nome'], 'active': selectTableRowBalcao == 'Nome' }">
+              <label>Nome</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 70px" (click)="SortList(listBalcao, 'Quantidade')" [ngClass]="{ 'asc': sortingBalcaoDesc['Quantidade'], 'desc': !sortingBalcaoDesc['Quantidade'], 'active': selectTableRowBalcao == 'Quantidade' }">
+              <label>Qtde</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 70px" (click)="SortList(listBalcao, 'EstoqueMinimo')" [ngClass]="{ 'asc': sortingBalcaoDesc['EstoqueMinimo'], 'desc': !sortingBalcaoDesc['EstoqueMinimo'], 'active': selectTableRowBalcao == 'EstoqueMinimo' }">
+              <label>Mínimo</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 70px" (click)="SortList(listBalcao, 'DiasPrevisao')" [ngClass]="{ 'asc': sortingBalcaoDesc['DiasPrevisao'], 'desc': !sortingBalcaoDesc['DiasPrevisao'], 'active': selectTableRowBalcao == 'DiasPrevisao' }">
+              <label>Previsão</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+
+            <th style="width: 10px"></th>
+          </tr>
+          <tr *ngFor="let estoque of listBalcao | paginate: { id: 'paginationBalcao', itemsPerPage: ((!visaoExtendidaBalcao) ? 9 : 15), currentPage: p1 }">
+            <td>{{estoque.Item.Codigo}}</td>
+            <td>{{estoque.Item.Nome}}</td>
+            <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}</td>
+            <td>{{estoque.EstoqueMinimo}} {{estoque.Item.UnidadeMedida}}</td>
+            <td *ngIf="estoque.DiasPrevisao >= 0">{{estoque.DiasPrevisao}} dia(s)</td>
+            <td *ngIf="estoque.DiasPrevisao < 0" title="Previsão indisponível">--</td>
+            <td>
+              <a href="" title="Visualizar" [routerLink]="" (click)="editarEstoqueProduto(estoque.Id, 1)">
+                <i class="icon-loupe"></i>
+              </a>
+            </td>
+          </tr>
+        </table>
+        <div class="toolbar-bottom" *ngIf="visaoExtendidaBalcao || filtroBalcao == 3">
+          <pagination-controls id="paginationBalcao" (pageChange)="p1 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+            previousLabel="ANTERIOR" #paginationBalcao>
+          </pagination-controls>
+        </div>
+
+        <div class="button-wrapper" *ngIf="sourceBalcao.length > 9 && inputSearchBalcao == '' && filtroBalcao != 3">
+          <button class="btn-secondary" (click)="setVisaoBalcao()">
+            <span *ngIf="!visaoExtendidaBalcao">Ver mais</span>
+            <span *ngIf="visaoExtendidaBalcao">Ver menos</span>
+          </button>
+        </div>
+        <div class="toolbar-bottom" *ngIf="filtroBalcao == 3">
+          <button class="btn-action" [disabled]='isExporting' (click)="exportarBalcao()">
+            <span>Exportar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-floating" *ngIf="acessoVendaBalcao && acessoVendaExterna">
+  <div class="nds nd3">
+    <button (click)="solicitarPuxada()">
+      <div class="t-left t-sm" data-tooltip="Parceiro Ambev">
+        <span class="letter">P</span>
+      </div>
+    </button>
+  </div>
+  <div class="nds nd2">
+    <button [routerLink]="['/estoque-ativos-giro']">
+      <div class="t-left t-sm" data-tooltip="Ativos de giro">
+        <span class="letter">A</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="nds nd1">
+    <button [routerLink]="['/estoque-transferencia']">
+      <div class="t-left t-sm" data-tooltip="Transferência">
+        <span class="letter">T</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="floating-button">
+    <span class="letter">
+      <i class="fa fa-bars"></i>
+    </span>
+  </div>
+</div>
+
+<modal #modalEditar title="Estoque do produto" [closeOnOutsideClick]="false">
+
+  <modal-header>
+    <span>Estoque do produto</span>
+  </modal-header>
+
+  <modal-content *ngIf="estoqueEdicao">
+    <div class="row">
+      <div class="col-md-3 txt-c">
+        <img [src]="urlImageProdutoEdicao" height="160" width="160" />
+      </div>
+      <div class="col-md-9">
+        <div class="col-md-3">
+          <label for="codigo">Código</label>
+          <input [(ngModel)]="estoqueEdicao.Item.Codigo" id="codigo" placeholder="Código" type="text" disabled />
+        </div>
+        <div class="col-md-9">
+          <label for="nome">Nome</label>
+          <input [(ngModel)]="estoqueEdicao.Item.Nome" id="nome" placeholder="Nome" type="text" disabled />
+        </div>
+        <div class="col-md-3">
+          <label for="quantidade">Quantidade ({{estoqueEdicao.Item.UnidadeMedida}})</label>
+          <input [(ngModel)]="estoqueEdicao.Quantidade" id="quantidade" placeholder="Quantiadade" type="number" disabled />
+        </div>
+        <div class="col-md-4" *ngIf="estoqueEdicaoTipo == 2">
+          <label for="custo-medio">Custo médio (R$)</label>
+          <input [(ngModel)]="estoqueEdicao.CustoMedio" id="estoque-minimo" placeholder="Custo médio" type="text" disabled/>
+        </div>
+        <div [ngClass]="{ 'col-md-9': estoqueEdicaoTipo == 1, 'col-md-5': estoqueEdicaoTipo == 2 }">
+          <label for="estoque-minimo">Estoque Mínimo ({{estoqueEdicao.Item.UnidadeMedida}})</label>
+          <input [(ngModel)]="estoqueEdicao.EstoqueMinimo" id="estoque-minimo" placeholder="Estoque Mínimo" type="number" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="toolbar">
+
+        <div class="col-md-12">
+          <h3 class="toolbar-title">
+            Movimentacao
+          </h3>
+        </div>
+      </div>
+
+      <table class="table">
+        <tr>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Data')" [ngClass]="{ 'asc': movimentoSortingDesc['Data'], 'desc': !movimentoSortingDesc['Data'], 'active': selectTableRow == 'Data' }">
+            <label>Data</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Valor')" [ngClass]="{ 'asc': movimentoSortingDesc['Valor'], 'desc': !movimentoSortingDesc['Valor'], 'active': selectTableRow == 'Valor' }">
+            <label>Qtde</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Nome')" [ngClass]="{ 'asc': movimentoSortingDesc['Nome'], 'desc': !movimentoSortingDesc['Nome'], 'active': selectTableRow == 'Nome' }">
+            <label>Usuário</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Origem')" [ngClass]="{ 'asc': movimentoSortingDesc['Origem'], 'desc': !movimentoSortingDesc['Origem'], 'active': selectTableRow == 'Origem' }">
+            <label>Origem</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'TipoMovimento')" [ngClass]="{ 'asc': movimentoSortingDesc['TipoMovimento'], 'desc': !movimentoSortingDesc['TipoMovimento'], 'active': selectTableRow == 'TipoMovimento' }">
+            <label>Entrada/Saída</label>
+          </th>
+
+        </tr>
+        <tr *ngIf="isLoadingMovimentacao">
+          <td>
+            <div>
+              <label>Carregando ...</label>
+            </div>
+          </td>
+        </tr>
+        <tr *ngFor="let movimento of listEstoqueEdicaoMovimentacao | paginate: { id: 'paginationEstoqueEdicao', itemsPerPage: 6, currentPage: p3 }">
+          <td>{{movimento.Data}}</td>
+          <td>{{movimento.Valor}} {{estoqueEdicao.Item.UnidadeMedida}}</td>
+          <td>{{movimento.Usuario.Nome}}</td>
+          <td>{{getMovimentoOrigemDescricao(movimento.Origem)}}</td>
+          <td *ngIf="movimento.TipoMovimento == 1" title="Entrada">
+            <i class="fa fa-sign-in entrada"></i>
+          </td>
+          <td *ngIf="movimento.TipoMovimento == 2" title="Saída">
+            <i class="fa fa-sign-out saida"></i>
+          </td>
+        </tr>
+      </table>
+      <div class="toolbar-bottom">
+        <pagination-controls id="paginationEstoqueEdicao" (pageChange)="p3 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+          previousLabel="ANTERIOR" #paginationEstoqueEdicao>
+        </pagination-controls>
+      </div>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="fecharEdicaoEstoque()">Cancelar</button>
+    <button class="btn btn-primary" (click)="salvarEdicaoEstoque()">Confirmar</button>
+  </modal-footer>
+
+</modal>
+
+<div class="loading-overlay" *ngIf="isLoading || isExporting">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

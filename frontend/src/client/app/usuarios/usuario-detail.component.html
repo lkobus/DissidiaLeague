@@ -1,0 +1,120 @@
+<div class="container-fluid main-container">
+
+  <div class="card">
+
+    <div class="toolbar" *ngIf="usuario">
+
+      <h3 class="card-title" *ngIf="!usuario.id">Adicionar Usuário</h3>
+      <h3 class="card-title" *ngIf="usuario.id">Atualizar {{usuario.nome}}</h3>
+
+      <div class="content" *ngIf="restError">
+        <div class="alert alert-danger">
+          <span>{{restError}}</span>
+        </div>
+      </div>
+
+      <form autocomplete="off" #usuarioForm="ngForm" (ngSubmit)="save(usuarioForm)" id="usuarioForm">
+
+        <div class="content">
+
+          <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && codigo.errors && (codigo.errors.required || !codigo.pristine)) }">
+            <label for="">Código: </label>
+            <input [disabled]="usuario.id.lenght > 0" required type="number" id="codigo" name="codigo"
+              #codigo="ngModel" [(ngModel)]="usuario.codigo" placeholder="codigo" />
+            <div *ngIf="codigo.errors && codigo.errors.required" class="tooltip tooltip-bottom">Codigo é obrigatório</div>
+
+          </div>
+
+          <div class="col-md-6 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && nome.errors && (nome.errors.required || !nome.pristine)) }">
+            <label for="">Nome: </label>
+            <input type="text" [(ngModel)]="usuario.nome" id="nome" required minlength="3" maxlength="24" name="nome" #nome="ngModel"
+              placeholder="nome" />
+            <div *ngIf="nome.errors && nome.errors.required" class="tooltip tooltip-bottom">Nome é obrigatório</div>
+            <div *ngIf="nome.errors && nome.errors.minlength" class="tooltip tooltip-bottom">Nome deve conter pelo menos 3 caracteres</div>
+          </div>
+
+          <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cpf.errors && (cpf.errors.required || !cpf.pristine)) }">
+            <label for="">CPF: </label>
+            <input type="text" [(ngModel)]="usuario.cpf" id="cpf" name="cpf" required maxlength="14" #cpf="ngModel" kz-cpf kzMask="999.999.999-99"
+              placeholder="999.999.999-99" />
+            <div *ngIf="cpf.errors && cpf.errors.required" class="tooltip tooltip-bottom">CPF é obrigatório</div>
+            <div class="col-sm-8 text-success" *ngIf="!cpf.errors && !cpf.pristine">
+              <span class="glyphicon glyphicon-ok" aria-hidden="true">
+              </span> CPF válido!
+            </div>
+            <div class="col-sm-8 text-danger" *ngIf="cpf.errors && !cpf.pristine">
+              <span class="glyphicon glyphicon-remove" aria-hidden="true">
+              </span> CPF inválido.
+            </div>
+          </div>
+
+          <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && ((perfil.errors && (perfil.errors.required || (!usuario.perfil || usuario.perfil <= 0) || !perfil.pristine)))) }">
+            <label for="">Perfil: </label>
+            <select [(ngModel)]="usuario.perfil" class="form-control" name="perfil" id="perfil" #perfil="ngModel" required>
+              <option *ngFor="let perfil of perfis" [value]="perfil.Codigo">
+                {{perfil.Nome}}
+              </option>
+            </select>
+            <div *ngIf="(perfil.errors && perfil.errors.required) || (!usuario.perfil || usuario.perfil <= 0)" class="tooltip tooltip-bottom">Perfil é obrigatório</div>
+          </div>
+
+          <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && username.errors && (username.errors.required || !username.pristine)) }">
+            <label for="">Username: </label>
+            <input type="text" [(ngModel)]="usuario.credentials.Username" id="username" required minlength="3" maxlength="24" name="username"
+              #username="ngModel" placeholder="username" autocomplete="off"/>
+            <div *ngIf="username.errors && username.errors.required" class="tooltip tooltip-bottom">Username é obrigatório</div>
+            <div *ngIf="username.errors && username.errors.minlength" class="tooltip tooltip-bottom">Username deve conter pelo menos 3 caracteres</div>
+          </div>
+
+          <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && password.errors && (password.errors.required || !password.pristine)) }"
+            *ngIf="!usuario.id">
+            <label for="">Senha: </label>
+            <input type="password" [(ngModel)]="usuario.credentials.Password" id="password" required minlength="3" maxlength="24" name="password"
+              #password="ngModel" placeholder="password" autocomplete="off"/>
+            <div *ngIf="password.errors && password.errors.required" class="tooltip tooltip-bottom">Senha é obrigatória</div>
+            <div *ngIf="password.errors && password.errors.minlength" class="tooltip tooltip-bottom">Senha deve conter pelo menos 3 caracteres</div>
+          </div>
+
+          <div class="col-md-3" *ngIf="usuario.id">
+            <label for="">Senha temporária: </label>
+            <input type="password" class="form-control" id="passwordtemp" maxlength="24" name="passwordtemp" #passwordtemp="ngModel"
+              placeholder="Senha" [(ngModel)]="usuario.senhaTemporaria" />
+            <div *ngIf="submitted && (passwordtemp.errors && (passwordtemp.dirty || passwordtemp.touched))" class="alert alert-danger">
+              <div [hidden]="!password.errors.minlength">
+                Senha deve conter pelo menos 3 caracteres
+              </div>
+              <div [hidden]="!password.errors.maxlength">
+                Senha não deve conter mais de 24 caracteres
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-floating left">
+          <div class="floating-button">
+            <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+              <span class="letter">
+                <span class="fa fa-chevron-left"></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-floating">
+          <div class="floating-button">
+            <span class="letter">
+              <div class="t-left t-sm" data-tooltip="Salvar">
+                <button [disabled]="desabilitaBotao" form="usuarioForm" type="submit" class="btn-clean">
+                  <span class="letter">
+                    <span class="fa fa-floppy-o"></span>
+                  </span>
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

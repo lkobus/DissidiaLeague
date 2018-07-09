@@ -1,0 +1,347 @@
+<div class="container-fluid main-container">
+
+  <div class="card">
+
+    <h3 class="card-title">
+      <span>Configurações</span>
+    </h3>
+
+    <tabs>
+      <!-- TAB VENDA BALCAO  -->
+      <tab tabTitle="Venda Balcão">
+
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <h4 class="subtitle">Formas de Pagamento</h4>
+              </div>
+
+              <div *ngFor="let option of formasPagamentoVendaBalcaoPermitidos" class="switches-container col-md-2">
+                <ui-switch [checked]="isChecked(option)" (change)="onChange($event, option)"></ui-switch>
+                <label>{{option.Descricao}}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-4">
+                <h4 class="subtitle">Caixas Disponíveis</h4>
+                <input type="number" name="caixasDisponiveis" id="caixasDisponiveis" [(ngModel)]="empresa.CaixasDisponiveis">
+              </div>
+
+              <div class="col-md-4">
+                <h4 class="subtitle">% Máximo de Desconto</h4>
+                <input type="number" name="percentualDesconto" id="percentualDesconto" [(ngModel)]="empresa.PercentualDesconto">
+              </div>
+
+              <div class="col-md-4">
+                <h4 class="subtitle">Pede CPF</h4>
+                <div class="col-md-6 switches-container">
+                  <ui-switch [(ngModel)]="empresa.PedeCpfBalcao"></ui-switch>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="empresa" class="setting-block">
+
+          <div class="row">
+            <div class="col-md-12">
+              <!-- <div class="col-md-6">
+                <h4 class="subtitle">Cupom Fiscal</h4>
+              </div> -->
+
+              <div class="col-md-12" *ngIf="empresa.UtilizaCupomFiscal">
+                <h4 class="subtitle">Prazo Cancelamento Cupom Fiscal (Horas)</h4>
+              </div>
+              <!--<div class="col-md-6" *ngIf="!empresa.UtilizaCupomFiscal">
+                <h4 class="subtitle">&nbsp;</h4>
+              </div> -->
+
+              <!-- <div class="col-md-6 switches-container">
+                <ui-switch [(ngModel)]="empresa.UtilizaCupomFiscal"></ui-switch>
+                <label>Utiliza Cupom Fiscal</label>
+              </div> -->
+
+              <div class="col-md-6 switches-container" *ngIf="empresa.UtilizaCupomFiscal">
+                <input type="number" [(ngModel)]="empresa.PrazoCancelamentoCupomFiscal" name="prazoCancelamentoCupom" id="prazoCancelamentoCupom">
+              </div>
+              <!--<div class="col-md-6" *ngIf="!empresa.UtilizaCupomFiscal">
+                <h4 class="subtitle">&nbsp;</h4>
+              </div> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="container-floating">
+          <div class="floating-button">
+            <span class="letter">
+              <div class="t-left t-sm" data-tooltip="Salvar">
+                <button (click)="save()" class="btn-clean">
+                  <span class="fa fa-floppy-o"></span>
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </tab>
+
+      <!-- TAB VENDA EXTERNA  -->
+      <tab tabTitle="Venda Externa">
+
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="col-md-12">
+                <h4 class="subtitle hidden">Formas de Pagamento</h4>
+              </div>
+
+
+              <table class="table type-2">
+                <tr>
+                  <th style="width: 200px;">Formas de Pagamento</th>
+                  <th style="width: 80px;">Prazo</th>
+                  <th style="width: 120px;">Novo cliente</th>
+                  <th>&nbsp;</th>
+                </tr>
+                <tr *ngFor="let option of formasPagamentoVendaExternaPermitidos">
+                  <td style="width: 200px;">
+                    <div class="switches-container">
+                      <ui-switch [checked]="isCheckedExterna(option)" (change)="onChangeExterna($event, option)"></ui-switch>
+                      <label>{{option.Descricao}}</label>
+                    </div>
+                  </td>
+                  <td style="width: 80px;">
+                    <input type="number" name="prazoMaximo" min=0 id="prazoMaximo" (change)="setPrazoMaximo($event, option)" [disabled]="!isCheckedExterna(option)"
+                      [hidden]="option.Descricao.toUpperCase() == 'DINHEIRO'" [value]="getPrazoMaximo(option)">
+                  </td>
+
+                  <td style="width: 120px;">
+                    <mat-checkbox name="option.Descricao" id="option.Descricao" (change)="setDisponivel($event, option)" [disabled]="!isCheckedExterna(option)"
+                      [value]="option" [id]="option.Descricao" [checked]="getDisponivelParaClientesNovos(option)">
+                    </mat-checkbox>
+                  </td>
+
+                  <td>&nbsp;</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="col-md-4">
+                <h4 class="subtitle">Token Venda Externa</h4>
+                <input readonly type="text" value="{{empresa.TokenVendaExterna}}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+
+            <div class="col-md-12">
+              <div class="col-md-4">
+                <h4 class="subtitle">Limite de Crédito</h4>
+                <input type="number" name="limiteCredito" id="limiteCredito" min=0 [(ngModel)]="empresa.LimiteCreditoPadrao">
+              </div>
+
+              <div class="col-md-4">
+                <h4 class="subtitle">Raio GPS</h4>
+                <input type="number" name="raioGps" id="raioGps" min=0 [(ngModel)]="empresa.RaioGps">
+              </div>
+
+              <div class="col-md-4">
+                <h4 class="subtitle">% Máximo de Desconto</h4>
+                <input type="number" name="maxDesconto" id="maxDesconto" min=0 [(ngModel)]="empresa.PercentualDescontoExterno">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="col-md-12">
+                <h4 class="subtitle">Prazo Cancelamento Nota Fiscal (Horas)</h4>
+              </div>
+
+              <div class="col-md-1">
+                <input type="number" name="prazoCancelamentoNFe" id="prazoCancelamentoNFe" min=0 [(ngModel)]="empresa.PrazoCancelamentoNFe">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-floating">
+          <div class="floating-button">
+            <span class="letter">
+              <div class="t-left t-sm" data-tooltip="Salvar">
+                <button (click)="save()" class="btn-clean">
+                  <span class="fa fa-floppy-o"></span>
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+
+      </tab>
+
+      <tab tabTitle="Estoque">
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="col-md-12">
+                <h4 class="subtitle">Estoque Mínimo Balcão (un)</h4>
+              </div>
+
+              <div class="col-md-1">
+                <input type="number" name="estoqueMinimo" id="estoqueMinimo" min=0 [(ngModel)]="empresa.EstoqueMinimoPadraoBalcao">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="empresa" class="setting-block">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="col-md-12">
+                <h4 class="subtitle">Estoque Mínimo Externo</h4>
+              </div>
+
+              <div class="col-md-1">
+                <input type="number" name="estoqueMinimo" id="estoqueMinimo" min=0 [(ngModel)]="empresa.EstoqueMinimoPadraoExterno">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-floating">
+          <div class="floating-button">
+            <span class="letter">
+              <div class="t-left t-sm" data-tooltip="Salvar">
+                <button (click)="save()" class="btn-clean">
+                  <span class="fa fa-floppy-o"></span>
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </tab>
+
+      <tab tabTitle="Financeiro">
+        <sd-configuracoes-financeiras></sd-configuracoes-financeiras>
+      </tab>
+
+      <!-- TAB OPERACOES  -->
+      <tab tabTitle="Operações (NF-E)">
+        <div class="setting-block">
+          <table class="table type-2">
+            <tr _ngcontent-c8="">
+              <th></th>
+              <th></th>
+              <th colspan="2">Código fiscal</th>
+              <th></th>
+            </tr>
+            <tr>
+              <th>Código</th>
+              <th>Nome da Operação</th>
+              <th>p/ Estado</th>
+              <th>p/ Outros</th>
+              <th>Pis e Cofins</th>
+            </tr>
+            <tr *ngFor="let operacao of operacoesSaida">
+              <td>{{operacao.OperacaoId}}</td>
+              <td>{{operacao.NomeOperacao}}</td>
+              <td>
+                <input [(ngModel)]="operacao.CfEstado" maxlength="4" type="text" (keypress)="validateOnlyNumbers($event)" />
+              </td>
+              <td>
+                <input [(ngModel)]="operacao.CfOutros" maxlength="4" type="text" (keypress)="validateOnlyNumbers($event)" />
+              </td>
+              <td style="width: 150px;">
+                <div class="switches-container">
+                  <ui-switch [(ngModel)]="operacao.PisCofins"></ui-switch>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="container-floating">
+          <div class="floating-button">
+            <span class="letter">
+              <div class="t-left t-sm" data-tooltip="Salvar">
+                <button (click)="save()" class="btn-clean">
+                  <span class="fa fa-floppy-o"></span>
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </tab>
+
+      <!-- TAB IMPORTACOES Iniciais -->
+      <tab tabTitle="Importações Iniciais">
+
+        <div class="align-radios">
+          <mat-radio-group class="example-radio-group" [(ngModel)]="importacao">
+            <mat-radio-button class="example-radio-button" *ngFor="let importacao of importacoes" [value]="importacao" [checked]="importacao.Codigo == importacoes[0].Codigo">
+              {{importacao.Valor}}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="setting-block">
+          <image-upload [max]="1" [preview]="false" [buttonCaption]="'Selecione o arquivo CSV'" [dropBoxMessage]="''" [extensions]="['csv', 'txt', 'CSV', 'TXT', '*.*']"
+            (onFileUploadFinish)="uploadCSV($event)" (uploadFinished)="onUploadFinished($event)">
+          </image-upload>
+        </div>
+
+        <div class="container-floating">
+          <div class="nds nd2">
+            <button [disabled]="isImporting || csvCargaInicial == null" (click)="importarCsv()">
+              <div class="t-left t-sm" data-tooltip="Importar">
+                <span class="letter">I</span>
+              </div>
+            </button>
+          </div>
+          <div class="nds nd1">
+            <button [disabled]="isImporting" (click)="exportCargaInicial()">
+              <div class="t-left t-sm" data-tooltip="Exportar">
+                <span class="letter">E</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="floating-button">
+            <span class="letter">
+              <i class="fa fa-bars"></i>
+            </span>
+          </div>
+        </div>
+      </tab>
+    </tabs>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading || isExporting || isImporting">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

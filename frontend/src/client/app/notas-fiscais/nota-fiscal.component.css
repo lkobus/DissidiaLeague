@@ -1,0 +1,12 @@
+.selected {
+  background-color: #4381f3 !important;
+  color: white;
+}
+
+.mapa-name {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

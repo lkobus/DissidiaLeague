@@ -1,0 +1,167 @@
+<form #configForm="ngForm" (ngSubmit)="save(configForm)" id="configForm">
+  <div class="setting-block">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-12">
+          <h4 class="subtitle">Dados bancários</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">Banco </label>
+          <select (change)="changeBancoSelecionado($event.target.value)">
+            <option *ngFor="let banco of data" [value]="banco.DocumentId">
+              {{banco.Descricao}}
+            </option>
+          </select>
+        </div>
+
+        <div class='col-md-3 tooltip-holder'>
+          <label for="">Conta corrente</label>
+          <input type="text" maxlength="8" id="contaCorrente" name="contaCorrente" [(ngModel)]="configuracaoBanco.ContaCorrente" />
+        </div>
+
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">Dígito</label>
+          <input type="text" maxlength="1" id="digitoContaCorrente" name="digitoContaCorrente" [(ngModel)]="configuracaoBanco.DigitoContaCorrente"
+          />
+        </div>
+
+        <div class='col-md-3 tooltip-holder'>
+          <label for="">Código agência</label>
+          <input type="text" maxlength="4" id="codigoAgencia" name="codigoAgencia" [(ngModel)]="configuracaoBanco.CodigoAgencia" />
+        </div>
+
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">Dígito</label>
+          <input type="text" maxlength="1" id="digitoAgencia" name="digitoAgencia" [(ngModel)]="configuracaoBanco.DigitoAgencia" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class='col-md-4 tooltip-holder'>
+          <label for="">Número convênio</label>
+          <input type="text" maxlength="7" id="numeroConvenio" name="numeroConvenio" [(ngModel)]="configuracaoBanco.NumeroConvenio"
+          />
+        </div>
+
+        <div class='col-md-4 tooltip-holder'>
+          <label for="">Código variação de carteira</label>
+          <input type="text" maxlength="3" id="codigoVariacaoCarteira" name="codigoVariacaoCarteira" [(ngModel)]="configuracaoBanco.CodigoVariacaoCarteira"
+          />
+        </div>
+
+        <div class='col-md-4 tooltip-holder'>
+          <label for="">Código carteira</label>
+          <input type="text" maxlength="2" id="codigoCarteira" name="codigoCarteira" [(ngModel)]="configuracaoBanco.CodigoCarteira"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="setting-block">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-12">
+          <h4 class="subtitle">Controle de numerações</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class='col-md-4 tooltip-holder'>
+          <label for="">Nosso número</label>
+          <input type="text" id="nossoNumero" maxlength="6" name="nossoNumero" [(ngModel)]="configuracaoBanco.NossoNumero" />
+        </div>
+
+        <div class='col-md-4 tooltip-holder'>
+          <label for="">Número remessa</label>
+          <input type="text" [(ngModel)]="configuracaoBanco.NumeroRemessa" maxlength="8" id="numeroRemessa" name="numeroRemessa" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="setting-block">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-12">
+          <h4 class="subtitle">Tarifas / Juros</h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">Juros ao mês (%)</label>
+          <input type="text" class="form-control" name="jurosMes" id="jurosMes" #jurosMes="ngModel" placeholder="0,00" max="5000"
+            minlength="0" maxlength="6" [(ngModel)]="configuracaoBanco.JurosMes" [kzMaskCurrency]="{prefixo:''}" />
+        </div>
+
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">Tarifa bancaria (R$)</label>
+          <input type="text" class="form-control" name="tarifaBancaria" id="tarifaBancaria" #tarifaBancaria="ngModel" placeholder="0,00"
+            max="5000" minlength="0" minlength="0" maxlength="15" [(ngModel)]="configuracaoBanco.TarifaBancaria" [kzMaskCurrency]="{prefixo:''}"
+          />
+        </div>
+
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">Multa por atraso (%)</label>
+          <input type="text" class="form-control" name="percentMulta" id="percentMulta" #percentMulta="ngModel" placeholder="0,00"
+            max="5000" minlength="0" maxlength="6" required [(ngModel)]="configuracaoBanco.PercentualMulta" [kzMaskCurrency]="{prefixo:''}"
+          />
+        </div>
+
+        <div class='col-md-3 tooltip-holder'>
+          <label for="">Código Primeira instrução</label>
+          <input type="number" id="primeiraInstrucao" maxlength="6" name="primeiraInstrucao" [(ngModel)]="configuracaoBanco.PrimeiraInstrucao"
+          />
+        </div>
+
+        <div class='col-md-3 tooltip-holder'>
+          <label for="">Código Segunda instrução</label>
+          <input type="number" id="segundaInstrucao" maxlength="6" name="segundaInstrucao" [(ngModel)]="configuracaoBanco.SegundaInstrucao"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating">
+    <div class="nds nd1">
+      <button form="configForm" type="submit">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <span class="letter">
+            <span class="fa fa-floppy-o"></span>
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="floating-button">
+      <span class="letter">
+        <i class="fa fa-bars"></i>
+      </span>
+    </div>
+  </div>
+
+  <div class="container-floating">
+    <div class="floating-button">
+      <span class="letter">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <button form="configForm" type="submit" class="btn-clean">
+            <span class="fa fa-floppy-o"></span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+</form>

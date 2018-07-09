@@ -1,0 +1,29 @@
+.order-page {
+  .card {
+    margin: 38px 15px 15px;
+
+    .toolbar-title {
+      line-height: 39px;
+    }
+
+    .table {
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      th,
+      td {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      input[type="text"] {
+        margin: 0;
+      }
+    }
+  }
+
+  .button-wrapper {
+    padding: 15px;
+  }
+}

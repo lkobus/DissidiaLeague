@@ -1,0 +1,1049 @@
+<div class="container-fluid main-container">
+
+  <div class="row">
+    <div class="content-head">
+      <h3 class="content-title">
+        Fluxo financeiro
+      </h3>
+
+      <div class="col-md-2 col-sm-2">
+        <select [(ngModel)]="selectPeriodoValue" selected id="1" (change)="onChangeFiltroPeriodo($event.target)">
+          <option id="1" value="hoje">Hoje</option>
+          <option id="2" value="semana">Semana</option>
+          <option id="3" value="mês">Este mês</option>
+          <option id="4" value="ano">Este ano</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="extrato" class="col-md-12">
+    <div *ngIf="isImporting">
+      <div class="loading-overlay">
+        <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+        <div class="spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="values type-2">
+
+      <!--  Recebimento -->
+      <span class="col-md-4 col-sm-6 col-xs-12 no-padding-l">
+        <span class="title">Total recebido {{selectPeriodoValue}}</span>
+        <span class="value">{{GetTotalRecebido() | currencyFormat}}</span>
+        <span class="description">
+          Total a receber {{selectPeriodoValue}}: {{GetTotalReceber() | currencyFormat}}
+        </span>
+        <span class="description">
+          Total atrasado {{selectPeriodoValue}}: {{GetTotalReceberAtrasado() | currencyFormat}}
+        </span>
+      </span>
+
+      <!--  Pagamento -->
+      <span class="col-md-4 col-sm-6 col-xs-12 no-padding-r">
+        <span class="title">Total pago {{selectPeriodoValue}}</span>
+        <span class="value c-error">
+          {{GetTotalPago() | currencyFormat}}
+        </span>
+        <span class="description">
+          Total a pagar {{selectPeriodoValue}}: {{GetTotalPagar() | currencyFormat}}
+        </span>
+        <span class="description">
+          Total atrasado {{selectPeriodoValue}}: {{GetTotalPagarAtrasado() | currencyFormat}}
+        </span>
+
+      </span>
+
+      <!--  Saldo -->
+      <span class="col-md-4 col-sm-6 col-xs-12 -padding-r">
+        <span class="title">Saldo total {{selectPeriodoValue}}</span>
+        <span class="value c-highlight">
+          {{GetSaldo() | currencyFormat}}
+        </span>
+        <span class="description">
+          Saldo estimado {{selectPeriodoValue}}: {{GetSaldoEstimado() | currencyFormat}}
+        </span>
+        <!--
+        <span class="description">
+          Saldo atrasado {{selectPeriodoValue}}: {{GetSaldoEstimadoAtrasado() | currencyFormat}}
+        </span>-->
+      </span>
+    </p>
+  </div>
+
+  <div class="col-md-12">
+    <div class="line-indicator">
+
+      <span class="tooltip-help">
+        <span class="tooltip-item">
+          <span class="slice b-ok"></span>
+        </span>
+      </span>
+
+      <span class="tooltip-help">
+        <span class="tooltip-item">
+          <span class="slice b-error"></span>
+        </span>
+      </span>
+
+      <span class="tooltip-help">
+        <span class="tooltip-item">
+          <span class="slice b-highlight"></span>
+        </span>
+      </span>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card type-2">
+      <tabs *ngIf="extrato" (OnTabSelected)="OnTabSelected($event)">
+        <!-- TAB Extrato -->
+        <tab tabTitle="Extrato">
+          <br/>
+
+          <div *ngIf="!isLoading && titulosExtrato.length > 0" echarts [options]="ChartExtrato" style="height: 220px;" class="col-md-12"></div>
+
+          <hr class="style1">
+
+          <div class="toolbar">
+            <div class="col-md-6">
+              <h3 class="toolbar-title">
+                Extrato
+              </h3>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-with-btn">
+                <input [ngModel]="filterValue" type="text" placeholder="Buscar beneficiário/cliente" (keyup)="inputSearchOnFilter($event.target.value)"
+                />
+                <button>
+                  <i class="icon-loupe"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <select [(ngModel)]="statusSelecionado" (change)="onChangeFiltroExtrato()" name="extrato_filter" id="extrato_filter">
+                <option *ngFor="let status of arrStatus" [value]="status.codigo">{{status.descricao}}</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="table type-3 order-table">
+            <tr>
+              <th style="width: 15px"></th>
+              <th (click)="SortList(titulosExtrato, 'dataDocumento')" [ngClass]="{ 'asc': sortingDesc['dataDocumento'], 'desc': !sortingDesc['dataDocumento'], 'active': selectTableRow == 'dataDocumento' }">
+                <div>
+                  <label>Data - Documento</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'categoria.descricao')" [ngClass]="{ 'asc': sortingDesc['categoria.descricao'], 'desc': !sortingDesc['categoria.descricao'], 'active': selectTableRow == 'categoria.descricao' }">
+                <div>
+                  <label>Categoria</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'beneficiario.razaoSocial')" [ngClass]="{ 'asc': sortingDesc['beneficiario.razaoSocial'], 'desc': !sortingDesc['beneficiario.razaoSocial'], 'active': selectTableRow == 'beneficiario.razaoSocial' }">
+                <div>
+                  <label>Beneficiário / Cliente</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'valor')" [ngClass]="{ 'asc': sortingDesc['valor'], 'desc': !sortingDesc['valor'], 'active': selectTableRow == 'valor' }" class="txt-r">
+                <div>
+                  <label>Valor</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'formaPagamento.descricao')" [ngClass]="{ 'asc': sortingDesc['formaPagamento.descricao'], 'desc': !sortingDesc['formaPagamento.descricao'], 'active': selectTableRow == 'formaPagamento.descricao' }">
+                <div>
+                  <label>Forma pagamento</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'dataVencimento')" [ngClass]="{ 'asc': sortingDesc['dataVencimento'], 'desc': !sortingDesc['dataVencimento'], 'active': selectTableRow == 'dataVencimento' }">
+                <div>
+                  <label>Data Venc.</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'dataPagamento')" [ngClass]="{ 'asc': sortingDesc['dataPagamento'], 'desc': !sortingDesc['dataPagamento'], 'active': selectTableRow == 'dataPagamento' }">
+                <div>
+                  <label>Data Pgto.</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosExtrato, 'status.codigo')" [ngClass]="{ 'asc': sortingDesc['status.codigo'], 'desc': !sortingDesc['status.codigo'], 'active': selectTableRow == 'status.codigo' }">
+                <div>
+                  <label>Status</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+            </tr>
+
+
+            <tr *ngFor="let titulo of titulosExtrato | paginate: { id: 'paginateExtrato', itemsPerPage: 5, currentPage: p1 }">
+              <td>
+                <div *ngIf="IsTituloPendente(titulo) || IsTituloAtrasado(titulo)" class="check-wrapper">
+                  <input type="checkbox" (change)="OnCheckTitulo($event.target.id)" [checked]="checkedTitulos.indexOf(titulo.documentId) > -1"
+                    [value]="titulo" name="" class="check" [id]=titulo.documentId>
+                  <label [for]="titulo.documentId"></label>
+                </div>
+              </td>
+
+              <td>
+                <label [for]="titulo.documentId">{{titulo.dataDocumento | date:'dd/MM HH:mm'}}</label>
+              </td>
+              <td>{{titulo.categoria.descricao}}</td>
+              <td>{{titulo.beneficiario.razaoSocial}}</td>
+              <td class="txt-r">
+                <span [ngClass]="{'c-error': IsTituloPagar(titulo), 'c-ok': IsTituloPagar(titulo) == false}">
+                  {{titulo.valor | currencyFormat}}
+                </span>
+              </td>
+              <td>{{titulo.formaPagamento.descricao}}</td>
+              <td>{{titulo.dataVencimento | date:'dd/MM/yyyy'}}</td>
+              <td>{{titulo.dataPagamento | date:'dd/MM/yyyy HH:mm'}}</td>
+              <td>
+                <p [class]="'status ' + GetStateClass(titulo)">
+                  <span class="status-txt">{{GetStatusDescricao(titulo)}}</span>
+                  <i [class]="GetStateIconClass(titulo)"></i>
+                  <br>
+                  <small *ngIf="titulo.valorPago > 0">{{titulo.valorPago | currencyFormat}}</small>
+                </p>
+              </td>
+
+            </tr>
+          </table>
+
+          <div class="toolbar-bottom">
+            <pagination-controls id="paginateExtrato" (pageChange)="p1 = $event" maxSize="6" directionLinks="true" nextLabel="PRÓXIMO"
+              previousLabel="ANTERIOR">
+            </pagination-controls>
+          </div>
+
+          <div class="container-floating">
+            <div class="nds nd5">
+              <button (click)="RemessaBancaria()">
+                <div class="t-left t-sm" data-tooltip="Remessa bancária">
+                  <span class="letter">R</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd4">
+              <button (click)="modalFornecedores.open()">
+                <div class="t-left t-sm" data-tooltip="Fornecedores">
+                  <span class="letter">F</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd3">
+              <button [disabled]="isImporting" (click)="exportarCsvExtrato()">
+                <div class="t-left t-sm" data-tooltip="Exportar">
+                  <span class="letter">E</span>
+                </div>
+              </button>
+            </div>
+
+            <div class="nds nd2">
+              <button [disabled]="!(checkedTitulos.length > 0)" (click)="ConfirmaCancelarTitulo()">
+                <div class="t-left t-sm" data-tooltip="Cancelar">
+                  <span class="letter">C</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd1">
+              <button [disabled]="!(checkedTitulos.length > 0)" (click)="IniciarRecebimento()">
+                <div class="t-left t-sm" data-tooltip="Dar baixa">
+                  <span class="letter">B</span>
+                </div>
+              </button>
+            </div>
+
+            <div class="floating-button">
+              <span class="letter">
+                <i class="fa fa-bars"></i>
+              </span>
+            </div>
+          </div>
+        </tab>
+
+        <!-- TAB Pagamentos -->
+        <tab tabTitle="Pagamentos">
+          <br/>
+
+          <div *ngIf="!isLoading && titulosPagar.length > 0" echarts [options]="ChartCategoriasPagamentos" style="height: 220px;" class="col-md-5 no-padding-r"></div>
+          <div *ngIf="!isLoading && titulosPagar.length > 0" echarts [options]="ChartPagamentos" style="height: 220px;" class="col-md-7"></div>
+
+          <hr class="style1">
+          <div class="toolbar">
+            <div class="col-md-6">
+              <h3 class="toolbar-title">
+                Pagamentos
+              </h3>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-with-btn">
+                <input [ngModel]="filterValue" type="text" placeholder="Buscar beneficiário/cliente" (keyup)="inputSearchOnFilter($event.target.value)"
+                />
+                <button>
+                  <i class="icon-loupe"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <select [(ngModel)]="statusSelecionado" (change)="onChangeFiltroPagamentos()" name="pagamentos_filter" id="pagamentos_filter">
+                <option *ngFor="let status of arrStatus" [value]="status.codigo">{{status.descricao}}</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="table type-3 order-table">
+            <tr>
+              <th style="width: 15px"></th>
+              <th (click)="SortList(titulosPagar, 'dataDocumento')" [ngClass]="{ 'asc': sortingDesc['dataDocumento'], 'desc': !sortingDesc['dataDocumento'], 'active': selectTableRow == 'dataDocumento' }">
+                <div>
+                  <label>Data - Documento</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'categoria.descricao')" [ngClass]="{ 'asc': sortingDesc['categoria.descricao'], 'desc': !sortingDesc['categoria.descricao'], 'active': selectTableRow == 'categoria.descricao' }">
+                <div>
+                  <label>Categoria</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'beneficiario.razaoSocial')" [ngClass]="{ 'asc': sortingDesc['beneficiario.razaoSocial'], 'desc': !sortingDesc['beneficiario.razaoSocial'], 'active': selectTableRow == 'beneficiario.razaoSocial' }">
+                <div>
+                  <label>Beneficiário / Cliente</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'valor')" [ngClass]="{ 'asc': sortingDesc['valor'], 'desc': !sortingDesc['valor'], 'active': selectTableRow == 'valor' }" class="txt-r">
+                <div>
+                  <label>Valor</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'formaPagamento.descricao')" [ngClass]="{ 'asc': sortingDesc['formaPagamento.descricao'], 'desc': !sortingDesc['formaPagamento.descricao'], 'active': selectTableRow == 'formaPagamento.descricao' }">
+                <div>
+                  <label>Forma pagamento</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'dataVencimento')" [ngClass]="{ 'asc': sortingDesc['dataVencimento'], 'desc': !sortingDesc['dataVencimento'], 'active': selectTableRow == 'dataVencimento' }">
+                <div>
+                  <label>Data Venc.</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'dataPagamento')" [ngClass]="{ 'asc': sortingDesc['dataPagamento'], 'desc': !sortingDesc['dataPagamento'], 'active': selectTableRow == 'dataPagamento' }">
+                <div>
+                  <label>Data Pgto.</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosPagar, 'status.codigo')" [ngClass]="{ 'asc': sortingDesc['status.codigo'], 'desc': !sortingDesc['status.codigo'], 'active': selectTableRow == 'status.codigo' }">
+                <div>
+                  <label>Status</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+            </tr>
+
+
+            <tr *ngFor="let titulo of titulosPagar | paginate: {id: 'paginatePagar', itemsPerPage: 5, currentPage: p2 }">
+              <td>
+                <div *ngIf="IsTituloPendente(titulo) || IsTituloAtrasado(titulo)" class="check-wrapper">
+                  <input type="checkbox" (change)="OnCheckTitulo($event.target.id)" [checked]="checkedTitulos.indexOf(titulo.documentId) > -1"
+                    [value]="titulo.documentId" name="" class="check" [id]=titulo.documentId>
+                  <label [for]="titulo.documentId"></label>
+                </div>
+              </td>
+
+              <td>
+                <label [for]="titulo.documentId">{{titulo.dataDocumento | date:'dd/MM HH:mm'}}</label>
+              </td>
+              <td>{{titulo.categoria.descricao}}</td>
+              <td>{{titulo.beneficiario.razaoSocial}}</td>
+              <td class="txt-r">
+                <span [ngClass]="{'c-error': IsTituloPagar(titulo), 'c-ok': IsTituloPagar(titulo) == false}">
+                  {{titulo.valor | currencyFormat}}
+                </span>
+              </td>
+              <td>{{titulo.formaPagamento.descricao}}</td>
+              <td>{{titulo.dataVencimento | date:'dd/MM/yyyy'}}</td>
+              <td>{{titulo.dataPagamento | date:'dd/MM/yyyy HH:mm'}}</td>
+              <td>
+                <p [class]="'status ' + GetStateClass(titulo)">
+                  <span class="status-txt">{{GetStatusDescricao(titulo)}}</span>
+                  <i [class]="GetStateIconClass(titulo)"></i>
+                  <br>
+                  <small *ngIf="titulo.valorPago && titulo.valorPago > 0">{{titulo.valorPago | currencyFormat}}</small>
+                </p>
+              </td>
+
+            </tr>
+          </table>
+
+          <div class="toolbar-bottom">
+            <pagination-controls id="paginatePagar" (pageChange)="p2 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+              previousLabel="ANTERIOR">
+            </pagination-controls>
+          </div>
+          <div class="container-floating">
+            <div class="nds nd5">
+              <button (click)="modalFornecedores.open()">
+                <div class="t-left t-sm" data-tooltip="Fornecedores">
+                  <span class="letter">F</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd4">
+              <button (click)="IncluirNovoPagamento()">
+                <div class="t-left t-sm" data-tooltip="Novo pagamento">
+                  <span class="letter">P</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd3">
+              <button [disabled]="isImporting" (click)="exportarCsvPagar()">
+                <div class="t-left t-sm" data-tooltip="Exportar">
+                  <span class="letter">E</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd2">
+              <button [disabled]="!(checkedTitulos.length > 0)" (click)="ConfirmaCancelarTitulo()">
+                <div class="t-left t-sm" data-tooltip="Cancelar">
+                  <span class="letter">C</span>
+                </div>
+              </button>
+            </div>
+
+            <div class="nds nd1">
+              <button [disabled]="!(checkedTitulos.length > 0)" (click)="IniciarRecebimento()">
+                <div class="t-left t-sm" data-tooltip="Dar baixa">
+                  <span class="letter">B</span>
+                </div>
+              </button>
+            </div>
+
+            <div class="floating-button">
+              <span class="letter">
+                <i class="fa fa-bars"></i>
+              </span>
+            </div>
+          </div>
+        </tab>
+
+        <!-- TAB Recebimentos -->
+        <tab tabTitle="Recebimentos">
+          <br/>
+
+          <div *ngIf="!isLoading && titulosReceber.length > 0" echarts [options]="ChartCategoriasRecebimentos" style="height: 220px;"
+            class="col-md-5 no-padding-r"></div>
+          <div *ngIf="!isLoading && titulosReceber.length > 0" echarts [options]="ChartRecebimentos" style="height: 220px;" class="col-md-7"></div>
+
+          <hr class="style1">
+
+          <div class="toolbar">
+            <div class="col-md-6">
+              <h3 class="toolbar-title">
+                Recebimentos
+              </h3>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-with-btn">
+                <input [ngModel]="filterValue" type="text" placeholder="Buscar beneficiário/cliente" (keyup)="inputSearchOnFilter($event.target.value)"
+                />
+                <button>
+                  <i class="icon-loupe"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <select [(ngModel)]="statusSelecionado" (change)="onChangeFiltroRecebimentos()" name="recebimentos_filter" id="recebimentos_filter">
+                <option *ngFor="let status of arrStatus" [value]="status.codigo">{{status.descricao}}</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="table type-3 order-table">
+            <tr>
+              <th style="width: 15px"></th>
+              <th (click)="SortList(titulosReceber, 'dataDocumento')" [ngClass]="{ 'asc': sortingDesc['dataDocumento'], 'desc': !sortingDesc['dataDocumento'], 'active': selectTableRow == 'dataDocumento' }">
+                <div>
+                  <label>Data - Documento</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'categoria.descricao')" [ngClass]="{ 'asc': sortingDesc['categoria.descricao'], 'desc': !sortingDesc['categoria.descricao'], 'active': selectTableRow == 'categoria.descricao' }">
+                <div>
+                  <label>Categoria</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'beneficiario.razaoSocial')" [ngClass]="{ 'asc': sortingDesc['beneficiario.razaoSocial'], 'desc': !sortingDesc['beneficiario.razaoSocial'], 'active': selectTableRow == 'beneficiario.razaoSocial' }">
+                <div>
+                  <label>Beneficiário / Cliente</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'valor')" [ngClass]="{ 'asc': sortingDesc['valor'], 'desc': !sortingDesc['valor'], 'active': selectTableRow == 'valor' }" class="txt-r">
+                <div>
+                  <label>Valor</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'formaPagamento.descricao')" [ngClass]="{ 'asc': sortingDesc['formaPagamento.descricao'], 'desc': !sortingDesc['formaPagamento.descricao'], 'active': selectTableRow == 'formaPagamento.descricao' }">
+                <div>
+                  <label>Forma pagamento</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'dataVencimento')" [ngClass]="{ 'asc': sortingDesc['dataVencimento'], 'desc': !sortingDesc['dataVencimento'], 'active': selectTableRow == 'dataVencimento' }">
+                <div>
+                  <label>Data Venc.</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'dataPagamento')" [ngClass]="{ 'asc': sortingDesc['dataPagamento'], 'desc': !sortingDesc['dataPagamento'], 'active': selectTableRow == 'dataPagamento' }">
+                <div>
+                  <label>Data Pgto.</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+              <th (click)="SortList(titulosReceber, 'status.codigo')" [ngClass]="{ 'asc': sortingDesc['status.codigo'], 'desc': !sortingDesc['status.codigo'], 'active': selectTableRow == 'status.codigo' }">
+                <div>
+                  <label>Status</label>
+                </div>
+
+                <span class="order-icons-wrapper">
+                  <i class="fa fa-chevron-up order-icons"></i>
+                  <i class="fa fa-chevron-down order-icons"></i>
+                </span>
+              </th>
+            </tr>
+
+
+            <tr *ngFor="let titulo of titulosReceber | paginate: {id: 'paginateReceber', itemsPerPage: 5, currentPage: p3 }">
+              <td>
+                <div *ngIf="IsTituloPendente(titulo) || IsTituloAtrasado(titulo)" class="check-wrapper">
+                  <input type="checkbox" (change)="OnCheckTitulo($event.target.id)" [checked]="checkedTitulos.indexOf(titulo.documentId) > -1"
+                    [value]="titulo.documentId" name="" class="check" [id]=titulo.documentId>
+                  <label [for]="titulo.documentId"></label>
+                </div>
+              </td>
+
+              <td>
+                <label [for]="titulo.documentId">{{titulo.dataDocumento | date:'dd/MM HH:mm'}}</label>
+              </td>
+              <td>{{titulo.categoria.descricao}}</td>
+              <td>{{titulo.beneficiario.razaoSocial}}</td>
+              <td class="txt-r">
+                <span [ngClass]="{'c-error': IsTituloPagar(titulo), 'c-ok': IsTituloPagar(titulo) == false}">
+                  {{titulo.valor | currencyFormat}}
+                </span>
+              </td>
+              <td>{{titulo.formaPagamento.descricao}}</td>
+              <td>{{titulo.dataVencimento | date:'dd/MM/yyyy'}}</td>
+              <td>{{titulo.dataPagamento | date:'dd/MM/yyyy HH:mm'}}</td>
+              <td>
+                <p [class]="'status ' + GetStateClass(titulo)">
+                  <span class="status-txt">{{GetStatusDescricao(titulo)}}</span>
+                  <i [class]="GetStateIconClass(titulo)"></i>
+                  <br>
+                  <small *ngIf="titulo.valorPago > 0">{{titulo.valorPago | currencyFormat}}</small>
+                </p>
+              </td>
+            </tr>
+          </table>
+
+          <div class="toolbar-bottom">
+            <pagination-controls id="paginateReceber" (pageChange)="p3 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+              previousLabel="ANTERIOR">
+            </pagination-controls>
+          </div>
+
+          <div class="container-floating">
+            <div class="nds nd5">
+              <button (click)="IncluirNovoRecebimento()">
+                <div class="t-left t-sm" data-tooltip="Novo Recebimento">
+                  <span class="letter">N</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd4">
+              <button (click)="RemessaBancaria()">
+                <div class="t-left t-sm" data-tooltip="Remessa bancária">
+                  <span class="letter">R</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd3">
+              <button [disabled]="isImporting" (click)="exportarCsvReceber()">
+                <div class="t-left t-sm" data-tooltip="Exportar">
+                  <span class="letter">E</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd2">
+              <button [disabled]="!(checkedTitulos.length > 0)" (click)="ConfirmaCancelarTitulo()">
+                <div class="t-left t-sm" data-tooltip="Cancelar">
+                  <span class="letter">C</span>
+                </div>
+              </button>
+            </div>
+            <div class="nds nd1">
+              <button [disabled]="!(checkedTitulos.length > 0)" (click)="IniciarRecebimento()">
+                <div class="t-left t-sm" data-tooltip="Dar baixa">
+                  <span class="letter">B</span>
+                </div>
+              </button>
+            </div>
+
+            <div class="floating-button">
+              <span class="letter">
+                <i class="fa fa-bars"></i>
+              </span>
+            </div>
+          </div>
+        </tab>
+      </tabs>
+
+    </div>
+  </div>
+
+</div>
+
+<modal #modalFornecedores title="Fornecedores" [closeOnOutsideClick]="false" class="col-md-12">
+  <modal-header>
+    <span>Cadastrar Fornecedor</span>
+  </modal-header>
+
+  <modal-content>
+    <sd-fornecedor></sd-fornecedor>
+  </modal-content>
+
+  <modal-footer>
+  </modal-footer>
+</modal>
+
+<modal #modalImportar title="Cadastrar despesa" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Cadastrar despesa</span>
+  </modal-header>
+
+  <modal-content *ngIf="novoTitulo">
+    <div *ngIf="isImporting">
+      <div class="loading-overlay">
+        <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+        <div class="spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+    </div>
+
+    <form #despesaForm="ngForm" (ngSubmit)="CadastrarTitulo(despesaForm)" id="despesaForm">
+
+      <div class="col-md-6">
+
+        <div *ngIf="novoTitulo.tipo.codigo == 2">
+          <div *ngIf="novoTitulo.fornecedor" class="tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cliente.errors && (cliente.errors.required || !cliente.pristine)) }">
+            <label for="">Recebido de:</label>
+            <input type="text" [(ngModel)]="novoTitulo.fornecedor.RazaoSocial" name="cliente" id="cliente" #cliente="ngModel" required
+            />
+            <div *ngIf="cliente.errors && cliente.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+          </div>
+        </div>
+
+        <div *ngIf="novoTitulo.tipo.codigo == 1">
+          <div *ngIf="listFornecedores" class="tooltip-holder" [ngClass]="{ 'error-msg': (submitted && fornec.errors && (fornec.errors.required || !fornec.pristine)) }">
+            <label for="">Pago para:</label>
+            <div class="input-with-btn">
+              <input ngui-auto-complete class="form-control" type="text" placeholder="Buscar" [(ngModel)]="novoTitulo.fornecedor" [source]="listFornecedores"
+                min-chars=1 max-num-list=5 value-formatter="RazaoSocial" list-formatter="CNPJ - RazaoSocial" match-formatted=true
+                display-property-name="RazaoSocial" (customSelected)="customCallback($event)" (valueChanged)="selectAutoComplete($event)"
+                no-match-found-text="Fornecedor não encontrado" id="fornec" name="fornec" #fornec="ngModel" required/>
+              <button tabindex="-1">
+                <i class="icon-loupe"></i>
+              </button>
+              <div *ngIf="fornec.errors && fornec.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && dataDespesa.errors && (dataDespesa.errors.required || !dataDespesa.pristine)) }">
+        <label for="dataDespesa">Data da despesa </label>
+        <input id="dataDespesa" name="dataDespesa" class="form-control" [(ngModel)]="novoTitulo.dataLancamento" type="text" required
+          disabled #dataDespesa="ngModel">
+        <div *ngIf="dataDespesa.errors && dataDespesa.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+      </div>
+
+      <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && (categoria.errors && (categoria.errors.required || !categoria.pristine)) || (novoTitulo.categoria && novoTitulo.categoria.codigo <= 0) ) }">
+        <label for="categoria">Categoria {{selectedCategoria}}</label>
+        <select name="categoria" id="categoria" [(ngModel)]="novoTitulo.categoria" required #categoriaSelect #categoria="ngModel">
+          <option *ngFor="let categoria of Categorias" [ngValue]="categoria">{{categoria.descricao}}</option>
+        </select>
+        <div *ngIf="((categoria.errors && categoria.errors.required) || (novoTitulo.categoria && novoTitulo.categoria.codigo <= 0))"
+          class="tooltip tooltip-bottom">Campo obrigatório</div>
+      </div>
+
+      <div class="col-md-4 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && (pagamento.errors && (pagamento.errors.required || !pagamento.pristine)) || (novoTitulo.formaPagamento && novoTitulo.formaPagamento.codigo <= 0)) }">
+        <label for="pagamento">Forma de pagamento </label>
+        <select [(ngModel)]="novoTitulo.formaPagamento" (ngModelChange)="OnPagamentoChange($event, pag)" name="pagamento" id="pagamento"
+          #pagamentoSelect #pagamento="ngModel" required>
+          <option *ngFor="let pagamento of FormasPagamento" [ngValue]="pagamento">{{pagamento.descricao}}</option>
+        </select>
+        <div *ngIf="((pagamento.errors && pagamento.errors.required) || (novoTitulo.formaPagamento && novoTitulo.formaPagamento.codigo <= 0))"
+          class="tooltip tooltip-bottom">Campo obrigatório</div>
+      </div>
+
+      <div class="col-md-4 tooltip-holder">
+        <label for="dataInicio">Data primeiro vencimento</label>
+        <my-date-picker name="dataInicio" id="dataInicio" [locale]="pt-br" (dateChanged)="onDateInicialChanged($event)" [selDate]="selectedDateInicio"
+          [options]="myDatePickerOptions">
+        </my-date-picker>
+      </div>
+
+      <div class="col-md-4 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && valor.errors && (valor.errors.required || !valor.pristine)) }">
+        <label for="valor">Valor</label>
+        <input kzMaskCurrency [disabled]="!novoTitulo.formaPagamento" (ngModelChange)="OnValorChange($event)" type="text" class="form-control"
+          name="valor" id="valor" placeholder="0,00" [(ngModel)]="novoTitulo.valor" #valor="ngModel" required>
+        <div *ngIf="valor.errors && valor.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+
+      </div>
+
+      <div class="col-md-4 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && parcelas.errors && (parcelas.errors.required || !parcelas.pristine)) }">
+        <label for="parcelas">Parcelas</label>
+        <input [disabled]="!novoTitulo.formaPagamento" (ngModelChange)="OnParcelasChange($event)" [(ngModel)]="novoTitulo.parcelas"
+          class="form-control" type="number" min="1" name="parcelas" id="parcelas" #parcelas="ngModel" required>
+        <div *ngIf="parcelas.errors && parcelas.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="recorrencia">Recorrência </label>
+        <select name="recorrencia" id="recorrencia">
+          <option *ngFor="let vencimento of novoTitulo.vencimentos">{{vencimento.data | date:'dd/MM/yyyy'}} - {{vencimento.valor | currencyFormat}}</option>
+        </select>
+      </div>
+
+      <!--
+      <div class="col-md-12">
+        <label for="">Descrição</label>
+        <textarea class="form-control w100"></textarea>
+      </div>
+
+      <div class="col-md-12">
+        <span>{{GetPayload()}}</span>
+      </div>
+      -->
+    </form>
+
+  </modal-content>
+
+  <modal-footer>
+    <button [disabled]="isImporting" form="despesaForm" type="submit" class="btn btn-primary">
+      Cadastrar
+    </button>
+  </modal-footer>
+</modal>
+
+
+<modal #modalConfirmaPagamento title="Confirmar valores" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Confirma Valores</span>
+  </modal-header>
+
+  <modal-content>
+    <h2 style="color: black">Confirma o baixa do(s) título(s)?</h2>
+
+    <table class="table type-2">
+      <tr>
+        <th>Data</th>
+        <th>Beneficiário/Cliente</th>
+        <th>Valor</th>
+        <th>Recebido</th>
+        <th>Valor Pago</th>
+      </tr>
+      <tr *ngFor="let titulo of GetTitulosMarcados()">
+        <td>
+          <label>{{titulo.dataDocumento | date:'dd/MM HH:mm'}}</label>
+        </td>
+        <td>{{titulo.beneficiario.razaoSocial}}</td>
+        <td>
+          <span [ngClass]="{'c-error': IsTituloPagar(titulo), 'c-ok': IsTituloPagar(titulo) == false}">
+            {{titulo.valor | currencyFormat}}
+          </span>
+          <br>
+          <p [class]="'status ' + GetStateClass(titulo)">
+            <small *ngIf="titulo.valorPago > 0">Restante {{(titulo.valor - titulo.valorPago) | currencyFormat}}</small>
+          </p>
+        </td>
+        <td>
+          <span [ngClass]="{'c-error': IsTituloPagar(titulo), 'c-ok': IsTituloPagar(titulo) == false}">
+            {{titulo.valorPago | currencyFormat}}
+          </span>
+        </td>
+        <td>
+          <input [id]="titulo.documentId" [(ngModel)]="titulo.valorReceber" class="form-control" type="text" kzMaskCurrency>
+        </td>
+      </tr>
+    </table>
+
+    <div class="col-md-4">
+      <label for="totalReceber">Total a receber</label>
+      <input disabled id="totalReceber" value="{{TotalPagamentoAReceber() | currencyFormat}}" class="form-control" type="text">
+    </div>
+
+    <div class="col-md-4">
+      <label for="totalReceber">Total recebido</label>
+      <input disabled id="totalRecebido" value="{{TotalPagamentoRecebido() | currencyFormat}}" class="form-control" type="text">
+    </div>
+
+
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="ReceberContas();">Dar baixa</button>
+  </modal-footer>
+
+</modal>
+
+<modal #modalRemessaBancaria title="Remessa Bancária" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Remessa bancária</span>
+  </modal-header>
+
+  <modal-content class="content">
+
+    <table class="table type-2">
+      <tr>
+        <th>Banco</th>
+        <th>Remessa</th>
+        <th>Data</th>
+        <th>Qtd de boletos</th>
+        <th></th>
+      </tr>
+      <tbody *ngFor="let remessa of remessas?.remessasBancarias | paginate: {id: 'paginateRemessa', itemsPerPage: 5, currentPage: pr }; let i = index; ">
+        <tr class="trHead">
+          <td (click)="showTrFn(i, remessa.documentId)">{{remessa.nomeBanco}}</td>
+          <td (click)="showTrFn(i, remessa.documentId)">{{remessa.numero}}</td>
+          <td (click)="showTrFn(i, remessa.documentId)">{{remessa.dataRemessa | date:'dd/MM/yyyy HH:mm'}}</td>
+          <td (click)="showTrFn(i, remessa.documentId)">{{remessa.quantidadeBoletos}}</td>
+          <td>
+            <i class="fa fa-download c-highlight" (click)="downloadRemessa(remessa.documentId)"></i>
+          </td>
+        </tr>
+        <tr [attr.id]="'hideTr'+i" [ngClass]="{'active': showTr===i}" class="trHidden">
+          <td colspan="5" class="no-padding">
+            <table class="table type-2">
+              <tr>
+                <th>Data Lançamento</th>
+                <th>Cliente</th>
+                <th>Valor</th>
+                <th>Data Venc.</th>
+                <th>Data Pagto.</th>
+                <th>Status</th>
+              </tr>
+              <tr *ngFor="let tituloRemessa of titulosRemessa;">
+                <td>{{tituloRemessa.dataDocumento | date:'dd/MM/yyyy'}}</td>
+                <td>{{tituloRemessa.beneficiario.razaoSocial}}</td>
+                <td>{{tituloRemessa.valor | currencyFormat}}</td>
+                <td>{{tituloRemessa.dataVencimento | date:'dd/MM/yyyy'}}</td>
+                <td>{{tituloRemessa.dataPagamento | date:'dd/MM/yyyy'}}</td>
+                <td>{{tituloRemessa.status.descricao}}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="toolbar-bottom">
+      <pagination-controls id="paginateRemessa" (pageChange)="pr = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+        previousLabel="ANTERIOR">
+      </pagination-controls>
+
+      <p class="c-warning warning" *ngIf="remessas?.totalBoletosPendentes > 0">* Possui {{remessas.totalBoletosPendentes}} boletos pendentes para remessa</p>
+      <p class="c-warning warning" *ngIf="remessas?.totalBoletosPendentes == 0">* Não possui boletos pendentes para remessa</p>
+    </div>
+
+  </modal-content>
+  <modal-footer>
+    <button class="btn btn-primary" (click)="GerarRemessa();" *ngIf="remessas?.totalBoletosPendentes > 0">Gerar remessa</button>
+    <!--<button class="btn btn-primary" (click)="modalRetornoBancario.open()">Importar retorno</button> -->
+    <image-upload *ngIf="!isImporting" [max]="1" [preview]="false" [buttonCaption]="'Retorno Bancário'" [dropBoxMessage]="''"
+      [extensions]="['csv', 'txt', 'CSV', 'TXT', '*.*']" (onFileUploadFinish)="uploadArquivoRetornoBancario($event)" (uploadFinished)="onUploadFinished($event)">
+    </image-upload>
+  </modal-footer>
+
+</modal>
+
+<modal #modalRetornoBancario title="Importar Retorno Bancário" [closeOnOutsideClick]="false">
+
+  <modal-header>
+    <span>Importar Retorno Bancário</span>
+  </modal-header>
+
+  <modal-content>
+    <image-upload *ngIf="!isImporting" [max]="1" [preview]="false" [buttonCaption]="'Selecione o arquivo'" [dropBoxMessage]="''"
+      [extensions]="['csv', 'txt', 'CSV', 'TXT', '*.*']" (onFileUploadFinish)="uploadArquivoRetornoBancario($event)" (uploadFinished)="onUploadFinished($event)">
+    </image-upload>
+
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" [disabled]="isImporting" (click)="ImportarRetornoBancario()">Importar</button>
+  </modal-footer>
+
+</modal>
+
+<modal #modalConfirmaCancelamento title="Cancelar Títulos" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Cancelar Títulos</span>
+  </modal-header>
+
+  <modal-content>
+    <h2 style="color: black">Confirma o cancelamento do(s) título(s)?</h2>
+    <table class="table type-2">
+      <tr>
+        <th>Data</th>
+        <th>Beneficiário/Cliente</th>
+        <th>Valor</th>
+      </tr>
+      <tr *ngFor="let titulo of GetTitulosMarcados()">
+        <td>
+          <label>{{titulo.dataDocumento | date:'dd/MM HH:mm'}}</label>
+        </td>
+        <td>{{titulo.beneficiario.razaoSocial}}</td>
+        <td>
+          <span [ngClass]="{'c-error': IsTituloPagar(titulo), 'c-ok': IsTituloPagar(titulo) == false}">
+            {{titulo.valor | currencyFormat}}
+          </span>
+        </td>
+      </tr>
+    </table>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="CloseModalConfirmacao()">Não</button>
+    <button class="btn btn-primary" (click)="CancelarTitulo()">Sim</button>
+  </modal-footer>
+</modal>
+
+<div *ngIf="isLoading">
+  <div class="loading-overlay">
+    <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+  </div>
+</div>

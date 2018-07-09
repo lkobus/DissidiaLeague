@@ -1,0 +1,43 @@
+<div [formGroup]="form">
+
+  <li class="icos-list-item-header" [class.active]="isValid">
+    <i class="icon flation-checked"></i>
+    <span class="title" [attr.for]="question.key">{{question.label}}</span>
+  </li>
+
+  <div [ngSwitch]="question.controlType">
+
+    <li class="icos-list-item col-md-6">
+      <div class="col-md-4">
+
+        <div *ngSwitchCase="'textbox'" class="col-md-12">
+          <input [formControlName]="question.key"
+          type="text" class="form-control">
+        </div>
+
+        <div *ngSwitchCase="'numeric'" class="col-md-12">
+          <input [formControlName]="question.key"
+            type="number" class="form-control" maxlength="15">
+        </div>
+
+        <div *ngSwitchCase="'single-select'" class="col-md-12">
+          <mat-radio-group [formControlName]="question.key" class="md-primary">
+            <div *ngFor='let opt of question.options;let i = index'>
+            <mat-radio-button
+            [value]="opt.key"
+            [id]="opt.key"
+            >{{opt.value}}</mat-radio-button>
+            </div>
+          </mat-radio-group>
+
+        </div>
+
+        <select [id]="question.key" *ngSwitchCase="'dropdown'" [formControlName]="question.key">
+            <option *ngFor="let opt of question.options" [value]="opt.key">{{opt.value}}</option>
+        </select>
+
+      </div>
+    </li>
+  </div>
+
+</div>

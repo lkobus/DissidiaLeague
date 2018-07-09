@@ -1,0 +1,42 @@
+<div class="container-fluid main-container cards-2">
+
+  <div class="col-md-12">
+    <div class="card">
+      <div class="no-padding">
+        <div *ngIf="serverError" class="alert alert-danger">
+          <span>{{serverError}}</span>
+        </div>
+      </div>
+      <form #form="ngForm" name="form" (ngSubmit)="form.form.valid && cancelarVenda()">
+
+        <div class="col-md-12">
+          <div class="toolbar">
+            <h3 class="toolbar-title">
+              Cancelamento da venda
+            </h3>
+          </div>
+
+          <ul class="icos-list">
+            <li class="full-line">
+              <div class="col-md-10">
+                <label>Informe o motivo do cancelamento:</label>
+                <input [(ngModel)]="motivo" #valor="ngModel" id="motivo" name="motivo" type="text" minlength="15" maxlength="250" required>
+
+                <div *ngIf="valor.invalid && (valor.dirty || valor.touched)" class="alert alert-danger">
+                  <div [hidden]="!valor.errors.required">É necessário informar o motivo do cancelamento</div>
+                  <div [hidden]="!valor.errors.minlength">Motivo deve conter pelo menos 15 caracteres</div>
+                  <div [hidden]="!valor.errors.maxlength">Motivo não deve conter mais de 250 caracteres</div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="button-wrapper">
+          <button class="btn-action" (click)="goBack()">Voltar</button>
+          <button type="submit" class="btn-action">Cancelar venda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

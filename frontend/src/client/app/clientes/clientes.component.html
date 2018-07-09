@@ -1,0 +1,235 @@
+<div class="container-fluid main-container">
+
+  <modal-confirmacao #modalConfirmar (onConfirmar)="excluirCliente($event)"></modal-confirmacao>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-5">
+        <h3 class="toolbar-title">
+          Lista de clientes
+        </h3>
+      </div>
+
+      <div class="col-md-3">
+        <div class="input-with-btn">
+          <input type="text" placeholder="Buscar" ngui-auto-complete min-chars=1 max-num-list=5 value-formatter="nome" list-formatter="codigo - nome"
+            match-formatted=true display-property-name="nome" no-match-found-text="Cliente não encontrado" [(ngModel)]="inputSearch"
+            (keyup)="inputSearchOnFilter($event.target.value)" />
+          <button>
+            <i class="icon-loupe"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <select name="status" id="status" (change)="statusFilterOnChange($event.target.value)">
+          <option value="0" selected>Filtrar...</option>
+          <option *ngFor="let status of listStatus" [value]="status.Codigo">{{status.Valor}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-1">
+        <button class="btn-view-toggle" (click)="viewMode = !viewMode">
+          <i class="icon-list-thumbnails" *ngIf="!viewMode"></i>
+          <i class="icon-grid" *ngIf="viewMode"></i>
+        </button>
+      </div>
+    </div>
+
+    <table class="table order-table" *ngIf="!viewMode">
+      <tr>
+        <th (click)="SortList(listClientes, 'razaoSocial')" [ngClass]="{ 'asc': sortingDesc['razaoSocial'], 'desc': !sortingDesc['razaoSocial'], 'active': selectTableRow == 'razaoSocial' }">
+          <label>Razão Social/Nome</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listClientes, 'cnpjCpf')" [ngClass]="{ 'asc': sortingDesc['cnpjCpf'], 'desc': !sortingDesc['cnpjCpf'], 'active': selectTableRow == 'cnpjCpf' }">
+          <label>CNPJ/CPF</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listClientes, 'tipoPessoa')" [ngClass]="{ 'asc': sortingDesc['tipoPessoa'], 'desc': !sortingDesc['tipoPessoa'], 'active': selectTableRow == 'tipoPessoa' }">
+          <label>Tipo</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listClientes, 'status')" [ngClass]="{ 'asc': sortingDesc['status'], 'desc': !sortingDesc['status'], 'active': selectTableRow == 'status' }">
+          <label>Situação</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th>
+        </th>
+      </tr>
+
+      <tr *ngIf="isLoadingClientes">
+        <td>
+          <div>
+            <label>Carregando ...</label>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngFor="let cliente of listClientes | paginate: { itemsPerPage: 10, currentPage: p }" [class.selected]="cliente === selectedCliente"
+        (click)="onSelect(cliente)">
+        <td>{{cliente.RazaoSocial}}</td>
+        <td>{{cliente.CnpjCpf}}</td>
+        <td *ngIf="cliente.TipoPessoa == 1">PESSOA JURÍDICA</td>
+        <td *ngIf="cliente.TipoPessoa == 2">PESSOA FISÍCA</td>
+        <td>{{getStatusDescription(cliente.Status)}}</td>
+        <td>
+          <a href="" [routerLink]="['/updateCliente', cliente.Id]">
+            <i class="icon-pen-2"></i>
+          </a>
+          <!--  *** Não deixar deletar o PDV, pois irá afetar a rotina de frequencia de visita. O PDV deverá ser inativado ***
+          <a href="javascript:void(0)" (click)="deletarCliente(cliente); $event.stopPropagation()">
+                <i class="icon-x c-error"></i>
+          </a>
+          -->
+        </td>
+      </tr>
+    </table>
+
+    <div class="products-grid2-container" *ngIf="viewMode">
+      <ul class="products-list">
+        <li class="product" *ngFor="let cliente of listClientes | paginate: { itemsPerPage: 12, currentPage: p };">
+
+          <div class="card-flip same-front-height" [class.active]="isParaActive">
+
+            <div class="front">
+              <a href="" [routerLink]="['/updateCliente', cliente.Id]" class="client-container">
+                <div class="product-image">
+                  <img [src]='getImagemFachada(cliente.Id)' height="186" width="186" />
+                </div>
+                <p class="product-name" title="{{cliente.CnpjCpf}} - {{cliente.NomeFantasia}}">
+                  {{cliente.CnpjCpf}} - {{cliente.NomeFantasia}}
+                </p>
+                <p class="product-name" title="{{cliente.RazaoSocial}}">
+                  {{cliente.RazaoSocial}}
+                </p>
+                <span class="product-state">
+                  {{getStatusDescription(cliente.Status)}}
+                </span>
+              </a>
+              <div class="product-btns">
+                <a href="javascript:void(0)" (click)="abrirConfirmacaoExclusao(cliente); $event.stopPropagation()">
+                  <i class="icon-x c-error"></i>
+                </a>
+              </div>
+              <button class="flip" [class.active]="isBtnActive" (click)="toggleClass()">
+                <img src="assets/svg/return.svg" alt="Virar" title="Clique para virar a carta" width="18px" height="18px">
+              </button>
+            </div>
+
+            <div class="back">
+              <p class="product-name" title="{{cliente.CnpjCpf}} - {{cliente.NomeFantasia}}">
+                {{cliente.CnpjCpf}} - {{cliente.NomeFantasia}}
+              </p>
+              <table class="table">
+                <tr>
+                  <td>{{getTipoPessoaDescription(cliente.TipoPessoa)}}</td>
+                </tr>
+                <tr>
+                  <td>{{loadMunicipioNome(cliente)}} - {{getEstadoUF(cliente.Endereco.Estado)}}</td>
+                </tr>
+              </table>
+              <button class="flip" [class.active]="isBtnActive" (click)="toggleClass()">
+                <img src="assets/svg/return.svg" alt="Virar" title="Clique para virar a carta" width="18px" height="18px">
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" nextLabel="Próximo" previousLabel="Anterior" maxSize=7 autoHide=true directionLinks=true></pagination-controls>
+    </div>
+
+    <div *ngIf="isExporting">
+      <md-spinner></md-spinner>
+      <div class="loading-overlay">
+        <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+        <div class="spinner">
+          <div class="bounce1"></div>
+          <div class="bounce2"></div>
+          <div class="bounce3"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-floating">
+      <div class="nds nd3">
+        <button [routerLink]="['/addCliente']">
+          <div class="t-left t-sm" data-tooltip="Novo cliente">
+            <span class="letter">
+              <span class="fa fa-plus"></span>
+            </span>
+          </div>
+        </button>
+      </div>
+      <div class="nds nd2">
+        <button (click)="modalImportar.open()">
+          <div class="t-left t-sm" data-tooltip="Importar clientes">
+            <span class="letter">I</span>
+          </div>
+        </button>
+      </div>
+      <div class="nds nd1">
+        <button (click)="getAllExportClientes()" [disabled]='isExporting'>
+          <div class="t-left t-sm" data-tooltip="Exportar clientes">
+            <span class="letter">E</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="floating-button">
+        <span class="letter">
+          <i class="fa fa-bars"></i>
+        </span>
+      </div>
+    </div>
+
+    <modal #modalImportar title="Importar Clientes" [closeOnOutsideClick]="false">
+
+      <modal-header>
+        <span>Importar Clientes</span>
+      </modal-header>
+
+      <modal-content>
+        <image-upload *ngIf="!isImporting" [max]="1" [preview]="false" [buttonCaption]="'Selecione o arquivo CSV'" [dropBoxMessage]="''"
+          [extensions]="['csv', 'txt', 'CSV', 'TXT', '*.*']" (onFileUploadFinish)="uploadCSV($event)" (uploadFinished)="onUploadFinished($event)">
+        </image-upload>
+
+        <div *ngIf="isImporting">
+          <md-spinner></md-spinner>
+          <div class="loading-overlay">
+            <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+            <div class="spinner">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+          </div>
+        </div>
+      </modal-content>
+
+      <modal-footer>
+        <button class="btn btn-primary" [disabled]="isImporting" (click)="importCSV()">Importar</button>
+      </modal-footer>
+
+    </modal>
+
+  </div>
+
+</div>

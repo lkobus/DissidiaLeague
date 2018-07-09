@@ -1,0 +1,299 @@
+/* Checkbox */
+.check-wrapper {
+  position: relative;
+
+  input[type="checkbox"] {
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    z-index: 100;
+    width: 14px;
+    height: 14px;
+    top: 50%;
+    left: 30%;
+    margin-top: -7px;
+    position: absolute;
+  }
+
+  label {
+    display: inline-block;
+    position: relative;
+    padding: 0 0 0 28px;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-transition: color 0.3s;
+    transition: color 0.3s;
+
+    &:before {
+      content: "";
+      width: 15px;
+      height: 15px;
+      top: 45%;
+      left: 0;
+      margin-top: -8px;
+      font-size: 16px;
+      position: absolute;
+      cursor: pointer;
+      color: color(txt,base);
+      border: 2px solid color(input,border);
+
+      &:hover {
+        color: color(primary,base);
+      }
+    }
+    &.active {
+      &:before {
+        display: none;
+      }
+    }
+  }
+
+  input[type="checkbox"]:checked+label:before {
+    background-color: color(primary,base);
+    border-color: color(primary,base);
+  }
+
+  &.active label:after,
+  input[type="checkbox"]:checked+label:after,
+  label.active:after {
+    content: "\78";
+    font-family: "icon";
+    width: 15px;
+    height: 15px;
+    top: 73%;
+    left: 3px;
+    margin-top: -5px;
+    font-size: 13px;
+    color: color(txt,light);
+    position: absolute;
+    cursor: pointer;
+  }
+}
+
+
+/* Checkbox material */
+.mat-checkbox {
+  transition: background .4s cubic-bezier(.25,.8,.25,1), box-shadow 280ms cubic-bezier(.4,0,.2,1);
+  cursor: pointer;
+}
+
+.mat-checkbox-layout {
+  cursor: inherit;
+  align-items: baseline;
+  vertical-align: middle;
+  display: inline-flex;
+}
+
+.mat-checkbox-layout .mat-checkbox-label {
+  line-height: 24px;
+}
+
+.mat-checkbox-input {
+  bottom: 0;
+  left: 50%;
+}
+
+.cdk-visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  text-transform: none;
+  width: 1px;
+}
+
+.mat-checkbox-ripple {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  right: -15px;
+  bottom: -15px;
+  border-radius: 50%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.mat-checkbox-frame {
+  background-color: transparent;
+  transition: border-color 90ms cubic-bezier(0,0,.2,.1);
+  border-width: 2px;
+  border-style: solid;
+}
+
+.mat-checkbox-background, .mat-checkbox-frame {
+  border-radius: 2px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mat-checkbox-background, .mat-checkbox-checkmark, .mat-checkbox-frame {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mat-checkbox-frame {
+  border-color: rgba(0,0,0,.54);
+}
+
+.mat-checkbox-anim-checked-unchecked .mat-checkbox-background {
+  animation: 180ms linear 0s mat-checkbox-fade-out-background;
+}
+
+.mat-checkbox-background {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  transition: background-color 90ms cubic-bezier(0,0,.2,.1),opacity 90ms cubic-bezier(0,0,.2,.1);
+}
+
+.mat-checkbox-background, .mat-checkbox-frame {
+  border-radius: 2px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mat-checkbox-background, .mat-checkbox-checkmark, .mat-checkbox-frame {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mat-checkbox-checkmark {
+  width: 100%;
+}
+
+.mat-checkbox-checkmark, .mat-checkbox-mixedmark {
+  width: calc(100% - 4px);
+}
+
+.mat-checkbox-background, .mat-checkbox-checkmark, .mat-checkbox-frame {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mat-checkbox-checkmark {
+  fill: #fafafa;
+}
+
+.mat-checkbox-mixedmark {
+  height: 2px;
+  opacity: 0;
+  transform: scaleX(0) rotate(0);
+}
+
+.mat-checkbox-checkmark, .mat-checkbox-mixedmark {
+  width: calc(100% - 4px);
+}
+
+.mat-checkbox-mixedmark {
+  background-color: #fafafa;
+}
+
+.mat-checkbox-background, .mat-checkbox-frame {
+  border-radius: 2px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.mat-checkbox-inner-container {
+  display: inline-block;
+  height: 20px;
+  line-height: 0;
+  margin: auto;
+  margin-right: 8px;
+  order: 0;
+  position: relative;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.mat-checkbox-layout {
+  cursor: inherit;
+  align-items: baseline;
+  vertical-align: middle;
+  display: inline-flex;
+}
+
+/* checked */
+.mat-checkbox-checked.mat-accent .mat-checkbox-background, .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: color(primary,base);
+}
+
+.mat-checkbox-anim-unchecked-checked .mat-checkbox-background {
+  animation: 180ms linear 0s mat-checkbox-fade-in-background;
+}
+
+.mat-checkbox-background {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  transition: background-color 90ms cubic-bezier(0,0,.2,.1),opacity 90ms cubic-bezier(0,0,.2,.1);
+}
+
+.mat-checkbox-checked .mat-checkbox-checkmark {
+  opacity: 1;
+}
+
+.mat-checkbox-anim-unchecked-checked .mat-checkbox-checkmark-path {
+  animation: 180ms linear 0s mat-checkbox-unchecked-checked-checkmark-path;
+}
+
+.mat-checkbox-checked .mat-checkbox-checkmark-path {
+  stroke-dashoffset: 0;
+}
+
+.mat-checkbox-checkmark-path {
+  stroke-dashoffset: 22.91026;
+  stroke-dasharray: 22.91026;
+  stroke-width: 2.66667px;
+}
+
+.mat-checkbox-checkmark-path {
+  stroke: #fafafa!important;
+}
+
+@keyframes mat-checkbox-fade-out-background {
+  0%, 50% {
+    opacity: 1;
+  }
+  100% {
+     opacity: 0;
+   }
+}
+
+@keyframes mat-checkbox-fade-in-background {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes mat-checkbox-unchecked-checked-chekmark-path {
+  0%, 50% {
+    stroke-dashoffset: 22.91026;
+  }
+  50% {
+    animation-timing-function: cubic-bezier(0,0,.2,.1);
+  }
+  100% {
+     stroke-dashoffset: 0;
+   }
+}

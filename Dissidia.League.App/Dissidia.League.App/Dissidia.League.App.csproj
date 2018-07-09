@@ -57,9 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nancy\DTO\AuthDTO.cs" />
+    <Compile Include="Nancy\DTO\Gamification\PlayerPontuationDTO.cs" />
     <Compile Include="Nancy\DTO\UserRegisterDTO.cs" />
     <Compile Include="Nancy\EndpointsConfiguration\EndpointConfigurationEnum.cs" />
     <Compile Include="Nancy\Modules\AuthenticationModule.cs" />
+    <Compile Include="Nancy\Modules\League\Gamificatio\PontuationModule.cs" />
     <Compile Include="Nancy\Modules\League\MatchModule.cs" />
     <Compile Include="Nancy\NancyBootstrap.cs" />
     <Compile Include="Nancy\Services\AuthenticationService.cs" />

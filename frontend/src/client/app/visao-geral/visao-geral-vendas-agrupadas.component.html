@@ -1,0 +1,22 @@
+<div class="card">
+  <div class="toolbar">
+    <h3 class="toolbar-title">
+      Vendas
+    </h3>
+  </div>
+
+  <div *ngIf="valores" class="content">
+
+
+    <div class="values" *ngFor="let resumo of valores">
+      <b class="title">{{resumo.origem}}</b>
+      <span class="value">
+        {{resumo.valorAtual | currencyFormat}}
+      </span>
+      <span class="description">
+        {{GetLabel()}} anterior {{resumo.valorAnterior | currencyFormat}}
+      </span>
+    </div>
+  </div>
+
+</div>

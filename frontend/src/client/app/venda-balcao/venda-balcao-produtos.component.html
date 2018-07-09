@@ -1,0 +1,261 @@
+<div class="container-fluid main-container cards-2">
+
+  <div class="col-md-8 col-sm-7 col-xs-12">
+    <div [ngBusy]="{busy: busy, template: templateLoading, message: 'Venda sendo gerada, aguarde...'}"></div>
+
+    <!--@TODO Remover campo de testes-->
+    <div class="row col-md-4 hidden" style="position: fixed;
+    left: 40%;
+    top: 10px;
+    z-index: 1001;
+    width: 150px;
+    ">
+      <input type="text" [(ngModel)]="dataPedido">
+    </div>
+    <!--@TODO Remover campo de testes-->
+
+    <div class="input-with-btn wide-input">
+      <input type="text" placeholder="Buscar o produto desejado, sku ou código de barra" #busca tabindex="0" [(ngModel)]="inputSearch"
+        (keyup)="onSearchType($event.target.value, false);" (keyup.enter)="searchProduct($event.target.value, true);">
+      <button tabindex="-1">
+        <i class="icon-loupe"></i>
+      </button>
+    </div>
+
+    <ul class="menu-btns">
+      <li class="menu-btn menu-title">
+        Ver apenas:
+      </li>
+      <li class="menu-btn">
+        <button [ngClass]="{'active': isCervejaActive}" (click)="cervejaActive(); onFilter('CERVEJA')" tabindex="-1">
+          Cerveja
+        </button>
+      </li>
+      <li class="menu-btn">
+        <button [ngClass]="{'active': isRefriActive}" (click)="refriActive(); onFilter('REFRI')" tabindex="-1">
+          Refrigerante
+        </button>
+      </li>
+      <li class="menu-btn">
+        <button [ngClass]="{'active': isOutrosActive}" (click)="outrosActive(); onFilter('OUTROS')" tabindex="-1">
+          Outros
+        </button>
+      </li>
+    </ul>
+
+    <div class="products-grid-container">
+      <ul class="products-list">
+        <li class="product" *ngFor="let produto of produtosTela; let i =  index">
+          <div (dblclick)="addProdutoCarinho(produto)" class="product-container" tabindex="-1">
+            <div class="product-image">
+              <img [src]='getImagemProduto(produto)' height="128" width="128" />
+            </div>
+            <p class="product-name" title="{{produto.nome}}">
+              {{produto.nome}}
+            </p>
+            <p class="product-qty">
+              {{produto.codigo}}
+            </p>
+            <span class="product-un-price">
+              {{produto.precoUnitario | currencyFormat}}
+            </span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-md-4 col-sm-5 col-xs-12 no-padding-r">
+    <div class="card card-fixed">
+
+      <div class="toolbar">
+        <h3 class="toolbar-title">
+          1. Produtos ({{carrinho.produtos.length}})
+        </h3>
+      </div>
+
+      <div class="fog-container">
+        <div class="content scrollable-content">
+
+          <!-- Mostra se não tiver produtos adicionados -->
+          <div *ngIf="carrinho.produtos.length == 0">
+            <p class="toolbar-txt">Nenhum produto foi adicionado.</p>
+          </div>
+
+          <table class="table" *ngIf="carrinho.produtos.length > 0">
+            <tr>
+              <th>Produto</th>
+              <th>QTDE</th>
+              <th>Valor (R$)</th>
+            </tr>
+            <tr *ngFor="let produtoCarinho of carrinho.produtos.slice().reverse(); let i = index;">
+              <td>
+                <span class="product-name" title="{{produtoCarinho.nome}}">{{produtoCarinho.nome}}</span>
+                <span *ngIf="!(produtoCarinho.descontoPermitido > 0)" class="price" title="Preço unitário">{{produtoCarinho.precoUnitario | currencyFormat}}</span>
+                <div *ngIf="(produtoCarinho.descontoPermitido > 0)" class="tooltip-holder" [ngClass]="{'error-msg': (isTemDescontoInconsistente(i)) }">
+                  <input tabindex="-1" currencyMask type="text" title="Preço unitário" [maxlength]="9" max="6.2" min="0" maxValue="6.22" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',', allowNegative: false }"
+                    [(ngModel)]="produtoCarinho.precoVenda" (ngModelChange)="verificaDesconto(i)" />
+                  <div *ngIf="(isDescontoMaiorQuePermitido(i))" class="tooltip tooltip-bottom">Desconto não Permitido</div>
+                  <div *ngIf="(isPrecoMaiorQuePrecoOriginal(i))" class="tooltip tooltip-bottom">Preço Maior {{produtoCarinho.precoUnitario}}</div>
+                </div>
+              </td>
+              <td>
+                <div class="qty-holder">
+                  <button class="btn-minus" (click)="subQuantidadeCarinho(i);" tabindex="-1">
+                    -
+                  </button>
+
+                  <label for="" class="qty-label">Un</label>
+                  <input #rows type="number" max=999 min="0" onkeypress="return event.charCode >= 48 && event.charCode <= 57" tabindex="0"
+                    pattern="[0-9]" step="1" class="qty-input" [(ngModel)]="produtoCarinho.quantidade" (ngModelChange)="removeItem(i)">
+
+                  <button class="btn-plus" (click)="addQuantidadeCarinho(i);" tabindex="-1">
+                    +
+                  </button>
+                </div>
+              </td>
+              <td>
+                <span class="price final-price">{{ getTotalProduto(produtoCarinho) | currencyFormat}}</span>
+
+                <i class="icon-x btn-remove" (click)="removeProdutoCarrinho(produtoCarinho)"></i>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <ul class="lr-values">
+        <li class="lr-value lr-title">
+          <span class="lr-txt">
+            Total
+          </span>
+        </li>
+        <li class="lr-value">
+          <span class="price">
+            {{ getTotal() | currencyFormat }}
+          </span>
+        </li>
+      </ul>
+
+      <div class="toolbar">
+        <h3 class="toolbar-title">
+          2. Forma de Pagamento
+        </h3>
+      </div>
+
+      <ul class="menu-btns">
+        <li class="menu-btn" *ngFor="let formaPagamento of formasPagamento; let i = index">
+          <button tabindex="0" [ngClass]="{'active': formaPagamento == selectedFormaPagamento}" (click)="onSelectFormaPagamento(formaPagamento);">
+            {{formaPagamento?.Descricao}}
+          </button>
+        </li>
+      </ul>
+
+      <div class="toolbar">
+        <h3 class="toolbar-title">
+          3. Receber
+        </h3>
+      </div>
+
+      <div class="content payment-block">
+        <div class="col-md-6 col-xs-5 no-padding-l tooltip-holder" [ngClass]="{'error-msg': ((this.carrinho.valorReceber < this.getTotal()) || (this.carrinho.condicaoPagamentoPrincipal.formaPagamento && this.carrinho.condicaoPagamentoPrincipal.formaPagamento.Codigo !== 1 && this.getTotalCondicoesPagamentosNaoDinheiro() > this.getTotal()))}">
+          <label for="">{{selectedFormaPagamento?.Descricao}} (R$)</label>
+          <input tabindex="0" required kzMaskCurrency type="text" [maxlength]="7" max=9999999 min="0" placeholder="0,00" [readOnly]="!isDinheiro && !carrinho.condicoesPagamentosAdicionais.length > 0"
+            [(ngModel)]="carrinho.condicaoPagamentoPrincipal.valorReceber" (ngModelChange)="refreshValores()" />
+          <div *ngIf="(this.carrinho.valorReceber < this.getTotal())" class="tooltip tooltip-bottom">Valor a receber menor que o Total da Venda</div>
+          <div *ngIf="(this.carrinho.condicaoPagamentoPrincipal.formaPagamento && this.carrinho.condicaoPagamentoPrincipal.formaPagamento.Codigo !== 1 && this.getTotalCondicoesPagamentosNaoDinheiro() > this.getTotal())"
+            class="tooltip tooltip-bottom">Total a receber é superior ao Total da Venda</div>
+        </div>
+
+        <div class="col-md-4 col-xs-5 no-padding" *ngIf="isDinheiro">
+          <label for="">Troco (R$)</label>
+          <input type="text" [kzMaskCurrency]="{prefixo:''}" [(ngModel)]="carrinho.condicaoPagamentoPrincipal.troco" placeholder="0,00" [value]="carrinho.condicaoPagamentoPrincipal.troco"
+            readonly tabindex="-1" />
+        </div>
+
+        <div class="col-md-2 col-xs-2">
+          <span title="Adicionar mais de uma forma de pagamento" (click)="addCondicaoPagamentoAdicional()" class="btn-absolute">
+            <i class="icon-plus c-ok"></i>
+          </span>
+        </div>
+
+        <div *ngFor="let condicaoPagAdicional of carrinho.condicoesPagamentosAdicionais; let i = index" class="payment-methods">
+          <div class="col-md-6 col-xs-5 no-padding-l">
+            <label for="">Forma de Pagamento</label>
+            <select (change)="onChangeFormaPagamentoAdicional(i, $event.target.value)">
+              <option *ngFor="let fp of getFormaPagamentosAdicionais(condicaoPagAdicional.formaPagamento)" [value]="fp.Codigo">
+                {{fp.Descricao}}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4 col-xs-5 no-padding tooltip-holder" [ngClass]="{'error-msg': ((this.carrinho.valorReceber < this.getTotal()) || ((condicaoPagAdicional.formaPagamento.Codigo !== 1) && (this.getTotalCondicoesPagamentosNaoDinheiro() > this.getTotal())))}">
+            <label for="">Valor (R$)</label>
+            <input tabindex="0" required kzMaskCurrency type="text" [maxlength]="7" max=9999999 min="0" placeholder="0,00" [(ngModel)]="condicaoPagAdicional.valorReceber"
+              (ngModelChange)="refreshValoresPagAdicional()" />
+            <div *ngIf="(this.carrinho.valorReceber < this.getTotal())" class="tooltip tooltip-bottom">Valor a receber menor que o Total da Venda</div>
+            <div *ngIf="((condicaoPagAdicional.formaPagamento.Codigo !== 1) && (this.getTotalCondicoesPagamentosNaoDinheiro() > this.getTotal()))"
+              class="tooltip tooltip-bottom">Total a receber é superior ao Total da Venda</div>
+          </div>
+          <div class="col-md-2 col-xs-2">
+            <span (click)="removeCondicaoPagamentoAdicional(condicaoPagAdicional);" class="btn-absolute">
+              <i class="icon-x"></i>
+            </span>
+          </div>
+          <div class="col-md-4 no-padding" *ngIf="condicaoPagAdicional.formaPagamento.Codigo === 1">
+            <label for="">Troco (R$)</label>
+            <input type="text" [kzMaskCurrency]="{prefixo:''}" [(ngModel)]="condicaoPagAdicional.troco" placeholder="0,00" [value]="condicaoPagAdicional.troco" readonly tabindex="-1"
+            />
+          </div>
+        </div>
+
+        <button tabindex="0" class="btn-full btn-action" [disabled]="!isReadyToFinish()" (click)="fecharVenda(false);">
+          Concluir venda
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>
+
+
+<modal #modalCpfNota title="CPF Nota" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>CPF Nota</span>
+  </modal-header>
+
+  <modal-content>
+    <h2 style="color: black">Informe cpf do consumidor</h2>
+
+    <form #cpfConsumidorForm="ngForm" (ngSubmit)="fecharVenda(true, cpfConsumidorForm);" id="cpfConsumidorForm">
+      <div class="col-md-4 tooltip-holder" [ngClass]="{ 'error-msg': (cpf.errors && (cpf.errors.required || !cpf.pristine)) }">
+        <label for="cpfConsumidor">CPF</label>
+        <input [(ngModel)]="cpfConsumidor" type="text" id="cpfConsumidor" name="cpfConsumidor" maxlength="14" placeholder="999.999.999-99"
+        kz-cpf kzMask="999.999.999-99" #inputCpfConsumidor #cpf="ngModel" autocomplete="off">
+        <span hidden>{{cpfConsumidor}}</span>
+
+        <div class="col-sm-8 text-success" *ngIf="!cpf.errors && !cpf.pristine">
+          <small class="glyphicon glyphicon-ok" aria-hidden="true">
+          </small> CPF válido!
+        </div>
+        <div class="col-sm-8 text-danger" *ngIf="cpf.errors && !cpf.pristine">
+          <small class="glyphicon glyphicon-remove" aria-hidden="true">
+          </small> CPF inválido.
+        </div>
+      </div>
+    </form>
+
+  </modal-content>
+
+  <modal-footer>
+    <button form="cpfConsumidorForm" type="submit" class="btn btn-primary">Concluir</button>
+  </modal-footer>
+
+</modal>

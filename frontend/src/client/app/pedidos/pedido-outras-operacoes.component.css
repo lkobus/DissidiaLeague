@@ -1,0 +1,12 @@
+.selection:hover {
+  background-color: #4381f3 !important;
+  color: white;
+}
+
+li.selection:first-child {
+  background-color: #b3b3b3 !important;
+  color: white;
+}
+li.selection:first-child:hover {
+  background-color: #4381f3 !important;
+}

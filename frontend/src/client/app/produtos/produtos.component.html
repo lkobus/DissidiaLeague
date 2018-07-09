@@ -1,0 +1,244 @@
+<div class="container-fluid main-container">
+  <div class="card">
+
+    <div class="toolbar">
+      <div class="col-md-3">
+        <h3 class="toolbar-title">
+          Lista de produtos
+        </h3>
+      </div>
+
+      <div class="col-md-6">
+        <div class="input-with-btn">
+          <input type="text" placeholder="Busca" [(ngModel)]="inputSearch" (keyup)="onSearchType($event.target.value)" />
+          <button>
+            <i class="icon-loupe"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <select (change)="onChangeFilter($event.target.value)">
+          <option selected>Filtrar...</option>
+          <option>Cerveja</option>
+          <option>Refri</option>
+          <option>Produto Externo</option>
+          <option>Produto Franquia</option>
+          <option>Outros</option>
+
+        </select>
+      </div>
+
+      <div class="col-md-1">
+        <button class="btn-view-toggle" (click)="viewMode = !viewMode">
+          <i class="icon-list-thumbnails" *ngIf="!viewMode"></i>
+          <i class="icon-grid" *ngIf="viewMode"></i>
+        </button>
+      </div>
+    </div>
+
+    <table class="table order-table" *ngIf="!viewMode">
+      <tr>
+        <th (click)="SortList(data, 'codigo')" [ngClass]="{ 'asc': sortingDesc['codigo'], 'desc': !sortingDesc['codigo'], 'active': selectTableRow == 'codigo' }">
+          <label>Código</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(data, 'nome')" [ngClass]="{ 'asc': sortingDesc['nome'], 'desc': !sortingDesc['nome'], 'active': selectTableRow == 'nome' }">
+          <label>Nome</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(data, 'precoVendaBalcao.precoUnitarioVendaBalcao')" [ngClass]="{ 'asc': sortingDesc['precoVendaBalcao.precoUnitarioVendaBalcao'], 'desc': !sortingDesc['precoVendaBalcao.precoUnitarioVendaBalcao'], 'active': selectTableRow == 'precoVendaBalcao.precoUnitarioVendaBalcao' }" class="txt-r">
+          <label>Preço Unitário</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(data, 'nome')" [ngClass]="{ 'asc': sortingDesc['nome'], 'desc': !sortingDesc['nome'], 'active': selectTableRow == 'nome' }">
+          <label>Produto Externo</label>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th></th>
+      </tr>
+
+      <!-- loading -->
+      <tr *ngIf="isLoading">
+        <td colspan="6">
+          <div>
+            <label>Carregando ...</label>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngFor="let produto of data | paginate: { itemsPerPage: 10, currentPage: p }" [class.selected]="produto === selectedProduto"
+        (click)="onSelect(produto)" (dblclick)="detailsProduto(produto)">
+        <td>
+          <input type="hidden" id={{produto.id}}>
+          <label for={{produto.id}}>{{produto.codigo}}</label>
+        </td>
+        <td>{{produto.nome}}</td>
+        <td class="txt-r">
+          R$ {{produto.precoVendaBalcao.precoUnitarioVendaBalcao.toFixed(2)}}
+        </td>
+        <td>{{produto.produtoExterno}}</td>
+        <td *ngIf="produto.canEdit">
+          <a href="" [routerLink]="['/updateProduto', produto.id]">
+            <i class="icon-pen-2"></i>
+          </a>
+          <a href="javascript:void(0)" (click)="deleteProduct(produto); $event.stopPropagation()">
+            <i class="icon-x c-error"></i>
+          </a>
+        </td>
+        <td *ngIf="!produto.canEdit">
+          <a href="" [routerLink]="['/updateProduto', produto.id]">
+            <i class="icon-loupe"></i>
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <div class="products-grid2-container" *ngIf="viewMode">
+      <ul class="products-list">
+        <li class="product" *ngFor="let produto of data | paginate: { itemsPerPage: 12, currentPage: p };" (click)="onSelect(produto)">
+
+          <div class="card-flip card-flip-small" [class.active]="isParaActive">
+            <div class="front">
+
+              <a href="" [routerLink]="['/updateProduto', produto.id]" class="product-container">
+                <div class="product-image">
+                  <img [src]='getImagemProduto(produto)' height="128" width="128" />
+                </div>
+                <p class="product-name" title="{{produto.codigo}} - {{produto.nome}}">
+                  {{produto.codigo}} - {{produto.nome}}
+                </p>
+              </a>
+              <div class="product-btns" *ngIf="produto.canEdit">
+                <a href="javascript:void(0)" (click)="deleteProduct(produto.id); $event.stopPropagation()">
+                  <i class="icon-x c-error"></i>
+                </a>
+              </div>
+
+              <button class="flip" [class.active]="isBtnActive" (click)="toggleClass()">
+                <img src="assets/svg/return.svg" alt="Virar" title="Clique para virar a carta" width="18px" height="18px">
+              </button>
+            </div>
+
+            <div class="back">
+
+              <p class="product-name" title="{{produto.codigo}} - {{produto.nome}}">
+                {{produto.codigo}} - {{produto.nome}}
+              </p>
+
+              <table class="table" *ngIf="produto.produtoExterno.toLocaleUpperCase() === 'EXTERNO'">
+                <tr *ngFor="let preco of produto.precoSegmentos">
+                  <td>{{preco.codigoSegmento}} - {{preco.descricaoSegmento}}</td>
+                  <td>R$ {{preco.precoPack.toFixed(2)}}</td>
+                </tr>
+                <tr *ngIf="produto.precoVendaBalcao">
+                  <td>Venda Balcão (Un.)</td>
+                  <td>R$ {{produto.precoVendaBalcao.precoUnitarioVendaBalcao.toFixed(2)}}</td>
+                </tr>
+                <tr *ngIf="produto.precoVendaBalcao">
+                  <td>Venda Balcão (Pack)</td>
+                  <td>R$ {{produto.precoVendaBalcao.precoPackVendaBalcao.toFixed(2)}}</td>
+                </tr>
+              </table>
+              <table class="table" *ngIf="produto.produtoExterno.toLocaleUpperCase() !== 'EXTERNO'">
+                <tr>
+                  <td>Venda Balcão</td>
+                  <td>R$ {{produto.precoVendaBalcao.precoUnitarioVendaBalcao.toFixed(2)}}</td>
+                </tr>
+              </table>
+
+              <button class="flip mirror" [class.active]="isBtnActive" (click)="toggleClass()">
+                <img src="assets/svg/return.svg" alt="Virar" title="Clique para virar a carta" width="18px" height="18px">
+              </button>
+            </div>
+          </div>
+
+
+        </li>
+      </ul>
+    </div>
+
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR">
+      </pagination-controls>
+    </div>
+
+    <div class="container-floating">
+      <div class="nds nd3" *ngIf="canAddProduto()">
+        <button [routerLink]="['/addProduto']">
+          <div class="t-left t-sm" data-tooltip="Novo produto">
+            <span class="letter">
+              <span class="fa fa-plus"></span>
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <div class="nds nd2">
+        <button (click)="modalImportarProdutos.open()">
+          <div class="t-left t-sm" data-tooltip="Importar tributação">
+            <span class="letter">I</span>
+          </div>
+        </button>
+      </div>
+      <div class="nds nd1">
+        <div class="t-left t-sm" data-tooltip="Exportar produtos">
+          <span class="letter">
+            <csv-downloader [data]='data' [fileName]='"produtos.csv"' [downloaderName]='"E"' [headers]='["Codigo", "Nome", "EAN", "Origem Produto", "Tipo de Produto", "NCM", "CEST", "CST Venda Externa - NFe (Editavel)", "CST Venda Balcao - NFCe (Editavel)", "CFOP Venda Balcao (Editavel)", "Aliquota ICMS (Editavel)", "Valor Base ICMS-ST (Editavel)", "% Reducao ICMS (Editavel)", "CST PIS", "CST COFINS"]'
+              [keysToExport]='["codigo", "nome", "codigoEAN", "produtoExterno", "tipo", "ncm", "cest", "cstNFe", "cstNFCe", "cfopNFCe", "aliquotaIcms", "valorBaseIcmsSt", "reducaoIcms", "cstPIS", "cstCOFINS"]'>
+            </csv-downloader>
+          </span>
+        </div>
+      </div>
+
+      <div class="floating-button">
+        <span class="letter">
+          <i class="fa fa-bars"></i>
+        </span>
+      </div>
+    </div>
+
+    <modal #modalImportarProdutos title="Importar Tributação" [closeOnOutsideClick]="false">
+
+      <modal-header>
+        <span>Importar Tributação</span>
+      </modal-header>
+
+      <modal-content>
+        <image-upload *ngIf="!isImporting" [max]="1" [preview]="false" [buttonCaption]="'Selecione o arquivo CSV'" [dropBoxMessage]="''"
+          [extensions]="['csv', 'txt', 'CSV', 'TXT', '*.*']" (onFileUploadFinish)="uploadCSV($event)" (uploadFinished)="onUploadFinished($event)">
+        </image-upload>
+
+        <div *ngIf="isImporting">
+          <md-spinner></md-spinner>
+          <div class="loading-overlay">
+            <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+            <div class="spinner">
+              <div class="bounce1"></div>
+              <div class="bounce2"></div>
+              <div class="bounce3"></div>
+            </div>
+          </div>
+        </div>
+      </modal-content>
+
+      <modal-footer>
+        <button class="btn btn-primary" [disabled]="isImporting" (click)="importCSV()">Importar</button>
+      </modal-footer>
+
+    </modal>
+
+  </div>
+</div>

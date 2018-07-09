@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="de5fb22324b5ee177290455ad7bc78cac7cb5ccb" datatype="html">
+        <source>
+        Resumo geral
+      </source>
+	  <target>Resumo geral</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\visao-geral\visao-geral.component.ts</context>
+          <context context-type="linenumber">5</context>
+        </context-group>
+      </trans-unit>
+    <trans-unit id="db0d9be616dc80ff0595bca2856fc89a2de55e2c" datatype="html">
+        <source>Atividades do dia</source>
+		<target>Atividades do dia</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\caixa\extrato-diario.component.ts</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit><trans-unit id="b0880bf4072dc8486cb2f6e131c570aaf866dd97" datatype="html">
+        <source>
+              Estoque
+            </source>
+			<target>Estoque</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">app\home\home.component.ts</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit></body>
+  </file>
+</xliff>

@@ -1,0 +1,67 @@
+<div class="container-fluid main-container">
+
+  <div class="row">
+    <div *ngIf="(statusCaixa?.CaixaDisponivel)" class="content-head type-2">
+      <venda-balcao-menu></venda-balcao-menu>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="no-padding">
+      <div *ngIf="restError" class="alert alert-danger">
+        <span>{{restError}}</span>
+      </div>
+    </div>
+    <form #form="ngForm" name="form" (ngSubmit)="form.form.valid && SuprimentoCaixa()">
+
+      <div class="col-md-5">
+
+        <div class="toolbar">
+          <h3 class="toolbar-title">
+            Total no caixa
+          </h3>
+        </div>
+
+        <b class="price">{{statusCaixa?.Saldo | currencyFormat}}</b>
+      </div>
+
+
+      <div class="col-md-7">
+
+        <div class="toolbar">
+          <h3 class="toolbar-title">
+            Valor a ser inserido
+          </h3>
+        </div>
+
+        <ul class="icos-list">
+          <li class="full-line">
+            <div class="col-md-12">
+              <label>Digite o valor desejado:</label>
+              <input [autofocus] [(ngModel)]="valorSuprimento" #valor="ngModel" id="valor" name="valor" type="text" placeholder="0,00" maxlength="15"
+                     required kzMaskCurrency>
+
+              <div *ngIf="valor.invalid && (valor.dirty || valor.touched)" class="alert alert-danger">
+                <div [hidden]="!valor.errors.required">Obrigatório</div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="container-floating">
+          <div class="floating-button">
+            <span class="letter">
+              <div class="t-left t-sm" data-tooltip="Salvar a inserção de valores">
+                <button type="submit" class="btn-clean">
+                  <span class="letter">
+                    <span class="fa fa-floppy-o"></span>
+                  </span>
+                </button>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

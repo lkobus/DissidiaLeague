@@ -1,0 +1,53 @@
+<div class="container-fluid main-container">
+
+    <div class="card">
+        <h3 class="card-title">
+            <span>Indicador minha franquia</span>
+        </h3>
+
+        <form #indicadorForm="ngForm" id="indicadorForm" *ngIf="indicador">
+
+            <div class="content">
+
+                <div class="col-md-3 tooltip-holder">
+                    <label>Indicador</label>
+                    <input [(ngModel)]="indicador.IndicadoresEnum.Valor" #uIndicadorIndicador="ngModel" name="uIndicadorIndicador" type="text"
+                        disabled="disabled" />
+                </div>
+
+                <div class="col-md-3 tooltip-holder">
+                    <label>Tipo cálculo</label>
+                    <input [(ngModel)]="indicador.TipoCalculo.Valor" #uIndicadorTipoCalculo="ngModel" name="uIndicadorTipoCalculo" type="text"
+                        disabled="disabled" />
+                </div>
+
+                <div class="col-md-2 tooltip-holder">
+                    <label>Regra cálculo</label>
+                    <input [(ngModel)]="RegraCalculo" #uIndicadorRegraCalculo="ngModel" name="uIndicadorRegraCalculo" type="text" disabled="disabled"
+                    />
+                </div>
+
+                <div class="col-md-2 tooltip-holder">
+                    <label>Mês meta</label>
+                    <input [(ngModel)]="DataIndicador" #uIndicadorMesMeta="ngModel" name="uIndicadorMesMeta" type="text" disabled="disabled"
+                    />
+                </div>
+
+                <div class="col-md-2 tooltip-holder">
+                    <label>Valor</label>
+                    <input [(ngModel)]="ValorIndicador" #uIndicadorValor="ngModel" name="uIndicadorValor" type="text" disabled="disabled" />
+                </div>
+            </div>
+        </form>
+
+        <div class="container-floating left">
+            <div class="floating-button">
+                <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+                    <span class="letter">
+                        <span class="fa fa-chevron-left"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

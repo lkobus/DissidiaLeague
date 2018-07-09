@@ -1,0 +1,66 @@
+<div class="container-fluid main-container">
+    <div class="card">
+        <div class="toolbar">
+
+            <div class="col-md-3">
+                <h3 class="toolbar-title">
+                    Indicadores
+                </h3>
+            </div>
+
+            <div class="col-md-3 no-padding-l">
+                <my-date-picker [locale]="pt-br" [options]="myDatePickerOptions" [selDate]="selectedMesMeta" (dateChanged)="onDataMesMeta($event)">
+                </my-date-picker>
+            </div>
+
+            <div class="col-md-6">
+                <div class="input-with-btn">
+                    <input type="text" placeholder="Busca" [(ngModel)]="inputSearch" (keyup)="onSearchType($event.target.value)" />
+                    <button>
+                        <i class="icon-loupe"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <table class="table">
+            <tr>
+                <th (click)="sortList(dados, 'DataMesMeta')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                    <label>Mês</label>
+                </th>
+                <th (click)="sortList(dados, 'IndicadoresEnum.Valor')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                    <label>Indicador</label>
+                </th>
+                <th (click)="sortList(dados, 'RegraCalculo.Valor')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                    <label>Regra cálculo</label>
+                </th>
+                <th (click)="sortList(dados, 'Valor')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                    <label>Valor</label>
+                </th>
+                <th></th>
+            </tr>
+           
+            <tr *ngFor="let indicador of dados | paginate: { itemsPerPage: 10, currentPage: p }">
+
+                <td>{{formatDate(indicador.DataMesMeta)}}</td>
+
+                <td>{{indicador.IndicadoresEnum.Valor}}</td>
+
+                <td>{{formatRegraCalculo(indicador.RegraCalculo.Codigo)}}</td>
+
+                <td>{{formatValor(indicador.Valor, indicador.IndicadoresEnum.Valor)}}</td>
+
+                <td>
+                    <a href="" [routerLink]="['/verIndicador', indicador.DocumentId]">
+                        <i class="icon-loupe"></i>
+                    </a>
+                </td>
+            </tr>
+        </table>
+
+        <div class="toolbar-bottom">
+            <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR"></pagination-controls>
+        </div>
+    </div>
+</div>

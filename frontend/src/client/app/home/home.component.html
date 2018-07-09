@@ -1,0 +1,48 @@
+<div class="container-fluid main-container flexbox cards-3">
+
+  <div class="row">
+    <div class="col-md-5">
+      <div class="card">
+        <div class="toolbar">
+          <div class="col-md-5">
+            <h3 class="toolbar-title" i18n>
+              Estoque
+            </h3>
+          </div>
+
+          <div class="col-md-6">
+            <select name="" id="">
+              <option value="">Menor - maior</option>
+            </select>
+          </div>
+
+        </div>
+
+        <table class="table">
+          <tr>
+            <th colspan="2">
+              Produtos
+            </th>
+          </tr>
+          <tr *ngFor="let number of [0,1,2,3]">
+            <td>Skol 600ml</td>
+            <td>2 caixas</td>
+          </tr>
+        </table>
+
+        <p class="txt-tip">Fique atento aos seus produtos com baixo estoque.</p>
+
+        <div class="button-wrapper">
+          <button class="btn-secondary" (click)="solicitarPuxada()">
+            Solicitar puxada
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-7">
+      <extrato-diario>
+      </extrato-diario>
+    </div>
+  </div>
+</div>

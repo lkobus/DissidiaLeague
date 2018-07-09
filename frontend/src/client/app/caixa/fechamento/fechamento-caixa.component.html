@@ -1,0 +1,67 @@
+<div class="container-fluid main-container">
+
+  <form #form="ngForm" (ngSubmit)="form.form.valid && FecharCaixa(true, form)" name="form">
+
+    <div class="card">
+      <div class="no-padding">
+        <div *ngIf="restError" class="alert alert-danger">
+          <span>{{restError}}</span>
+        </div>
+      </div>
+
+      <div *ngIf="statusCaixa && checklistFechamento">
+        <div class="toolbar">
+          <h3 class="toolbar-title">Checklist de fechamento</h3>
+        </div>
+
+        <div class="container-fluid">
+          <h4 class="subtitle">Verifique o status de todos os pontos abaixo para fechar o balanço do seu dia de trabalho.</h4>
+
+          <ul class="icos-list">
+            <li class="icos-list-item-header" [class.active]="1 === 2">
+              <i class="icon flation-checked"></i>
+              <span class="title">
+                  Seu caixa tem {{GetSaldoDinheiro() | currencyFormat}}, quanto você deseja retirar?
+              </span>
+            </li>
+
+            <li class="icos-list-item">
+              <div class="col-md-6">
+                <div class="col-md-3">
+                  <input [autofocus] type="text" class="form-control" name="fechamento" id="fechamento" placeholder="0,00" #fechamento="ngModel" [(ngModel)]="valorFechamento"
+                    kzMaskCurrency>
+
+                  <div *ngIf="fechamento.invalid && (fechamento.dirty || fechamento.touched)" class="alert alert-danger">
+                    <div [hidden]="!fechamento.errors.required">Obrigatório</div>
+                    <div [hidden]="!fechamento.errors.min">min.</div>
+                    <div [hidden]="!fechamento.errors.max">max.</div>
+                    <div [hidden]="!fechamento.errors.minlength">minlength</div>
+                    <div [hidden]="!fechamento.errors.maxlength">maxlength</div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+
+          <dynamic-form (onButtonClicked)="FecharCaixa(true, form)" [questions]="checklistFechamento"></dynamic-form>
+        </div>
+
+        <modal #modalSobra title="Confirir os valores" [closeOnOutsideClick]="false">
+          <modal-content class="content">
+
+            <div class="card-subtitle">
+              <label>Ficou no caixa {{(GetSaldoDinheiro() - valorFechamento) | currencyFormat}}, deseja continuar?</label>
+            </div>
+
+            <div class="button-wrapper">
+                <button (click)="modalSobra.close()" class="btn-action">Cancelar</button>
+                <button (click)="FecharCaixa(false, form)" class="btn-action">Confirmar</button>
+            </div>
+          </modal-content>
+
+        </modal>
+      </div>
+
+    </div>
+  </form>
+</div>

@@ -1,0 +1,74 @@
+.cubes {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  float: left;
+  width: 100%;
+
+  -webkit-flex-flow: row wrap;
+  justify-content: space-around;
+
+  margin-top: 18px;
+
+  &:after {
+    content: "";
+    flex: auto;
+  }
+
+  .cube {
+    width: 33.33%;
+    color: color(input,border);
+    font-weight: bold;
+    margin-bottom: 15px;
+
+    &.minus {
+      color: color(status,error);
+
+      .cube-content {
+        border-color: color(status, error);
+      }
+    }
+
+    &.plus {
+      color: color(primary,base);
+
+      .cube-content {
+        border-color: color(primary, base);
+      }
+    }
+
+    &:nth-child(3n-1) {
+      .cube-content {
+        margin: 0;
+      }
+    }
+
+    .cube-content {
+      margin: 0 17px;
+      padding: 10px 0;
+      border: 1px solid color(input,border);
+    }
+
+    .txt {
+      font-size: em(14px);
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+
+      &:first-child {
+        font-size: em(12px);
+        min-height: 65px;
+        padding: 0 10px;
+        box-sizing: border-box;
+      }
+    }
+    .value {
+      font-size: em(35px);
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,42 @@
+﻿<div class="container" id="login">
+  <div [ngBusy]="{busy: busy, template: templateLoading, message: 'Estamos preparando tudo para você, aguarde um momento...'}"></div>
+  <div class="col-sm-8 col-sm-offset-2">
+
+    <div class="main-title-container col-md-6 col-md-offset-3">
+      <a class="main-title" href="/" title="Página Idsadsadsanicial">
+          <img src="assets/logo-ambev.png" alt="logo Ambev" />
+        <span class="divider"></span>
+          <img src="assets/logo-promax.png" alt="logo Promax" />
+      </a>
+    </div>
+
+    <div class="col-md-6 col-md-offset-3 login-box">
+      <h2 style="color:blueviolet">Login</h2>
+      <form name="form" (ngSubmit)="f.form.valid && login()" #f="ngForm" novalidate>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !username.valid }">
+          <label style="color:blueviolet" for="username">Username</label>
+          <input type="text" class="form-control" name="username" id="username" [(ngModel)]="model.username" #username="ngModel" required />
+          <div *ngIf="f.submitted && !username.valid" class="help-block">Insert your username</div>
+        </div>
+        <div class="form-group" [ngClass]="{ 'has-error': f.submitted && !password.valid }">
+          <label style="color:blueviolet" for="password">Password</label>
+          <input type="password" class="form-control" name="password" id="password" [(ngModel)]="model.password" #password="ngModel" required />
+          <div *ngIf="f.submitted && !password.valid" class="help-block">Insert your password</div>
+        </div>
+        <div class="form-group">
+          <button [disabled]="loading" class="btn btn-action">Enter</button>
+          <!-- <a [routerLink]="['/register']" class="btn btn-link">Register</a> -->
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="loading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

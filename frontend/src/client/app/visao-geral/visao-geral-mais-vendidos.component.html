@@ -1,0 +1,15 @@
+<div class="card">
+
+  <div class="toolbar">
+    <h3 class="toolbar-title">
+      Produtos mais vendidos
+    </h3>
+  </div>
+  <div *ngIf="valores">
+    <tabs>
+      <tab tabTitle="{{item.key}}" *ngFor="let item of valores; let i = index" [active]="i == 0">
+        <div echarts [options]="ChartProdutos[item.key]" style="height: 220px;" class="col-md-12"></div>
+      </tab>
+    </tabs>
+  </div>
+</div>

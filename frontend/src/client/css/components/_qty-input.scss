@@ -1,0 +1,51 @@
+.qty-holder {
+  position: relative;
+  width: 110px;
+
+  .btn-minus,
+  .btn-plus {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    border-radius: 20px;
+    position: absolute;
+    top: 20px;
+    padding: 0;
+
+    @include breakpoint(xs) {
+      display: none;
+    }
+  }
+
+  .btn-minus {
+    left: 0;
+    font-size: em(18px);
+    background-color: color(status,warning);
+  }
+
+  .btn-plus {
+    right: 0;
+    background-color: color(status,ok);
+  }
+
+  .qty-label {
+    font-size: em(14px);
+    text-transform: lowercase;
+    color: color(txt,base);
+
+    @include breakpoint(xs) {
+      width: 100%;
+      text-align: center;
+    }
+  }
+
+  .qty-input {
+    width: 60px;
+    margin: 0 25px;
+    padding: 2px;
+
+    @include breakpoint(xs) {
+      margin: 0;
+    }
+  }
+}

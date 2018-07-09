@@ -1,0 +1,97 @@
+input[type="text"] {
+  width: 100%;
+  outline: none!important;
+  box-sizing: border-box;
+  padding: 9px 5px 10px 5px;
+  margin-bottom: 26px;
+  color: color(txt,dark);
+  border: 1px solid color(input,border);
+  background-color: color(backgroundLight);
+
+  &:focus {
+    border-color: color(primary, base);
+  }
+}
+
+input[type="password"] {
+  width: 100%;
+  outline: none!important;
+  box-sizing: border-box;
+  padding: 9px 5px 10px 5px;
+  margin-bottom: 26px;
+  color: color(txt,dark);
+  border: 1px solid color(input,border);
+  background-color: color(backgroundLight);
+
+  &:focus {
+    border-color: color(primary, base);
+  }
+}
+
+input[type="number"] {
+  width: 100%;
+  text-align: center;
+  outline: none!important;
+  box-sizing: border-box;
+  padding: 9px 5px 10px 5px;
+  margin-bottom: 26px;
+  color: color(txt,dark);
+  border: 1px solid color(input,border);
+  background-color: color(backgroundLight);
+
+  &:focus {
+    border-color: color(primary, base);
+  }
+}
+
+input[readonly] {
+  border: none;
+}
+
+label {
+  text-align: left;
+  text-transform: uppercase;
+  color: color(txt,secondary);
+  font-size: em(16px);
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+select {
+  width: 100%;
+  outline: none!important;
+  box-sizing: border-box;
+  padding: 8px 11px 9px 8px;
+  margin-bottom: 26px;
+  color: color(txt,dark);
+  font-weight: bold;
+  text-transform: uppercase;
+  border: 1px solid color(input,border);
+  background-color: color(backgroundLight);
+
+  &:focus {
+    border-color: color(primary, base);
+  }
+}
+
+.input-with-btn {
+  border: 1px solid color(input,border);
+  @include pseudoclearfix;
+
+  input[type="text"] {
+    border: none;
+    float: left;
+    max-width: 80%;
+    margin: 0;
+  }
+
+  button {
+    float: right;
+    font-size: em(23px);
+    padding: 5px 6px 0 0;
+    color: color(primary,base);
+    background-color: transparent;
+  }
+}

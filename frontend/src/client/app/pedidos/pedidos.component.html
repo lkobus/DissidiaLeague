@@ -1,0 +1,277 @@
+<div class="container-fluid main-container">
+
+  <div class="content-head">
+    <h3 class="content-title">
+      Ver pedidos
+    </h3>
+
+    <div class="col-md-2">
+      <select name="filterData" id="filterData" [(ngModel)]="filterData" (change)="onDataFilter()">
+        <option value="1">Hoje</option>
+        <option value="2">Semana atual</option>
+        <option value="3">Mês atual</option>
+        <option value="4">Últimos três meses</option>
+        <option value="5">Ano atual</option>
+      </select>
+    </div>
+
+    <button class="btn-slim-icon" [class.active]=true (click)="onDataFilter()">
+      <span>Recarregar</span>
+      <img src="assets/svg/return.svg" alt="Virar" title="Clique para atualizar" width="18px" height="18px">
+    </button>
+  </div>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-3">
+        <h3 class="toolbar-title">
+          Lista de pedidos
+        </h3>
+      </div>
+
+      <div class="col-md-3">
+          <select name="operacao" id="operacao" (change)="onOtherFilter()" [(ngModel)]="filterOperacao">
+            <option value="0">Operação</option>
+            <option value="1">Venda de Produtos</option>
+            <option value="102">Consumo Interno</option>
+            <option value="108">Perda/Quebra/Roubo</option>
+            <option value="115">Comodato Materiais</option>
+          </select>
+      </div>
+
+      <div class="col-md-3">
+        <select name="vendedores" id="vendedores" (change)="onOtherFilter()" [(ngModel)]="filterVendedor">
+          <option value="" selected>Vendedor</option>
+          <optgroup label="EXTERNO" *ngIf="listVDE.length > 0">
+            <option *ngFor="let vde of listVDE" [value]="vde.id">{{vde.nome}}</option>
+          </optgroup>
+          <optgroup label="INTERNO" *ngIf="listVDI.length > 0">
+            <option *ngFor="let vdi of listVDI" [value]="vdi.id">{{vdi.nome}}</option>
+          </optgroup>
+          <optgroup label="OUTROS" *ngIf="listVDOutros.length > 0">
+            <option *ngFor="let vd of listVDOutros" [value]="vd.id">{{vd.nome}}</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <select name="status" id="status" (change)="onOtherFilter()" [(ngModel)]="filterStatus">
+          <option value="0">Status</option>
+          <option value="1">Faturado</option>
+          <option value="2">Rejeitado</option>
+          <option value="5">Cancelado</option>
+          <option value="10">Devolvido</option>
+          <option value="6">Pendente</option>
+          <option value="3">Em processamento</option>
+          <option value="4">Em cancelamento</option>
+          <option value="7">Pronto para faturar</option>
+          <option value="8">Em faturamento</option>
+          <option value="9">Rejeitado SEFAZ</option>
+          <option value="11">Em processamento SEFAZ</option>
+          <option value="12">Enviado para SEFAZ</option>
+          <option value="13">Falha integração</option>
+        </select>
+      </div>
+
+    </div>
+
+    <table *ngIf="listPedidos" class="table order-table type-3">
+      <tr>
+        <th style="width: 15px"></th>
+        <th (click)="SortList(listPedidos, 'Data')" [ngClass]="{ 'asc': sortingDesc['Data'], 'desc': !sortingDesc['Data'], 'active': selectTableRow == 'Data' }">
+            <label>Data</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th (click)="SortList(listPedidos, 'Cliente.Nome')" [ngClass]="{ 'asc': sortingDesc['Cliente.Nome'], 'desc': !sortingDesc['Cliente.Nome'], 'active': selectTableRow == 'Cliente.Nome' }">
+            <label>Cliente</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th (click)="SortList(listPedidos, 'Vendedor.Nome')" [ngClass]="{ 'asc': sortingDesc['Vendedor.Nome'], 'desc': !sortingDesc['Vendedor.Nome'], 'active': selectTableRow == 'Vendedor.Nome' }" style="width: 72px">
+            <label>Vendedor</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th style="width:75px" (click)="SortList(listPedidos, 'Valor')" [ngClass]="{ 'asc': sortingDesc['Valor'], 'desc': !sortingDesc['Valor'], 'active': selectTableRow == 'Valor' }" class="txt-r">
+            <label>Valor</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th (click)="SortList(listPedidos, 'Desconto')" [ngClass]="{ 'asc': sortingDesc['Desconto'], 'desc': !sortingDesc['Desconto'], 'active': selectTableRow == 'Desconto' }" class="txt-r" style="width: 82px;">
+            <label>Desconto</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th hidden (click)="SortList(listPedidos, 'DataPagamento')" [ngClass]="{ 'asc': sortingDesc['DataPagamento'], 'desc': !sortingDesc['DataPagamento'], 'active': selectTableRow == 'DataPagamento' }">
+            <label>Data Pagto</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th (click)="SortList(listPedidos, 'MapaStatusDescricao')" [ngClass]="{ 'asc': sortingDesc['MapaStatusDescricao'], 'desc': !sortingDesc['MapaStatusDescricao'], 'active': selectTableRow == 'MapaStatusDescricao' }">
+            <label>Mapa</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th (click)="SortList(listPedidos, 'DataEntrega')" [ngClass]="{ 'asc': sortingDesc['DataEntrega'], 'desc': !sortingDesc['DataEntrega'], 'active': selectTableRow == 'DataEntrega' }">
+            <label>Data Entrega</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th (click)="SortList(listPedidos, 'FormaPagamento')" [ngClass]="{ 'asc': sortingDesc['FormaPagamento'], 'desc': !sortingDesc['FormaPagamento'], 'active': selectTableRow == 'FormaPagamento' }" style="width: 88px;">
+            <label>Forma Pagamento</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th style='width:150px;' (click)="SortList(listPedidos, 'StatusValor')" [ngClass]="{ 'asc': sortingDesc['StatusValor'], 'desc': !sortingDesc['StatusValor'], 'active': selectTableRow == 'StatusValor' }">
+            <label>Status</label>
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+        </th>
+        <th style='width:57px;'>
+        </th>
+      </tr>
+      <tr *ngFor="let pedido of listPedidos | paginate: { itemsPerPage: 10, currentPage: p }">
+        <td>
+          <div class="check-wrapper" *ngIf="HabilitaFaturarPedido(pedido)">
+            <input type="checkbox" class="check" name="checkFaturar" [id]="pedido.Id" (click)="onCheckPedidoFaturar(pedido.Id)">
+            <label [for]="pedido.Id"></label>
+          </div>
+        </td>
+        <td>{{pedido.Data}}</td>
+        <td>{{pedido.Cliente.Nome}}</td>
+        <td>{{pedido.Vendedor.Nome}}</td>
+        <td class="txt-r">{{pedido.Valor | currencyFormat}}</td>
+        <td class="txt-r">{{pedido.Desconto | currencyFormat}}</td>
+        <td hidden>{{pedido.DataPagamento}}</td>
+        <td>
+          <span class="mapa-name" *ngIf="pedido.MapaCodigo" [title]="pedido.MapaCodigo + '-' + pedido.MapaDescricao">{{pedido.MapaCodigo}} - {{pedido.MapaDescricao}}</span>
+          <span *ngIf="!pedido.MapaCodigo">-</span>
+          <br>
+          <small [class]="getStateClassMapa(pedido.MapaStatusCodigo)">{{pedido.MapaStatusDescricao}}</small>
+        </td>
+        <td>{{pedido.DataEntrega}}</td>
+        <td>{{pedido.FormaPagamento}}</td>
+        <td>
+          <p [class]="'status ' + getStateClass(pedido.StatusCodigo)">
+            <span class="status-txt">{{pedido.StatusValor}}</span>
+            <i style="margin-left: 4px" [class]="getStateIcon(pedido.StatusCodigo)"></i>
+            <span class="tooltip-help" *ngIf="(pedido.StatusCodigo == 2 || pedido.StatusCodigo == 9)  && pedido.AlertDetail">
+              <span class="tooltip-item">
+                <i class="fa fa-question-circle c-error"></i>
+              </span>
+              <span class="tooltip-content tooltip-content-big">
+                <span class="tooltip-text">
+                  {{pedido.AlertDetail}}
+                </span>
+              </span>
+            </span>
+          </p>
+
+        </td>
+        <td>
+          <i class="fa fa-file-code-o c-ok" *ngIf="pedido.StatusCodigo == 1" (click)="baixarXml(pedido.Id)" title="Baixar XML"></i>
+          <i class="fa fa-file-pdf-o c-pdf" *ngIf="pedido.StatusCodigo == 1" (click)="baixarDanfe(pedido.Id)" title="Baixar DANFe"></i>
+          <a *ngIf="pedido.TipoOperacaoCodigo == 0 || pedido.TipoOperacaoCodigo == 1" href="javascript:void(0)" [routerLink]="['/pedidoResumo', pedido.Id]" [title]="allowEdit(pedido) ? 'Editar pedido' : 'Visualizar pedido'">
+            <i class="icon-pen-2"></i>
+          </a>
+          <a *ngIf="pedido.TipoOperacaoCodigo > 1" href="javascript:void(0)" [routerLink]="['/pedidoResumo/outrasOperacoes', pedido.Id]" [title]="allowEdit(pedido) ? 'Editar pedido' : 'Visualizar pedido'">
+            <i class="icon-pen-2"></i>
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <div class="container-floating">
+      <div class="nds nd3">
+        <button [routerLink]="['/addPedido/outrasOperacoes']" title="Outras operações">
+          <div class="t-left t-sm" data-tooltip="Outras operações">
+            <span class="letter">
+              O
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <div class="nds nd2">
+        <button (click)="openModalConfirmacao()" [disabled]="listPedidosFaturar.length < 1">
+          <div class="t-left t-sm" data-tooltip="Faturar">
+            <span class="letter">
+              F
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <div class="nds nd1">
+        <button [routerLink]="['/addPedido']" title="Novo pedido">
+          <div class="t-left t-sm" data-tooltip="Novo pedido">
+            <span class="letter">
+              N
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <div class="floating-button">
+        <span class="letter">
+          <i class="fa fa-bars"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR">
+      </pagination-controls>
+    </div>
+
+  </div>
+
+</div>
+
+<modal #modalConfirmacao title="Faturar Pedido" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Faturar Pedido</span>
+  </modal-header>
+
+  <modal-content>
+    <h2 style="color: black">Confirma o faturamto dos pedidos selecionados?</h2>
+    <h3 style="color: black">*As notas fiscais dos pedidos selecionados e não associados a um mapa de entrega, não possuirão informações de frete.</h3>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="closeModalConfirmacao()">Não</button>
+    <button class="btn btn-primary" (click)="faturarPedidos()">Sim</button>
+  </modal-footer>
+</modal>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

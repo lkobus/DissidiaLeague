@@ -1,0 +1,25 @@
+$font-path: "../fonts" !default;
+
+@font-face {
+  font-family: 'Lato';
+  src: url('#{$font-path}/lato-bold-webfont.woff2') format('woff2'),
+  url('#{$font-path}/lato-bold-webfont.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('#{$font-path}/lato-light-webfont.woff2') format('woff2'),
+  url('#{$font-path}/lato-light-webfont.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('#{$font-path}/lato-regular-webfont.woff2') format('woff2'),
+  url('#{$font-path}/lato-regular-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}

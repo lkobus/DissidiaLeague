@@ -1,0 +1,92 @@
+<div class="container-fluid main-container">
+
+  <modal-confirmacao #modalConfirmar (onConfirmar)="excluirCaminhao($event)"></modal-confirmacao>
+
+  <div class="card">
+    <div class="toolbar">
+
+      <div class="col-md-6">
+        <h3 class="toolbar-title">
+          Caminhões
+        </h3>
+      </div>
+
+      <div class="col-md-6">
+        <div class="input-with-btn">
+          <input type="text" placeholder="Busca" [(ngModel)]="inputSearch" (keyup)="onSearchType($event.target.value)" />
+          <button>
+            <i class="icon-loupe"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <table class="table">
+      <tr>
+        <th (click)="sort('placa')" [ngClass]="{ 'asc': isDesc, 'desc': !isDesc }">
+          <label>Placa</label>
+        </th>
+        <th (click)="sort('descricao')" [ngClass]="{ 'asc': isDesc, 'desc': !isDesc }">
+          <label>Descrição</label>
+        </th>
+        <th (click)="sort('capacidade')" [ngClass]="{ 'asc': isDesc, 'desc': !isDesc }">
+          <label>Capacidade</label>
+        </th>
+        <th (click)="sort('uf')" [ngClass]="{ 'asc': isDesc, 'desc': !isDesc }">
+          <label>UF</label>
+        </th>
+
+        <th>
+
+        </th>
+      </tr>
+      <!-- loading -->
+      <tr *ngIf="isLoading">
+        <td colspan=5>
+          <div>
+            <label>Carregando ...</label>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngFor="let caminhao of dados | paginate: { itemsPerPage: 10, currentPage: p }" [class.selected]="caminhao === selectedRow"
+        (click)="onSelect(caminhao)">
+
+        <td>{{formatarPlaca(caminhao.Placa)}}</td>
+
+        <td>{{caminhao.Descricao}}</td>
+
+        <td>{{caminhao.Capacidade}}</td>
+
+        <td>{{caminhao.UF}}</td>
+
+        <td>
+          <a href="" [routerLink]="['/updateCaminhao', caminhao.DocumentId]">
+            <i class="icon-pen-2"></i>
+          </a>
+
+          <a style="cursor: pointer" (click)="abrirConfirmacaoExclusao(caminhao)">
+            <i class="icon-x c-error"></i>
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR"></pagination-controls>
+    </div>
+  </div>
+</div>
+
+<div class="container-floating">
+  <div class="floating-button">
+    <span class="letter">
+      <div class="t-left t-sm" data-tooltip="Novo caminhão">
+        <button [routerLink]="['/addCaminhao']" class="btn-clean">
+          <span class="fa fa-plus"></span>
+        </button>
+      </div>
+    </span>
+  </div>
+</div>

@@ -1,0 +1,544 @@
+<div class="container-fluid main-container cards-2">
+
+  <div class="col-md-6 no-padding-r">
+    <div class="card card-transparent below">
+      <div class="toolbar">
+        <div class="col-md-5">
+          <h3 class="toolbar-title">
+            Pedidos disponíveis
+          </h3>
+        </div>
+
+        <div class="col-md-3">
+          <select name="vendedores" id="vendedores" (change)="onVendedorFilter()" [(ngModel)]="filterVendedor">
+            <option value="" selected>Vendedor</option>
+            <optgroup label="EXTERNO" *ngIf="listVDE.length > 0">
+              <option *ngFor="let vde of listVDE" [value]="vde.id">{{vde.nome}}</option>
+            </optgroup>
+            <optgroup label="INTERNO" *ngIf="listVDI.length > 0">
+              <option *ngFor="let vdi of listVDI" [value]="vdi.id">{{vdi.nome}}</option>
+            </optgroup>
+            <optgroup label="OUTROS" *ngIf="listVDOutros.length > 0">
+              <option *ngFor="let vd of listVDOutros" [value]="vd.id">{{vd.nome}}</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <div class="input-with-btn">
+            <input type="text" placeholder="Buscar" [(ngModel)]="inputSearchPedidosDisponiveis" (keyup)="inputSearchPedidosDisponiveisOnFilter($event.target.value)"
+            />
+            <button>
+              <i class="icon-loupe"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="col-md-6">
+          <h4 class="toolbar-subtitle">Peso</h4>
+          <input type="text" [value]="formatDecimal(getPesoTotalPedDisp())" disabled>
+        </div>
+
+        <div class="col-md-3">
+          <h4 class="toolbar-subtitle">Volume</h4>
+          <input type="text" [value]="formatDecimal(getVolumeTotalPedDisp())" disabled>
+        </div>
+        <div class="col-md-3">
+          <h4 class="toolbar-subtitle">Qtd. Pedidos</h4>
+          <input type="text" [value]="listPedidosDisponiveis.length" disabled>
+        </div>
+      </div>
+
+      <table class="table order-table type-5">
+        <tr>
+          <th (click)="SortList(listPedidosDisponiveis, 'DataEntrega')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+            <div>
+              <label>Entrega</label>
+            </div>
+
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+          </th>
+          <th (click)="SortList(listPedidosDisponiveis, 'ClienteFantasia')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+            <div>
+              <label>Cliente</label>
+            </div>
+
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+          </th>
+          <th (click)="SortList(listPedidosDisponiveis, 'Valor')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }" class="txt-r"
+            style="width: 95px;">
+            <div>
+              <label>Valor</label>
+            </div>
+
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+          </th>
+          <th (click)="SortList(listPedidosDisponiveis, 'PesoTotal')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }" class="txt-r">
+            <div>
+              <label>Peso</label>
+            </div>
+
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+          </th>
+          <th (click)="SortList(listPedidosDisponiveis, 'Volume Total')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }" class="txt-r">
+            <div>
+              <label>Volume</label>
+            </div>
+
+            <span class="order-icons-wrapper">
+              <i class="fa fa-chevron-up order-icons"></i>
+              <i class="fa fa-chevron-down order-icons"></i>
+            </span>
+          </th>
+          <td>
+            <div class="check-wrapper">
+              <input type="checkbox" class="check" name="checkFaturar" [id]="selecionarPedidosDisp" (change)="selectPedidos($event.target.checked, false)"
+                [(ngModel)]="selecionarPedidosDisp">
+              <label [for]="selecionarPedidosDisp"></label>
+            </div>
+          </td>
+        </tr>
+        <tr *ngFor="let pedido of listPedidosDisponiveis | paginate: { id: 'paginationPedidosDisponiveis', itemsPerPage: 12, currentPage: p1 }">
+          <td>{{pedido.DataEntrega}}</td>
+          <td>{{pedido.ClienteFantasia}}</td>
+          <td class="txt-r">{{pedido.Valor | currencyFormat}}</td>
+          <td class="txt-r">{{formatDecimal(pedido.PesoTotal)}}</td>
+          <td class="txt-r">{{formatDecimal(pedido.VolumeTotal)}}</td>
+          <td>
+            <a *ngIf="!selecionarPedidosDisp" href="" [routerLink]="" title="Adicionar pedido no mapa de entrega" (click)="addPedidoEntrega(pedido)">
+              <i class="fa fa-arrow-right c-ok"></i>
+            </a>
+
+            <div *ngIf="selecionarPedidosDisp" class="check-wrapper">
+              <input type="checkbox" class="check" name="checkFaturar" [id]="pedido.Id" [(ngModel)]="pedido.Selecionado">
+              <label [for]="pedido.Id"></label>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="toolbar-bottom">
+        <pagination-controls id="paginationPedidosDisponiveis" (pageChange)="p1 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+          previousLabel="ANTERIOR" #paginationPedidosDisponiveis>
+        </pagination-controls>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card block-toggle card-transparent active" [ngClass]="{'active': !showBlock}">
+      <div class="toolbar">
+        <div class="col-md-5">
+          <h3 class="toolbar-title">
+            Mapa de entrega
+          </h3>
+        </div>
+        <div class="col-md-5">
+          <select name="mapas" id="mapas" (change)="onMapaSelected($event.target.value)" [value]="this.mapaSelecionado ? this.mapaSelecionado.Id : '0'">
+            <option value="0" selected>Selecionar...</option>
+            <option *ngFor="let mapa of sourceMapas" [value]="mapa.Id">{{mapa.Codigo}} - {{mapa.Descricao}}</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button title="Adicionar mapa de entrega" (click)="openModalCadastro()" class="w100">
+            <i class="fa fa-plus"></i>
+          </button>
+        </div>
+
+        <div class="toggle-button" *ngIf="mapaSelecionado != null" (click)="showBlock= !showBlock">
+          <i class="fa fa-chevron-down"></i>
+        </div>
+      </div>
+
+      <div *ngIf="mapaSelecionado != null" class="block-content">
+        <div class="toolbar">
+          <div class="col-md-7">
+            <h4 class="toolbar-subtitle">Veículo</h4>
+            <select id="veiculo" name="veiculo" [(ngModel)]="mapaSelecionado.VeiculoId" (change)="onVeiculoChange($event.target.value)">
+              <option *ngFor="let veiculo of listVeiculos" [value]="veiculo.DocumentId">{{veiculo.Placa}} - {{veiculo.Descricao}}</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <h4 class="toolbar-subtitle">Peso Total</h4>
+            <input type="text" [value]="formatDecimal(mapaSelecionado.PesoTotal)" disabled>
+          </div>
+          <div class="col-md-2">
+            <h4 class="toolbar-subtitle">Vol. Total</h4>
+            <input type="text" [class]="getClassForVolume()" [value]="formatDecimal(mapaSelecionado.VolumeTotal)" disabled>
+          </div>
+        </div>
+
+        <table class="table type-5 order-table" style="margin-bottom: 13px">
+          <tr>
+            <th (click)="SortList(listPedidosMapaSelecionado, 'DataEntrega')" [ngClass]="{ 'asc': sortingDesc['DataEntrega'], 'desc': !sortingDesc['DataEntrega'], 'active': selectTableRow == 'DataEntrega' }">
+              <div>
+                <label>Entrega</label>
+              </div>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+            <th (click)="SortList(listPedidosMapaSelecionado, 'ClienteFantasia')" [ngClass]="{ 'asc': sortingDesc['ClienteFantasia'], 'desc': !sortingDesc['ClienteFantasia'], 'active': selectTableRow == 'ClienteFantasia' }">
+              <div>
+                <label>Cliente</label>
+              </div>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+            <th (click)="SortList(listPedidosMapaSelecionado, 'Valor')" [ngClass]="{ 'asc': sortingDesc['Valor'], 'desc': !sortingDesc['Valor'], 'active': selectTableRow == 'Valor' }"
+              class="txt-r" style="width: 95px;">
+              <div>
+                <label>Valor</label>
+              </div>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+            <th (click)="SortList(listPedidosMapaSelecionado, 'PesoTotal')" [ngClass]="{ 'asc': sortingDesc['PesoTotal'], 'desc': !sortingDesc['PesoTotal'], 'active': selectTableRow == 'PesoTotal' }"
+              class="txt-r">
+              <label>Peso</label>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+            <th (click)="SortList(listPedidosMapaSelecionado, 'VolumeTotal')" [ngClass]="{ 'asc': sortingDesc['VolumeTotal'], 'desc': !sortingDesc['VolumeTotal'], 'active': selectTableRow == 'VolumeTotal' }"
+              class="txt-r">
+              <div>
+                <label>Volume</label>
+              </div>
+              <span class="order-icons-wrapper">
+                <i class="fa fa-chevron-up order-icons"></i>
+                <i class="fa fa-chevron-down order-icons"></i>
+              </span>
+            </th>
+            <td>
+              <div class="check-wrapper">
+                <input title="Selecionar todos" type="checkbox" class="check" name="checkPedidosMapa" [id]="checkPedidosMapa" (change)="selectPedidos($event.target.checked, true)"
+                  [(ngModel)]="selecionarPedidosMapa">
+                <label [for]="checkPedidosMapa"></label>
+              </div>
+            </td>
+          </tr>
+          <tr *ngFor="let pedido of listPedidosMapaSelecionado | paginate: { id: 'paginationPedidosMapa', itemsPerPage: 10, currentPage: p2 }">
+            <td>{{pedido.DataEntrega}}</td>
+            <td>{{pedido.ClienteFantasia}}</td>
+            <td class="txt-r">{{pedido.Valor | currencyFormat}}</td>
+            <td class="txt-r">{{formatDecimal(pedido.PesoTotal)}}</td>
+            <td class="txt-r">{{formatDecimal(pedido.VolumeTotal)}}</td>
+            <td>
+              <a *ngIf="!selecionarPedidosMapa" href="" [routerLink]="" title="Remover pedido do mapa de entrega" (click)="removePedidoEntrega(pedido)">
+                <i class="fa fa-arrow-left c-error"></i>
+              </a>
+              <div *ngIf="selecionarPedidosMapa" class="check-wrapper">
+                <input type="checkbox" class="check" name="checkFaturar" [id]="pedido.Id" [(ngModel)]="pedido.Selecionado">
+                <label [for]="pedido.Id"></label>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <div class="toolbar-bottom">
+          <pagination-controls id="paginationPedidosMapa" (pageChange)="p2 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+            previousLabel="ANTERIOR" #paginationPedidosMapa>
+          </pagination-controls>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="map-wrapper" *ngIf="show" [@myAnimation]>
+    <ngui-map #mapa minZoom="3" zoom="13" styles='[
+      {
+          "featureType": "all",
+          "elementType": "all",
+          "stylers": [
+              {
+                  "hue": "#008eff"
+              }
+          ]
+      },
+      {
+          "featureType": "poi",
+          "elementType": "all",
+          "stylers": [
+              {
+                  "visibility": "off"
+              }
+          ]
+      },
+      {
+          "featureType": "road",
+          "elementType": "all",
+          "stylers": [
+              {
+                  "saturation": "0"
+              },
+              {
+                  "lightness": "0"
+              }
+          ]
+      },
+      {
+          "featureType": "transit",
+          "elementType": "all",
+          "stylers": [
+              {
+                  "visibility": "off"
+              }
+          ]
+      },
+      {
+          "featureType": "water",
+          "elementType": "all",
+          "stylers": [
+              {
+                  "visibility": "simplified"
+              },
+              {
+                  "saturation": "-60"
+              },
+              {
+                  "lightness": "-20"
+              }
+          ]
+      }]' mapTypeControl="false" (mapReady$)="onMapReady($event)" mapTypeId="roadmap">
+      <marker *ngFor="let pedido of filterPedidosDisponiveis()" icon="assets/redMarker.png" [title]="'Pedido disponível\r\nCliente: ' + pedido.ClienteFantasia + '\r\nValor: ' + formatCurrency(pedido.Valor)"
+        [position]="[pedido.ClienteLat, pedido.ClienteLng]" (click)="ontMarkerDisponivelClick($event, pedido)">
+      </marker>
+      <marker icon="assets/home-pin.png" [position]="[empresa.latitude, empresa.longitude]">
+      </marker>
+      <marker *ngFor="let pedido of filterPedidosMapaSelecionado()" icon="assets/greenMarker.png" [title]="'Pedido adicionado\r\nCliente: ' + pedido.ClienteFantasia + '\r\nValor: ' + formatCurrency(pedido.Valor)"
+        [position]="[pedido.ClienteLat, pedido.ClienteLng]" (click)="ontMarkerMapaClick($event, pedido)"></marker>
+
+      <info-window id="pedidoDisponivelDetail">
+        <div class="row">
+          <div class="toolbar">
+            <div class="col-md-12">
+              <h3 class="toolbar-title">
+                Pedido
+              </h3>
+            </div>
+          </div>
+        </div>
+        <table class="table" *ngIf="pedidoDetail" style="font-size: 15px">
+          <tr>
+            <th>Entrega</th>
+            <th>Cliente</th>
+            <th class="txt-r" style="width: 95px;">Valor</th>
+            <th class="txt-r">Peso</th>
+            <th class="txt-r">Volume</th>
+            <th>
+            </th>
+          </tr>
+          <tr>
+            <td>{{pedidoDetail.DataEntrega}}</td>
+            <td>{{pedidoDetail.ClienteFantasia}}</td>
+            <td class="txt-r">{{pedidoDetail.Valor | currencyFormat}}</td>
+            <td class="txt-r">{{formatDecimal(pedidoDetail.PesoTotal)}}</td>
+            <td class="txt-r">{{formatDecimal(pedidoDetail.VolumeTotal)}}</td>
+            <td>
+              <button class="btn-action b-ok" title="Adicionar pedido no mapa de entrega" (click)="addPedidoEntrega(pedidoDetail)">
+                <i class="fa fa-plus"></i>
+              </button>
+            </td>
+          </tr>
+        </table>
+      </info-window>
+      <info-window id="pedidoMapaDetail">
+        <div class="row">
+          <div class="toolbar">
+            <div class="col-md-12">
+              <h3 class="toolbar-title">
+                Pedido
+              </h3>
+            </div>
+          </div>
+          <table class="table" *ngIf="pedidoDetail" style="font-size: 15px">
+            <tr>
+              <th>Entrega</th>
+              <th>Cliente</th>
+              <th class="txt-r" style="width: 95px;">Valor</th>
+              <th class="txt-r">Peso</th>
+              <th class="txt-r">Volume</th>
+              <th></th>
+            </tr>
+            <tr>
+              <td>{{pedidoDetail.DataEntrega}}</td>
+              <td>{{pedidoDetail.ClienteFantasia}}</td>
+              <td class="txt-r">{{pedidoDetail.Valor | currencyFormat}}</td>
+              <td class="txt-r">{{formatDecimal(pedidoDetail.PesoTotal)}}</td>
+              <td class="txt-r">{{formatDecimal(pedidoDetail.VolumeTotal)}}</td>
+              <td>
+                <button class="btn-action b-error" title="Remover pedido do mapa de entrega" (click)="removePedidoEntrega(pedidoDetail)">
+                  <i class="fa fa-minus"></i>
+                </button>
+              </td>
+            </tr>
+          </table>
+
+        </div>
+      </info-window>
+
+    </ngui-map>
+  </div>
+
+  <div class="container-floating">
+    <div [class]="getClassFb(2)" *ngIf="selecionarPedidosMapa">
+      <button (click)="abrirModalMoverPedidos(false)">
+        <div class="t-left t-sm" data-tooltip="Remover pedidos">
+          <span class="letter">
+            <span class="fa fa-arrow-left"></span>
+          </span>
+        </div>
+      </button>
+    </div>
+    <div [class]="getClassFb(1)" *ngIf="selecionarPedidosDisp">
+      <button (click)="abrirModalMoverPedidos(true)">
+        <div class="t-left t-sm" data-tooltip="Adicionar pedidos">
+          <span class="letter">
+            <span class="fa fa-arrow-right"></span>
+          </span>
+        </div>
+      </button>
+    </div>
+    <div class="nds nd2" [class.nd3]="edited || listPedidosMapaSelecionado.length > 0" *ngIf="mapaSelecionado && mapaSelecionado.Id">
+      <button (click)="openModalConfirmacao()">
+        <div class="t-left t-sm" data-tooltip="Excluir mapa">
+          <span class="letter">
+            <i class="fa fa-trash-o"></i>
+          </span>
+        </div>
+      </button>
+    </div>
+    <div class="nds nd2" *ngIf="mapaSelecionado && mapaSelecionado.Id && listPedidosMapaSelecionado.length > 0 && !edited">
+      <button (click)="faturarMapaSelecionado()">
+        <div class="t-left t-sm" data-tooltip="Faturar mapa">
+          <span class="letter">
+            F
+          </span>
+        </div>
+      </button>
+    </div>
+    <div class="nds nd2" *ngIf="edited">
+      <button (click)="salvar()">
+        <div class="t-left t-sm" data-tooltip="Salvar alterações">
+          <span class="letter">
+            <span class="fa fa-floppy-o"></span>
+          </span>
+        </div>
+      </button>
+    </div>
+    <div class="nds nd1">
+      <button (click)="show = !show">
+        <div class="t-left t-sm" data-tooltip="Mostrar mapa">
+          <span class="letter">
+            <i class="fa fa-globe"></i>
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="floating-button">
+      <span class="letter">
+        <i class="fa fa-bars"></i>
+      </span>
+    </div>
+  </div>
+
+</div>
+
+<modal #modalCadastro title="Cadastrar mapa de entrega" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Cadastrar mapa de entrega</span>
+  </modal-header>
+
+  <modal-content>
+    <div class="row">
+      <div class="col-md-12" *ngIf="mapaCadastro">
+        <label for="codigo">Descrição</label>
+        <input [(ngModel)]="mapaCadastro.Descricao" id="mapacadastro-descricao" placeholder="Descrição" type="text" />
+      </div>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="closeModalCadastro()">Cancelar</button>
+    <button class="btn btn-primary" (click)="salvarCadastroMapa()">Salvar</button>
+  </modal-footer>
+</modal>
+
+<modal #modalMoverPedidoDisp title="Mover pedido" [closeOnOutsideClick]="false">
+
+  <modal-content>
+    <div class="row">
+      <div class="col-md-12">
+        <p>Deseja adicionar todos os pedidos selecionados para o mapa de entrega selecionado?</p>
+      </div>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="modalMoverPedidoDisp.close()">Cancelar</button>
+    <button class="btn btn-primary" (click)="moverTodosPedidosMapa(true)">Confirmar</button>
+  </modal-footer>
+</modal>
+
+<modal #modalMoverPedidoMapa title="Retirar pedido" [closeOnOutsideClick]="false">
+
+  <modal-content>
+    <div class="row">
+      <div class="col-md-12">
+        <p>Deseja retirar todos os pedidos selecionados do mapa de entrega selecionado?</p>
+      </div>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="modalMoverPedidoMapa.close()">Cancelar</button>
+    <button class="btn btn-primary" (click)="moverTodosPedidosMapa(false)">Confirmar</button>
+  </modal-footer>
+</modal>
+
+<modal #modalConfirmacao title="Excluir Mapa de Entrega" [closeOnOutsideClick]="false" *ngIf="mapaSelecionado && mapaSelecionado.Id">
+  <modal-header>
+    <span>Excluir Mapa de Entrega</span>
+  </modal-header>
+
+  <modal-content>
+    <h3 style="color: black">Confirma a exclusão do mapa de entrega "{{mapaSelecionado.Codigo}} - {{mapaSelecionado.Descricao}}"?</h3>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="closeModalConfirmacao()">Não</button>
+    <button class="btn btn-primary" (click)="removerMapaSelecionado()">Sim</button>
+  </modal-footer>
+</modal>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

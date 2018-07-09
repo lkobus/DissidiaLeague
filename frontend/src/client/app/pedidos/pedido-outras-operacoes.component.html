@@ -1,0 +1,333 @@
+<div class="container-fluid main-container order-page">
+
+  <div class="card">
+
+    <div class="toolbar">
+      <div class="col-md-10">
+        <h3 class="toolbar-title">
+          <span>Outras Operações</span>
+        </h3>
+      </div>
+
+      <div class="col-md-2" *ngIf="!isInserting">
+        <select name="" id="" disabled>
+          <option value="">{{pedido.StatusValor}}</option>
+        </select>
+      </div>
+    </div>
+
+    <table class="table">
+      <tr>
+        <th style="width: 20%">Operação</th>
+        <th style="width: 30%">Cliente</th>
+        <th>Informações Adicionais</th>
+        <th style="width: 140px">Valor total</th>
+      </tr>
+      <tr>
+        <td>
+          <select id="tipoOperacao" name="tipoOperacao" [disabled]="!isInserting"
+            [(ngModel)]="pedido.TipoOperacaoCodigo" (change)="onChangeTipoOperacao()">
+            <option value="102">CONSUMO INTERNO</option>
+            <option value="108">PERDA/QUEBRA/ROUBO</option>
+            <option *ngIf="!isInserting" value="115">COMODATO MATERIAIS</option>
+          </select>
+        </td>
+        <td>{{pedido.Cliente.Nome}}</td>
+        <td>
+          <input id="infCompl" name="infCompl" type="text" [(ngModel)]="pedido.InformacaoComplementar"
+            [disabled]="!isInserting" [readOnly]="!isInserting">
+        </td>
+        <td>{{pedido.Valor | currencyFormat}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="col-md-12" *ngIf="!(pedido.TipoOperacaoCodigo == 115)">
+    <tp-accordion-group>
+      <tp-accordion [title]="['Produtos']" [active]="pedido.TipoOperacaoCodigo">
+        <div *ngIf="isInserting && !pedido.TipoOperacaoCodigo" style="padding: 10px">
+          <span>
+            Por favor, selecione um tipo de operação antes de listar os produtos
+          </span>
+        </div>
+        <div *ngIf="(allowEdit || isInserting) && pedido.TipoOperacaoCodigo" class="input-with-btn" style="position: relative;">
+          <input #inputProdutoSearch type="text" placeholder="Buscar o produto desejado, sku ou código de barra" [(ngModel)]="inputSearchProduto"
+            (keyup)="onInputSearchProduto($event.target.value)" (keyup.enter)="quicklyAddProdutoEdicao()">
+          <button tabindex="-1">
+            <i class="icon-loupe"></i>
+          </button>
+
+          <div class="search-box" [ngClass]="{ 'active': viewProdutos.length > 0 }" style="overflow-y: auto;">
+            <ul class="search-results" id="listSearchProducts">
+              <li class="search-result last" *ngFor="let produto of viewProdutos">
+                <div class="search-details">
+                  <span class="search-name" title="">
+                    <span class="fa fa-info-circle more-info" [title]="produto.Nome"></span>
+                    {{produto.Codigo}} - {{produto.Nome}}
+                  </span>
+                  <span class="search-price" title="" style="width: 40%">
+                    <label [for]="produto.Id"></label>
+                    <input [id]="produto.Id" [name]="produto.Id" kzMaskCurrency type="text" [(ngModel)]="produto.PrecoVenda" placeholder="Preço"
+                      style="width: 60%; border: 1px solid #d9dce1">
+                  </span>
+                </div>
+                <div class="qty-bar" style="width: 25%">
+                  <button class="buttonMinus qty-btn minus-btn" (click)="decQtdProdutoView(produto)">
+                    <span class="fa fa-minus-circle" title="Diminuí Quantidade"></span>
+                  </button>
+                  <div class="qty-status">
+                    <input class="qty-search-p qty qty-product" type="text" [(ngModel)]="produto.Quantidade">
+                  </div>
+                  <button class="qty-btn plus-btn" (click)="incQtdProdutoView(produto)">
+                    <span class="fa fa-plus-circle" title="Aumenta Quantidade"></span>
+                  </button>
+                </div>
+                <div class="search-details" style="width: 5%; float: right; text-align: center">
+                  <button class="btn-absolute" title="Adicionar produto" (click)="addProdutoEdicao(produto)">
+                    <span>
+                      <i class="icon-plus c-ok"></i>
+                    </span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="products-grid-container">
+          <ul class="itens">
+            <li class="item" *ngFor="let produto of pedido.Produtos">
+              <div class="heading-container">
+                <span class="select-name-txt" [title]="produto.Nome">
+                  <span class="txt">{{produto.Nome}}</span>
+                </span>
+                <div [hidden]="!allowEdit">
+                  <span class="select-name-txt" (click)="removeProdutoEdicao(produto.Id)">
+                    <i class="icon-x c-error"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="content">
+                <span class="fa fa-info-circle more-info" title="{{produto.Nome}}"></span>
+
+                <div class="values">
+                  <span class="sku" title="">{{produto.Codigo}}</span>
+                  <span class="unitary-price unitarioP1745" title="">{{produto.ValorUnitario | currencyFormat}} UN</span>
+                  <span class="bundle-price" title="">
+                    <span class="tooltip-help">
+                      <span class="tooltip-item">
+                        <b class="with-input">R$</b>
+                        <input type="text" kzMaskCurrency [(ngModel)]="produto.ValorUnidade" placeholder="0,00" [disabled]="!allowEdit" [readonly]="!allowEdit"
+                          (change)="onChangeProdutoPedido(produto)">
+                      </span>
+                    </span>
+                  </span>
+                </div>
+                <div class="item-image">
+                  <img class="mCS_img_loaded" [src]="getProdutoImageURL(produto.Id)">
+                </div>
+              </div>
+              <button *ngIf="allowEdit" class="btn-slim estoque" [ngClass]="{ 'b-ok': (produto.Alert == 0 || produto.Alert == 4), 'b-warning': (produto.Alert == 1 || produto.Alert == 5), 'b-error':  (produto.Alert == 2 || produto.Alert == 6) }">Estoque: {{produto.Estoque}} {{produto.UnidadeMedida}}</button>
+              <div class="qty-bar" [ngClass]="{ 'b-error': allowEdit && (produto.Alert == 4 || produto.Alert == 5 || produto.Alert == 6) }">
+                <button class="qty-btn minus-btn" (click)="decQtdProdutoPedido(produto)" [disabled]="!allowEdit">
+                  <span class="fa fa-minus-circle gray" title="Diminuí Quantidade"></span>
+                </button>
+                <div class="qty-status">
+                  <span class="tooltip-help">
+                    <span class="tooltip-item">
+                      <input class="qty qty-product" type="text" [(ngModel)]="produto.Quantidade" (change)="onChangeProdutoPedido(produto)" [disabled]="!allowEdit">
+                      <span class="qty-span" title="">{{produto.UnidadeMedida}}</span>
+                    </span>
+                    <span class="tooltip-content" *ngIf="allowEdit && (produto.Alert == 4 || produto.Alert == 5 || produto.Alert == 6)">
+                      <span class="tooltip-text">
+                        Estoque insuficiente
+                      </span>
+                    </span>
+                  </span>
+                </div>
+                <button class="qty-btn plus-btn" (click)="incQtdProdutoPedido(produto)" [disabled]="!allowEdit">
+                  <span class="fa fa-plus-circle gray" title="Aumenta Quantidade"></span>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+
+  <div class="col-md-12" *ngIf="pedido.TipoOperacaoCodigo == 108" style="margin-top: 10px; margin-bottom: 100px">
+    <tp-accordion-group *ngIf="isInserting || allowEdit || pedido.AtivosDeGiro.length > 0">
+      <tp-accordion [title]="['Ativos']" [active]="pedido.TipoOperacaoCodigo">
+        <div *ngIf="(allowEdit || isInserting) && pedido.TipoOperacaoCodigo" class="input-with-btn" style="position: relative;">
+          <input #inputAtivoGiroSearch type="text" placeholder="Buscar o ativo de giro desejado" [(ngModel)]="inputSearchAtivoGiro"
+            (keyup)="onInputSearchAtivoGiro($event.target.value)" (keyup.enter)="quicklyAddAtivoEdicao()">
+          <button tabindex="-1">
+            <i class="icon-loupe"></i>
+          </button>
+
+          <div class="search-box" [ngClass]="{ 'active': viewAtivosGiro.length > 0 }" style="overflow-y: auto;">
+            <ul class="search-results" id="listSearchProducts">
+              <li class="search-result last" *ngFor="let ativo of viewAtivosGiro">
+                <div class="search-details">
+                  <span class="search-name" title="">
+                    <span class="fa fa-info-circle more-info" [title]="ativo.Nome"></span>
+                    {{ativo.Codigo}} - {{ativo.Nome}}
+                  </span>
+                </div>
+                <div class="qty-bar" style="width: 25%">
+                  <button class="buttonMinus qty-btn minus-btn" (click)="decQtdAtivoView(ativo)">
+                    <span class="fa fa-minus-circle" title="Diminuí Quantidade"></span>
+                  </button>
+                  <div class="qty-status">
+                    <input class="qty-search-p qty qty-product" type="text" [(ngModel)]="ativo.Quantidade">
+                  </div>
+                  <button class="qty-btn plus-btn" (click)="incQtdAtivoView(ativo)">
+                    <span class="fa fa-plus-circle" title="Aumenta Quantidade"></span>
+                  </button>
+                </div>
+                <div class="search-details" style="width: 5%; float: right; text-align: center">
+                  <button class="btn-absolute" title="Adicionar ativo de giro" (click)="addAtivoEdicao(ativo)">
+                    <span>
+                      <i class="icon-plus c-ok"></i>
+                    </span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="products-grid-container">
+          <ul class="itens only-img">
+            <li class="item" *ngFor="let ativo of pedido.AtivosDeGiro">
+              <div class="heading-container">
+                <span class="select-name-txt" [title]="ativo.Nome">
+                  <span class="txt">{{ativo.Codigo}} - {{ativo.Nome}}</span>
+                </span>
+                <div [hidden]="!allowEdit">
+                  <span class="select-name-txt" (click)="removeAtivoEdicao(ativo.Id)">
+                    <i class="icon-x c-error"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="content">
+                <div class="item-image">
+                  <img class="mCS_img_loaded" [src]="getAtivoGiroImageURL(ativo.Id)">
+                </div>
+              </div>
+              <div class="qty-bar">
+                <button class="qty-btn minus-btn" (click)="decQtdAtivoPedido(ativo)" [disabled]="!allowEdit">
+                  <span class="fa fa-minus-circle gray" title="Diminuí Quantidade"></span>
+                </button>
+                <div class="qty-status">
+                  <span class="tooltip-help">
+                    <span class="tooltip-item">
+                      <input class="qty qty-product" type="text" [(ngModel)]="ativo.Quantidade" [disabled]="!allowEdit">
+                      <span class="qty-span" title="">UN</span>
+                    </span>
+                  </span>
+                </div>
+                <button class="qty-btn plus-btn" (click)="incQtdAtivoPedido(ativo)" [disabled]="!allowEdit">
+                  <span class="fa fa-plus-circle gray" title="Aumenta Quantidade"></span>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+
+  <!-- COMODATO -->
+  <div class="col-md-12" *ngIf="pedido.TipoOperacaoCodigo == 115" style="margin-top: 10px; margin-bottom: 100px">
+    <tp-accordion-group *ngIf="isInserting || allowEdit || pedido.ItemsComodato.length > 0">
+      <tp-accordion [title]="['Comodato']" [active]="pedido.TipoOperacaoCodigo">
+
+        <div class="products-grid-container">
+          <ul class="itens only-img">
+            <li class="item" *ngFor="let ativo of pedido.ItemsComodato">
+              <div class="heading-container">
+                <span class="select-name-txt" [title]="ativo.Nome">
+                  <span class="txt">{{ativo.Codigo}} - {{ativo.Nome}}</span>
+                </span>
+              </div>
+
+              <div class="content">
+                <div class="item-image">
+                  <img class="mCS_img_loaded" [src]="getComodatoImageURL(ativo.Id)">
+                </div>
+              </div>
+              <div class="qty-bar">
+                <button class="qty-btn minus-btn" [disabled]="!allowEdit">
+                  <span class="fa fa-minus-circle gray" title="Diminuí Quantidade"></span>
+                </button>
+                <div class="qty-status">
+                  <span class="tooltip-help">
+                    <span class="tooltip-item">
+                      <input class="qty qty-product" type="text" [(ngModel)]="ativo.Quantidade" [disabled]="!allowEdit">
+                      <span class="qty-span" title="">UN</span>
+                    </span>
+                  </span>
+                </div>
+                <button class="qty-btn plus-btn" [disabled]="!allowEdit">
+                  <span class="fa fa-plus-circle gray" title="Aumenta Quantidade"></span>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+
+
+  <div class="container-floating left">
+    <div class="floating-button">
+      <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating" [hidden]="!allowCancel && !allowEdit">
+    <div class="nds nd2">
+      <button [hidden]="!allowCancel" (click)="cancelarPedido()">
+        <div class="t-left t-sm" data-tooltip="Cancelar pedido">
+          <span class="letter">
+            C
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="nds nd1">
+      <button [hidden]="!allowEdit" (click)="salvar()">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <span class="letter">
+            <span class="fa fa-floppy-o"></span>
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="floating-button">
+      <span class="letter">
+        <i class="fa fa-bars"></i>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

@@ -1,0 +1,208 @@
+<div class="container-fluid main-container">
+
+  <div class="content-head">
+    <h3 class="content-title">
+      Ver mapas
+    </h3>
+
+    <div class="col-md-2">
+      <select name="filterStatusMapa" id="filterStatusMapa" [(ngModel)]="filterStatus" (change)="onFilterStatusChange()">
+        <option value="1">Abertos</option>
+        <option value="3">Em faturamento</option>
+        <option value="4">Pronto para carregar</option>
+        <option value="2">Fechados</option>
+      </select>
+    </div>
+
+    <div *ngIf="filterStatus == 2">
+      <h3 class="content-title">
+        Data Criação
+      </h3>
+
+      <div class="col-md-2">
+        <my-date-picker name="dataInicial" [locale]="pt-br" (dateChanged)="onDateInicialChanged($event)" [selDate]="selectedDataIni"
+          [options]="myDatePickerOptions">
+        </my-date-picker>
+      </div>
+
+      <h3 class="content-title">
+        -
+      </h3>
+
+      <div class="col-md-2">
+        <my-date-picker name="dataFinal" [locale]="pt-br" (dateChanged)="onDateFinalChanged($event)" [selDate]="selectedDataFin"
+          [options]="myDatePickerOptions">
+        </my-date-picker>
+      </div>
+
+      <button class="btn-slim-icon" [class.active]=true (click)="onDataFilter()">
+        <span>Recarregar</span>
+        <img src="assets/svg/return.svg" alt="Virar" title="Clique para atualizar" width="18px" height="18px">
+      </button>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-8">
+        <h3 class="toolbar-title">
+          Lista de mapas de entrega
+        </h3>
+      </div>
+
+      <div class="col-md-4">
+        <div class="input-with-btn">
+          <input type="text" placeholder="Buscar" [(ngModel)]="inputSearch" (keyup)="inputSearchOnFilter($event.target.value)" />
+          <button>
+            <i class="icon-loupe"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <table class="table order-table type-3">
+      <tr>
+        <th style="width: 80px"
+        (click)="SortList(listMapas, 'Data')"
+        [ngClass]="{ 'asc': sortingDesc['Data'], 'desc': !sortingDesc['Data'], 'active': selectTableRow == 'Data' }">
+        <div>
+            <label>Data</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style="width: 80px" (click)="SortList(listMapas, 'Codigo')"
+        [ngClass]="{ 'asc': sortingDesc['Codigo'], 'desc': !sortingDesc['Codigo'], 'active': selectTableRow == 'Codigo' }">
+          <div>
+            <label>Código</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listMapas, 'Descricao')"
+        [ngClass]="{ 'asc': sortingDesc['Descricao'], 'desc': !sortingDesc['Descricao'], 'active': selectTableRow == 'Descricao' }" style="width: 79px;">
+          <div>
+            <label>Descrição</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th (click)="SortList(listMapas, 'UsuarioNome')"
+        [ngClass]="{ 'asc': sortingDesc['UsuarioNome'], 'desc': !sortingDesc['UsuarioNome'], 'active': selectTableRow == 'UsuaioNome' }">
+
+          <div>
+            <label>Usuário</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style="width: 80px" (click)="SortList(listMapas, 'VeiculoPlaca')"
+        [ngClass]="{ 'asc': sortingDesc['VeiculoPlaca'], 'desc': !sortingDesc['VeiculoPlaca'], 'active': selectTableRow == 'VeiculoPlaca' }">
+
+          <div>
+            <label>Veiculo</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style="width: 80px" (click)="SortList(listMapas, 'PesoTotal')"
+        [ngClass]="{ 'asc': sortingDesc['PesoTotal'], 'desc': !sortingDesc['PesoTotal'], 'active': selectTableRow == 'PesoTotal' }">
+
+          <div>
+            <label>Peso</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style="width: 80px" (click)="SortList(listMapas, 'VolumeTotal')"
+        [ngClass]="{ 'asc': sortingDesc['VolumeTotal'], 'desc': !sortingDesc['VolumeTotal'], 'active': selectTableRow == 'VolumeTotal' }">
+
+          <div>
+            <label>Volume</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style="width: 120px" (click)="SortList(listMapas, 'Valor')"
+        [ngClass]="{ 'asc': sortingDesc['Valor'], 'desc': !sortingDesc['Valor'], 'active': selectTableRow == 'Valor' }">
+
+          <div>
+            <label>Valor</label>
+          </div>
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style='width:25px;'></th>
+        <th style='width:140px;' *ngIf="filterStatus == 1"></th>
+        <th style='width:120px;' *ngIf="filterStatus == 4"></th>
+      </tr>
+      <tr *ngFor="let mapa of listMapas | paginate: { itemsPerPage: 10, currentPage: p }" [class.selected]="mapa == mapaSelecionado"
+        (click)="onSelectMapa(mapa)" (dblclick)="viewDetalheMapa(mapa)">
+        <td>{{mapa.Data}}</td>
+        <td>{{mapa.Codigo}}</td>
+        <td>{{mapa.Descricao}}</td>
+        <td>{{mapa.UsuarioNome}}</td>
+        <td>{{formatarPlaca(mapa.VeiculoPlaca)}}</td>
+        <td>{{formatDecimal(mapa.PesoTotal)}}</td>
+        <td>{{formatDecimal(mapa.VolumeTotal)}}</td>
+        <td>{{mapa.ValorTotal | currencyFormat}}</td>
+        <td>
+          <a href="javascript:void(0)" [routerLink]="['/entrega/mapa/detail', mapa.Id]">
+            <i class="icon-pen-2" *ngIf="mapa.StatusCodigo == 4" title="Editar Mapa"></i>
+            <i class="icon-loupe" *ngIf="mapa.StatusCodigo != 4" title="Visualizar Mapa"></i>
+          </a>
+        </td>
+        <td *ngIf="filterStatus == 1">
+          <button class="btn-secondary" *ngIf="mapa.StatusCodigo == 1 && mapa.PedidosQuantidade > 0" (click)="faturarMapa(mapa)" title="Faturar Mapa">
+            Faturar Mapa
+          </button>
+          <button class="btn-secondary" *ngIf="mapa.StatusCodigo == 1 && mapa.PedidosQuantidade < 1" disabled title="Nenhum pedido vinculado ao mapa de entrega">
+            Faturar Mapa
+          </button>
+        </td>
+        <td *ngIf="filterStatus == 4">
+          <button class="btn-secondary" *ngIf="mapa.StatusCodigo == 4 && mapa.PedidosQuantidade > 0" (click)="imprimirMapa(mapa)" title="Imprimir Mapa">
+            Imprimir
+          </button>
+          <button class="btn-secondary" *ngIf="mapa.StatusCodigo == 4 && mapa.PedidosQuantidade < 1" disabled title="Nenhum pedido vinculado ao mapa de entrega">
+            Imprimir
+          </button>
+        </td>
+      </tr>
+    </table>
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR">
+      </pagination-controls>
+    </div>
+  </div>
+
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

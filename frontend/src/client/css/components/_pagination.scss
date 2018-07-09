@@ -1,0 +1,33 @@
+.pagination,
+.ngx-pagination {
+  float: right;
+  margin: 14px 0;
+  @include pseudoclearfix;
+
+  .current {
+    text-decoration: underline;
+    color: color(primary,base)!important;
+    font-weight: bold;
+    background-color: transparent!important;
+  }
+
+  & > *:first-child,
+  & > *:last-child {
+    color: color(primary,base);
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: underline;
+  }
+
+  & > * {
+    float: left;
+    margin: 0 8px;
+    cursor: pointer;
+    color: color(txt,base);
+  }
+
+  a:hover,
+  button:hover {
+    background-color: transparent!important;
+  }
+}

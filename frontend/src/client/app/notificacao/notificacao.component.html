@@ -1,0 +1,30 @@
+<div class="container-fluid main-container">
+  <section id="cd-timeline" class="cd-container">
+
+    <div class="cd-timeline-block" *ngFor="let notificacao of notificacoes">
+      <div class="cd-timeline-img" [ngClass]="
+      {
+        'b-error2': notificacao.Tipo == 1, 
+        'b-warning': notificacao.Tipo == 2, 
+        'b-ok': notificacao.Tipo == 3
+      }">
+        <i class="fa" [ngClass]="
+        {
+          'fa-exclamation-triangle': notificacao.Tipo == 1, 
+          'fa-exclamation': notificacao.Tipo == 2, 
+          'fa-check': notificacao.Tipo == 3
+        }"></i>
+      </div>
+
+      <div class="cd-timeline-content">
+        <h4 class="cd-timeline-title">{{ notificacao.Titulo }}</h4>
+        <p>{{ notificacao.Descricao }}</p>
+        <a [routerLink]="'/estoque'" class="cd-read-more">Visualizar estoque</a>
+        <span class="cd-date">{{ notificacao.DataNotificacao | date: 'dd/MM HH:MM'}}</span>
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

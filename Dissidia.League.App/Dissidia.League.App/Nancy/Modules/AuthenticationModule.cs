@@ -1,4 +1,5 @@
 ﻿using Dissidia.League.App.Nancy.DTO;
+using Dissidia.League.App.Nancy.EndpointsConfiguration;
 using Dissidia.League.Domain.Exceptions.Authentication;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Dissidia.League.Domain.Services.Interfaces.Authentication;
@@ -18,22 +19,22 @@ namespace Dissidia.League.App.Nancy.Modules
         public AuthenticationModule(IBootstrapInjection injection)
         {
             _authService = injection.Services.AuthenticationService;
-            Post["dissidia/login"] = p =>
+            Post[EndpointConfigurationEnum.LOGIN] = p =>
             {
                 var body = Request.Body.AsString();
                 var auth = JsonConvert.DeserializeObject<AuthDTO>(body);
                 if(_authService.AuthUser(auth.Username, auth.Password))
                 {
-                    Request.Session["logged"] = true;
+                    Request.Cookies["logged"] = "true";
                 }
                 else
                 {
                     return HttpStatusCode.Unauthorized;
                 }
-                return HttpStatusCode.Accepted;
+                return Response.AsJson(new { Status = "OK" }, HttpStatusCode.Accepted);
             };
 
-            Post["dissidia/user/register"] = p =>
+            Post[EndpointConfigurationEnum.REGISTER_USER] = p =>
             {
                 try
                 {

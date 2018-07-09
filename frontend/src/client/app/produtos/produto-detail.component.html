@@ -1,0 +1,258 @@
+<div class="container-fluid main-container">
+
+  <div class="card">
+    <h3 class="card-title">
+      <span *ngIf="produto?.id">Atualizar Produto</span>
+      <span *ngIf="!produto?.id">Adicionar Produto</span>
+    </h3>
+
+    <form #produtoForm="ngForm" (ngSubmit)="save(produtoForm)" id="produtoForm">
+
+      <div class="content" *ngIf="produto">
+
+        <div class="row">
+          <div class="col-md-12 txt-c" *ngIf="produto?.id">
+            <img [src]="produtoUploadURL" height="128" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" *ngIf="!(produto?.id) || produto?.canEdit">
+            <image-upload *ngIf="!(produto?.id) || produto?.canEdit" [max]="1" [buttonCaption]="'Selecione a imagem'" [dropBoxMessage]="'Arraste a imagem aqui!'"
+              (onFileUploadFinish)="imageUploaded($event)">
+            </image-upload>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uProductName.errors && (uProductName.errors.required || !uProductName.pristine)) }">
+            <label for="uProductName">Nome</label>
+            <input [(ngModel)]="produto.nome" id="uProductName" required name="uProductName" #uProductName="ngModel" placeholder="Nome"
+              type="text" [disabled]="!(!(produto?.id) || produto?.canEdit)" />
+            <div *ngIf="uProductName.errors && uProductName.errors.required" class="tooltip tooltip-bottom">Nome é obrigatório</div>
+          </div>
+
+          <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uProductCode.errors && (uProductCode.errors.required || !uProductCode.pristine)) }">
+            <label for="uProductCode">Código</label>
+            <input [(ngModel)]="produto.codigo" id="uProductCode" name="uProductCode" #uProductCode="ngModel" required placeholder="Código"
+              type="text" [disabled]="produto?.id" />
+            <div *ngIf="uProductCode.errors && uProductCode.errors.required" class="tooltip tooltip-bottom">Código é obrigatório</div>
+          </div>
+
+          <div class="col-md-5">
+            <label for="uProductCodeEan">Código EAN (Código de Barras)</label>
+            <input [(ngModel)]="produto.codigoEAN" id="uProductCodeEan" name="uProductCodeEan" type="text" placeholder="EAN" [disabled]="!(!(produto?.id) || produto?.canEdit)"
+            />
+          </div>
+        </div>
+
+        <hr class="style6">
+
+        <tabs>
+          <tab tabTitle="Informações do produto">
+            <div class="content">
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="uProductUnPrice">Preço Unitario</label>
+                  <div *ngIf="produto.produtoExterno.toLocaleUpperCase() === 'EXTERNO'" class="tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uProductUnPrice.errors && (uProductUnPrice.errors.required || produto.precoVendaBalcao.precoUnitarioVendaBalcao <= 0 || !uProductUnPrice.pristine)) }">
+                    <input [(ngModel)]="produto.precoVendaBalcao.precoUnitarioVendaBalcao" required type="text" kzMaskCurrency placeholder="0,00"
+                      id="uProductUnPrice" name="uProductUnPrice" #uProductUnPrice="ngModel" readonly disabled/>
+                    <div *ngIf="((uProductUnPrice.errors && uProductUnPrice.errors.required) || produto.precoVendaBalcao.precoUnitarioVendaBalcao <= 0)"
+                      class="tooltip tooltip-bottom">Preço é obrigatório</div>
+                  </div>
+
+
+                  <div *ngIf="!(produto.produtoExterno.toLocaleUpperCase() === 'EXTERNO')" class="tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uProductUnPriceBalcao.errors && (uProductUnPriceBalcao.errors.required || produto.precoVendaBalcao.precoUnitarioVendaBalcao <= 0 || !uProductUnPriceBalcao.pristine)) }">
+                    <input [(ngModel)]="produto.precoVendaBalcao.precoUnitarioVendaBalcao" required type="text" kzMaskCurrency placeholder="0,00"
+                      id="uProductUnPriceBalcao" name="uProductUnPriceBalcao" #uProductUnPriceBalcao="ngModel" />
+                    <div *ngIf="((uProductUnPriceBalcao.errors && uProductUnPriceBalcao.errors.required) || produto.precoVendaBalcao.precoUnitarioVendaBalcao <= 0)"
+                      class="tooltip tooltip-bottom">Preço é obrigatório</div>
+                  </div>
+                </div>
+
+                <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && ncm.errors && (ncm.errors.required || !ncm.pristine)) }">
+                  <label title="Nomenclatura Comum do Mercosul">NCM</label>
+                  <input [(ngModel)]="produto.ncm" minlength="8" maxlength="8" type="text" required placeholder="NCM" #ncm="ngModel" [readOnly]="!(!(produto?.id) || produto?.canEdit)"
+                    id="ncm" name="ncm" [disabled]="!(!(produto?.id) || produto?.canEdit)" />
+                  <div *ngIf="ncm.errors && ncm.errors.required" class="tooltip tooltip-bottom">NCM é obrigatório</div>
+                  <div *ngIf="ncm.errors && ncm.errors.minlength" class="tooltip tooltip-bottom">NCM precisa ter pelo menos 8 caracteres</div>
+                </div>
+
+                <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cest.errors && (cest.errors.required || !cest.pristine)) }">
+                  <label title="Código Especificador da Substituição Tributária">CEST</label>
+                  <input [(ngModel)]="produto.cest" minlength="7" maxlength="7" type="text" required placeholder="CEST" [readOnly]="!(!(produto?.id) || produto?.canEdit)"
+                    id="cest" name="cest" #cest="ngModel" [disabled]="!(!(produto?.id) || produto?.canEdit)" />
+                  <div *ngIf="cest.errors && cest.errors.required" class="tooltip tooltip-bottom">Cest é obrigatório</div>
+                  <div *ngIf="cest.errors && cest.errors.minlength" class="tooltip tooltip-bottom">Cest precisa ter pelo menos 7 caracteres</div>
+                </div>
+
+                <div class="col-md-2">
+                  <label for="">Origem</label>
+                  <select [(ngModel)]="produto.origem" id="origem" name="origem" #origem="ngModel" [disabled]="!(!(produto?.id) || produto?.canEdit)">
+                    <option value=0>Nacional</option>
+                    <option value=1>Estrangeira (Importação Direta)</option>
+                    <option value=2>Estrangeira (Adquirida Mercado Interno)</option>
+                  </select>
+                </div>
+
+                <div class="col-md-2">
+                  <label title="Peso Bruto">Peso Bruto</label>
+                  <input [(ngModel)]="produto.pesoBruto" kzMaskCurrency type="text" id="pesoBruto" name="pesoBruto" placeholder="0,00" />
+                </div>
+
+                <div class="col-md-2">
+                  <label title="Volume">Volume</label>
+                  <input [(ngModel)]="produto.volume" id="volume" name="volume" kzMaskCurrency type="text" placeholder="0,00" />
+                </div>
+              </div>
+            </div>
+          </tab>
+
+          <tab tabTitle="Tributação ICMS">
+            <div class="content">
+              <div class="row">
+                <div class="col-md-2">
+                  <label for="">Procedência</label>
+                  <select [(ngModel)]="produto.procedenciaPropria" id="procedencia" name="procedencia" (ngModelChange)="alteraCfop()" #procedencia="ngModel"
+                    [disabled]="!(!(produto?.id) || produto?.canEdit)">
+                    <option value=true>Próprio</option>
+                    <option value=false>Terceiros</option>
+                  </select>
+                </div>
+                <div class="col-md-3" *ngIf="tributacao && produto" [ngClass]="{ 'error-msg': (submitted && cstExterno.errors && (cstExterno.errors.required || !cstExterno.pristine)) }">
+                  <label title="Código de Situação Tributária">{{labelCSOSNCST}} Venda Externa (NF-e)</label>
+                  <select required [(ngModel)]="produto.cstNFe" id="cstExterno" name="cstExterno" #cstExterno="ngModel">
+                    <option *ngFor="let cst of tributacao.CsosnCstNFe" [value]="cst.Codigo">
+                      {{cst.Descricao}}
+                    </option>
+                  </select>
+                  <div *ngIf="cstExterno.errors && cstExterno.errors.required" class="tooltip tooltip-bottom">cst é obrigatório</div>
+                </div>
+
+                <div class="col-md-3" *ngIf="tributacao && produto" [ngClass]="{ 'error-msg': (submitted && cst.errors && (cst.errors.required || !cst.pristine)) }">
+                  <label title="Código de Situação Tributária">{{labelCSOSNCST}} Venda Balcão (NFC-e)</label>
+                  <select required [(ngModel)]="produto.cstNFCe" id="cst" name="cst" #cst="ngModel" (ngModelChange)="alteraCfop()">
+                    <option *ngFor="let cst of tributacao.CsosnCstNFCe" [value]="cst.Codigo">
+                      {{cst.Descricao}}
+                    </option>
+                  </select>
+                  <div *ngIf="cst.errors && cst.errors.required" class="tooltip tooltip-bottom">cst é obrigatório</div>
+                </div>
+
+                <div class="col-md-4" *ngIf="tributacao && produto" [ngClass]="{ 'error-msg': (submitted && cfop.errors && (cfop.errors.required || !cfop.pristine)) }">
+                  <label title="Código Fiscal de Operações e Prestações">CFOP Venda Balcão (NFC-e)</label>
+                  <select required [(ngModel)]="produto.cfopNFCe" id="cfop" name="cfop" #cfop="ngModel">
+                    <option *ngFor="let cfop of tributacao.CfopNFCe" [value]="cfop.Codigo">
+                      {{cfop.Descricao}}
+                    </option>
+                  </select>
+                  <div *ngIf="cfop.errors && cfop.errors.required" class="tooltip tooltip-bottom">cfop é obrigatório</div>
+                </div>
+
+                <div class="row"></div>
+                <div class="col-md-2">
+                  <label>Aliquota ICMS</label>
+                  <input [(ngModel)]="produto.aliquotaIcms" type="text" kzMaskCurrency placeholder="0.0" id="aliquota" name="aliquota" />
+                </div>
+                <div class="col-md-2">
+                  <label title="Valor Base do ICMS-ST (Informar valor na unidade de venda do produto '{{produto.unidadeMedida}}' )">Base ICMS-ST ({{produto.unidadeMedida}})</label>
+                  <input [(ngModel)]="produto.valorBaseIcmsSt" type="text" kzMaskCurrency placeholder="0.0" id="Base ICMS" name="Base ICMS"
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label>% Redução ICMS</label>
+                  <input [(ngModel)]="produto.reducaoIcms" type="text" kzMaskCurrency placeholder="0.0" id="reducao" name="reducao" />
+                </div>
+              </div>
+            </div>
+          </tab>
+
+          <tab tabTitle="Tributação PIS/COFINS">
+            <div class="content">
+              <div class="row">
+                <div class="col-md-3" *ngIf="tributacao && produto" [ngClass]="{ 'error-msg': (submitted && cstPIS.errors && (cstPIS.errors.required || !cstPIS.pristine)) }">
+                  <label title="Código de Situação Tributária para PIS">CST PIS</label>
+                  <select required [(ngModel)]="produto.cstPIS" id="cstPIS" name="cstPIS" #cstPIS="ngModel">
+                    <option *ngFor="let cst of tributacao.CstPIS" [value]="cst.Codigo">
+                      {{cst.Descricao}}
+                    </option>
+                  </select>
+                  <div *ngIf="cstPIS.errors && cstPIS.errors.required" class="tooltip tooltip-bottom">cst pis é obrigatório</div>
+
+                </div>
+                <div class="col-md-3" *ngIf="tributacao && produto" [ngClass]="{ 'error-msg': (submitted && cstCOFINS.errors && (cstCOFINS.errors.required || !cstCOFINS.pristine)) }">
+                  <label title="Código de Situação Tributária para COFINS">CST COFINS</label>
+                  <select required [(ngModel)]="produto.cstPIS" id="cstCOFINS" name="cstCOFINS" #cstCOFINS="ngModel">
+                    <option *ngFor="let cst of tributacao.CstCOFINS" [value]="cst.Codigo">
+                      {{cst.Descricao}}
+                    </option>
+                  </select>
+                  <div *ngIf="cstCOFINS.errors && cstCOFINS.errors.required" class="tooltip tooltip-bottom">cst cofins é obrigatório</div>
+                </div>
+
+                <div class="col-md-3">
+                  <label>Valor Mínimo PIS</label>
+                  <input [(ngModel)]="produto.valorMinimoPis" type="text" kzMaskCurrency placeholder="0.0" id="minimoPis" name="minimoPis"
+                    [disabled]="!(!(produto?.id) || produto?.canEdit)" [readOnly]="!(!(produto?.id) || produto?.canEdit)" />
+                </div>
+                <div class="col-md-3 no-padding-r">
+                  <label>Valor Mínimo COFINS</label>
+                  <input [(ngModel)]="produto.valorMinimoCofins" type="text" kzMaskCurrency placeholder="0.0" id="minimoCofins" name="minimoCofins"
+                    [disabled]="!(!(produto?.id) || produto?.canEdit)" [readOnly]="!(!(produto?.id) || produto?.canEdit)" />
+                </div>
+                <div class="row"></div>
+                <div class="col-md-3">
+                  <label>Alíquota PIS (Varejista)</label>
+                  <input [(ngModel)]="produto.aliquotaPisVarejo" type="text" kzMaskCurrency placeholder="0.0" id="aliquotaPisVarejo" name="aliquotaPisVarejo"
+                    [disabled]="!(!(produto?.id) || produto?.canEdit)" [readOnly]="!(!(produto?.id) || produto?.canEdit)" />
+                </div>
+                <div class="col-md-3">
+                  <label>Alíquota COFINS (Varejista)</label>
+                  <input [(ngModel)]="produto.aliquotaCofinsVarejo" type="text" kzMaskCurrency placeholder="0.0" id="aliquotaCofinsVarejo"
+                    name="aliquotaCofinsVarejo" [disabled]="!(!(produto?.id) || produto?.canEdit)" [readOnly]="!(!(produto?.id) || produto?.canEdit)"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label>Alíquota PIS (Atacadista)</label>
+                  <input [(ngModel)]="produto.aliquotaPisAtacado" type="text" kzMaskCurrency placeholder="0.0" id="aliquotaPisAtacado" name="aliquotaPisAtacado"
+                    [disabled]="!(!(produto?.id) || produto?.canEdit)" [readOnly]="!(!(produto?.id) || produto?.canEdit)" />
+                </div>
+                <div class="col-md-3 no-padding-r">
+                  <label>Alíquota COFINS (Atacadista)</label>
+                  <input [(ngModel)]="produto.aliquotaCofinsAtacado" type="text" kzMaskCurrency placeholder="0.0" id="aliquotaCofinsAtacado"
+                    name="aliquotaCofinsAtacado" [disabled]="!(!(produto?.id) || produto?.canEdit)" [readOnly]="!(!(produto?.id) || produto?.canEdit)"
+                  />
+                </div>
+              </div>
+            </div>
+          </tab>
+
+        </tabs>
+      </div>
+    </form>
+  </div>
+
+  <div class="container-floating left">
+    <div class="floating-button">
+      <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating">
+    <div class="floating-button">
+      <span class="letter">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <button [disabled]="desabilitaBotao" form="produtoForm" type="submit" class="btn-clean">
+            <span class="letter">
+              <span class="fa fa-floppy-o"></span>
+            </span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+
+</div>

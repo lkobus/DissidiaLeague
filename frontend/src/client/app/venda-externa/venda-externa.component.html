@@ -1,0 +1,248 @@
+<div class="container-fluid main-container cards-2">
+
+  <div *ngIf="!(statusCaixa?.CaixaDisponivel);then content else other">here is ignored</div>
+
+  <ng-template #content>
+    <abertura-caixa>
+    </abertura-caixa>
+  </ng-template>
+
+  <ng-template #other>
+    <div *ngIf="!(statusCaixa?.CaixaDisponivel)" class="alert alert-danger">
+      <span>Caixa Fechado para o dia atual</span>
+    </div>
+
+    <!-- Primeiro passo -->
+    <div *ngIf="activeStep==1">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="toolbar">
+          <h3 class="toolbar-title">
+            1. Enviar pedidos externos
+          </h3>
+        </div>
+        <div class="content style-lb">
+          <label for="">Enviar arquivo:</label>
+          <button class="btn-secondary">fazer carga dos pedidos</button>
+        </div>
+      </div>
+
+      <div class="card disabled">
+        <div class="toolbar">
+          <h3 class="toolbar-title">
+            2. Crítica de pedidos
+          </h3>
+        </div>
+      </div>
+
+      <div class="card disabled">
+        <div class="button-wrapper">
+          <button class="btn-middle" (click)='activeStep=2'>finalizar</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-4"></div>
+    </div>
+    <!-- Final Primeiro passo -->
+
+    <!-- Segundo passo -->
+    <div *ngIf="activeStep==2">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="toolbar with-btn">
+          <h3 class="toolbar-title">
+            1. Enviar pedidos externos
+          </h3>
+          <button class="btn-secondary">Novo upload</button>
+        </div>
+        <div class="content">
+          <table class="table last-to-right">
+            <tbody>
+            <tr>
+              <th>Pedidos enviados (4)</th>
+              <th>QTDE</th>
+              <th>Valor total (R$)</th>
+            </tr>
+            <tr *ngFor="let number of [0,1,2,3]">
+              <td>
+                <span class="bubble b-ok">
+                  <i class="icon-checked"></i>
+                </span>
+                #0234
+              </td>
+              <td>30</td>
+              <td>12.000,00</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="lr-values">
+          <li class="lr-value lr-title">
+            <span class="lr-txt">
+              Total de pedidos aceitos
+            </span>
+          </li>
+          <li class="lr-value">
+            <span class="price">
+              R$147.500,00
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="toolbar">
+          <h3 class="toolbar-title">
+            2. Crítica de pedidos
+          </h3>
+        </div>
+        <div class="content">
+          <table class="table last-to-right">
+            <tbody>
+            <tr class="hidden">
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>
+                <span class="bubble b-error">
+                  !
+                </span>
+                #02349
+              </td>
+              <td>3</td>
+              <td>960,00</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="lr-values">
+          <li class="lr-value lr-title">
+            <span class="lr-txt">
+              Total de pedidos criticados
+            </span>
+          </li>
+          <li class="lr-value">
+            <span class="price">
+              R$960,00
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card disabled">
+        <div class="button-wrapper">
+          <button class="btn-middle">finalizar</button>
+        </div>
+      </div>
+
+    </div>
+
+      <div class="col-md-4 no-padding-r">
+        <div class="card card-fixed">
+
+          <div class="toolbar">
+            <h3 class="toolbar-title small-title">
+              1. Produtos (3)
+            </h3>
+          </div>
+
+          <div class="content scrollable-content">
+
+            <!-- Mostra se não tiver produtos adicionados /@TODO REMOVER A CLASSE HIDDEN -->
+            <p class="toolbar-txt hidden">Nenhum produto foi adicionado.</p>
+
+              <table class="table">
+                <tr>
+                  <th>Produto</th>
+                  <th>QTDE</th>
+                  <th>Valor (R$)</th>
+                </tr>
+                <tr *ngFor="let number of [0,1,2]">
+                  <td>
+                    <span class="product-name">Skoll 600ml</span>
+                    <span class="price">R$90,00</span>
+                  </td>
+                  <td>
+                    <div class="qty-holder">
+                      22 un
+                    </div>
+                  </td>
+                  <td>
+                    <span class="price final-price">
+                      360,00
+                    </span>
+                  </td>
+                </tr>
+              </table>
+          </div>
+
+          <ul class="lr-values">
+            <li class="lr-value lr-title">
+            <span class="lr-txt">
+              Total
+            </span>
+            </li>
+            <li class="lr-value">
+            <span class="price">
+              R$960,00
+            </span>
+            </li>
+          </ul>
+
+          <div class="toolbar">
+            <h3 class="toolbar-title small-title">
+              Forma e prazo de pagamento
+            </h3>
+          </div>
+          <div class="content">
+            <p>Forma: <b>Dinheiro</b></p>
+            <p class="c-error">Data: <b>12/05/2017</b></p>
+          </div>
+
+          <div class="toolbar">
+            <h3 class="toolbar-title small-title">
+              Críticas
+            </h3>
+          </div>
+
+          <div class="content">
+            <p class="c-error">
+              <b>1. Prazo de pagamento maior do que o permitido</b>
+            </p>
+              <hr>
+            <p class="c-error">
+              <b>2. Solicitado 22 cx de Skol, só constam 15 em estoque.</b>
+            </p>
+            <br/>
+          </div>
+
+          <div class="toolbar">
+            <h3 class="toolbar-title small-title">
+              O que você deseja fazer?
+            </h3>
+          </div>
+
+          <div class="content">
+            <button class="btn-full btn-action">
+              Aprovar o pedido
+            </button>
+
+            <button class="btn-full btn-secondary">
+              Editar o pedido
+            </button>
+
+            <button class="btn-full btn-action">
+              Reprovar o pedido
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- Final Segundo passo -->
+  </ng-template>
+
+</div>

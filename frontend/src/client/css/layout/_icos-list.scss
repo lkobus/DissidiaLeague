@@ -1,0 +1,339 @@
+.icos-list {
+  width: 100%;
+  float: left;
+  @include pseudoclearfix;
+  margin-top: 12px;
+
+  .icos-list-item-header {
+    width: 100%;
+    float: left;
+    font-weight: normal;
+    padding-bottom: 11px;
+    padding-left: 82px;
+    position: relative;
+    box-sizing: border-box;
+
+    @include breakpoint(xs) {
+      padding-left: 35px;
+    }
+
+    &:before {
+      content: "...";
+      position: absolute;
+      left: 30px;
+      top: -7px;
+      text-align: center;
+      color: color(txt, light);
+      line-height: 19px;
+      text-indent: 2px;
+      font-weight: bold;
+      font-size: em(24px);
+      letter-spacing: 2px;
+      width: 33px;
+      height: 33px;
+      background-color: color(input, border);
+      border-radius: 100%;
+
+      @include breakpoint(xs) {
+        left: -5px;
+      }
+    }
+    &.active {
+      &:before {
+        content: 'x';
+        font-family: "icon";
+        font-weight: normal;
+        line-height: 34px;
+        font-size: em(18px);
+        background-color: color(status, ok);
+      }
+    }
+    &.ac {
+      &:before {
+        content: "AC";
+        font-weight: bold;
+        font-size: em(18px);
+        line-height: 34px;
+        background-color: color(primary, light);
+      }
+    }
+    &.fc {
+      &:before {
+        content: "FC";
+        font-size: em(18px);
+        font-weight: bold;
+        line-height: 34px;
+        background-color: color(primary, light);
+      }
+    }
+    &.en {
+      &:before {
+        content: "EN";
+        font-weight: bold;
+        line-height: 34px;
+        background-color: color(primary, light);
+      }
+    }
+    &.plus {
+      &:before {
+        content: 'f';
+        font-family: "icon";
+        font-weight: normal;
+        line-height: 34px;
+        font-size: em(18px);
+        background-color: $success-color-2;
+      }
+    }
+    &.minus {
+      &:before {
+        content: 't';
+        font-family: "icon";
+        font-weight: normal;
+        line-height: 34px;
+        font-size: em(22px);
+        background-color: color(status, error);
+      }
+    }
+    &.money {
+      &:before {
+        content: 'h';
+        font-family: "icon";
+        font-weight: normal;
+        line-height: 34px;
+        background-color: color(primary, base);
+      }
+    }
+    &.sync {
+      &:before {
+        content: 'i';
+        font-family: "icon";
+        font-weight: normal;
+        line-height: 34px;
+        background-color: color(primary, base);
+      }
+    }
+  }
+  &:last-child {
+    .icos-list-item {
+      &:last-child {
+        margin-bottom: 5px;
+        &:before {
+          display: none;
+        }
+        table {
+          &:last-child {
+            margin-bottom: 0;
+            tr {
+              &:last-child {
+                border-bottom: none;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .icos-list-item {
+    width: 100%;
+    float: left;
+    position: relative;
+    padding-left: 70px;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+
+    @include breakpoint(xs) {
+      padding-left: 0;
+    }
+
+    &.full-line {
+      &:after {
+        display: none;
+      }
+    }
+    &:before {
+      content: "";
+      width: 100%;
+      height: 1px;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      background-color: color(input, border);
+    }
+    &:after {
+      content: "";
+      width: 85px;
+      height: 1px;
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      bottom: 0;
+      background-color: color(backgroundLight);
+
+      @include breakpoint(xs) {
+        display: none;
+      }
+    }
+    label {
+      color: color(txt, dark);
+      text-transform: none;
+    }
+    input[type="text"] {
+      width: auto;
+      margin: 0;
+
+      @include breakpoint(xs) {
+        width: 100%;
+      }
+    }
+    .status {
+      .icon {
+        margin-left: 8px;
+      }
+    }
+    .table {
+      &:after {
+        content: "";
+        width: 100%;
+        height: 1px;
+        background-color: color(backgroundLight);
+        position: absolute;
+        z-index: 2;
+        left: 0;
+        bottom: 0;
+      }
+      th {
+        font-size: em(14px);
+      }
+      tr {
+        &:first-child {
+          th {
+            border-top: 1px solid color(input, border);
+          }
+        }
+      }
+      td,
+      th {
+        position: relative;
+        &:first-child {
+          &:before {
+            content: "";
+            width: 20px;
+            height: 40px;
+            position: absolute;
+            z-index: 2;
+            left: 0;
+            bottom: -1px;
+            background-color: color(backgroundLight);
+          }
+        }
+        &:last-child {
+          padding-right: 32px;
+          &:after {
+            content: "";
+            width: 30px;
+            height: 40px;
+            position: absolute;
+            z-index: 2;
+            right: 0;
+            bottom: -1px;
+            background-color: color(backgroundLight);
+          }
+        }
+        .check-wrapper {
+          input[type="checkbox"] {
+            left: -49%;
+          }
+          label {
+            padding: 0;
+            &:before {
+              left: -52px;
+            }
+          }
+          &.active label:after,
+          input[type="checkbox"]:checked+label:after,
+          label.active:after {
+            left: -49px;
+          }
+        }
+      }
+    }
+  }
+  &.type-2 {
+    .icos-list-item-header {
+      &:before {
+        left: 52px;
+        top: 10px;
+      }
+      &:after {
+        content: "";
+        width: 86%;
+        height: 1px;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        background-color: color(input, border);
+      }
+      &:last-child {
+        &:after {
+          display: none;
+        }
+      }
+      margin-bottom: 15px;
+    }
+    .icos-list-time {
+      position: absolute;
+      left: 0;
+      top: 17px;
+      color: color(txt, base);
+    }
+    .center {
+      position: absolute;
+      top: 17px;
+    }
+    .ok {
+      color: color(status, ok2);
+    }
+    .error {
+      color: color(status, error);
+    }
+    .left-side {
+      text-align: left;
+      float: left;
+      width: 50%;
+      padding-left: 15px;
+      box-sizing: border-box;
+      .value {
+        font-size: em(14px);
+        display: inline-block;
+        width: 100%;
+        color: color(txt, base);
+        @include truncate;
+      }
+      .title {
+        font-size: em(16px);
+        display: inline-block;
+        width: 100%;
+        color: color(txt, dark);
+      }
+    }
+    .right-side {
+      text-align: right;
+      float: right;
+      width: 50%;
+      box-sizing: border-box;
+      .title {
+        font-size: em(14px);
+        display: inline-block;
+        width: 100%;
+        color: color(txt, base);
+      }
+      .value {
+        font-size: em(16px);
+        display: inline-block;
+        width: 100%;
+        color: color(txt, dark);
+      }
+    }
+  }
+}

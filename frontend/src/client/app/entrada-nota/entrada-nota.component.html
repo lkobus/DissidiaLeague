@@ -1,0 +1,179 @@
+<div class="container-fluid main-container order-page">
+
+  <div class="card">
+    <div class="toolbar">
+      <div class="col-md-6">
+        <h3 class="toolbar-title">Entrada de nota fiscal</h3>
+      </div>
+
+      <div class="col-md-6 txt-r">
+        <image-upload [max]="1" [preview]="false" [buttonCaption]="'Selecionar arquivo XML'" [dropBoxMessage]="''" [extensions]="['xml']"
+          (onFileUploadFinish)="uploadXml($event)" (onRemove)="removeXml($event)" class="small-image-upload">
+        </image-upload>
+      </div>
+
+    </div>
+    <div class="content">
+      <div class="col-md-4 no-padding-l">
+        <label for="chaveAcesso">
+          Chave de acesso (NF)
+        </label>
+
+        <input id="chaveAcesso" type="text" [(ngModel)]="notaPreview.Cabecalho.ChaveDeAcesso" [disabled]="!importacaoManual" required>
+      </div>
+
+      <div class="col-md-3 no-padding-l">
+        <label for="formaPagamento">Forma de pagamento</label>
+        <select [(ngModel)]="notaPreview.Pagamento.Tipo" name="pagamento" id="pagamento" [disabled]="!importacaoManual" required>
+          <option *ngFor="let item of listaPagamentos" [value]="item.codigo">{{item.descricao}}</option>
+        </select>
+      </div>
+
+      <div class="col-md-2 no-padding-l">
+        <label for="vecimento">Vencimento</label>
+        <my-date-picker [disabled]="!importacaoManual" name="vencimento" id="vencimento" [locale]="pt-br" [options]="myDatePickerOptions"
+          (dateChanged)="onDataVencimentoChanged($event)" [selDate]="selectedDataVencimento">
+        </my-date-picker>
+      </div>
+
+
+      <div class="col-md-3 no-padding-r">
+        <label for="total">
+          Valor total da nota (R$)
+        </label>
+        <input id="total" *ngIf="!importacaoManual" type="text" kzMaskCurrency [(ngModel)]="notaPreview.Totais.vNF" disabled placeholder="0,00"
+          required>
+        <input id="total" *ngIf="importacaoManual" type="text" kzMaskCurrency [(ngModel)]="notaPreview.Totais.vNF" placeholder="0,00"
+          required>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-12">
+    <tp-accordion-group>
+      <tp-accordion [title]="['Produtos']" [active]="!importacaoManual">
+        <div *ngIf="importacaoManual" class="input-with-btn" style="position: relative;">
+          <input type="text" #inputProductSearch placeholder="Buscar o produto desejado, sku ou código de barra" [(ngModel)]="inputSearch"
+            (keyup)="onSearchType($event.target.value);">
+          <button tabindex="-1">
+            <i class="icon-loupe"></i>
+          </button>
+
+          <div class="search-box" [ngClass]="{ 'active': listProdutos.length > 0 }">
+            <ul class="search-results" id="listSearchProducts">
+              <li class="search-result last" *ngFor="let produto of listProdutos">
+                <div class="search-details">
+                  <span class="search-name" title="">
+                    <span class="fa fa-info-circle more-info" [title]="produto.Nome"></span>
+                    {{produto.Codigo}} - {{produto.Nome}}
+                  </span>
+                  <span class="search-price" title="" style="width: 20%">
+                    <input kzMaskCurrency type="text" [(ngModel)]="produto.Valor" placeholder="Valor total" style="width: 80%; border: 1px solid #d9dce1">
+                  </span>
+                  <span class="search-price" title="" style="width: 20%">
+                    <input kzMaskCurrency type="text" [(ngModel)]="produto.Desconto" placeholder="Desconto" style="width: 80%; border: 1px solid #d9dce1">
+                  </span>
+                </div>
+                <div class="qty-bar" style="width: 25%">
+                  <button class="buttonMinus qty-btn minus-btn" (click)="decQuantidade(produto)">
+                    <span class="fa fa-minus-circle" title="Diminuí Quantidade"></span>
+                  </button>
+                  <div class="qty-status">
+                    <input class="qty-search-p qty qty-product" type="text" [(ngModel)]="produto.Quantidade">
+                  </div>
+                  <button class="qty-btn plus-btn" (click)="incQuantidade(produto)">
+                    <span class="fa fa-plus-circle" title="Aumenta Quantidade"></span>
+                  </button>
+                </div>
+                <div class="search-details" style="width: 5%; float: right; text-align: center">
+                  <button class="btn-absolute" title="Adicionar produto" (click)="addProdutoEntrada(produto)">
+                    <span>
+                      <i class="icon-plus c-ok"></i>
+                    </span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="products-grid-container">
+          <ul class="itens">
+            <li class="item" *ngFor="let item of notaPreview.Itens">
+              <div class="heading-container">
+                <span class="select-name-txt" [title]="item.NomeProduto">
+                  <span class="txt">{{item.NomeProduto}}</span>
+                </span>
+                <span *ngIf="importacaoManual" class="select-name-txt" (click)="removeItem(item)">
+                  <i class="icon-x c-error"></i>
+                </span>
+              </div>
+
+              <div class="content">
+                <span class="fa fa-info-circle more-info" [title]="item.NomeProduto"></span>
+
+                <div class="values">
+                  <span class="sku" title="">{{item.CodigoProduto}}</span>
+                  <span class="packing-type" title="">269ml</span>
+                  <span class="unitary-price unitarioP1745" title="">R$ {{item.Valores.ValorUnitario}} UN</span>
+                  <span class="bundle-price" title="">
+                    <span class="tooltip-help">
+                      <span class="tooltip-item">
+                        <b class="with-input">R$</b>
+                        <input type="text" readonly [value]="item.Valores.ValorUnidade">
+                      </span>
+                    </span>
+                  </span>
+                </div>
+                <div class="item-image">
+                  <img class="mCS_img_loaded" alt="{{item.CodigoProduto}}" [src]="getImagemProdutoUrl(item.ImageUri)" height="119" width="119">
+                </div>
+              </div>
+              <div class="qty-bar" [ngClass]="{ 'b-error': !item.Id }">
+                <div class="qty-status">
+                  <span class="tooltip-help">
+                    <span class="tooltip-item">
+                      <input class="qty qty-product" type="text" [readonly]="!importacaoManual" [value]="item.Valores.Quantidade">
+                      <span *ngIf="item.Id" class="qty-span" title="">{{item.Valores.UnidadeMedida}}</span>
+                      <span *ngIf="!item.Id" class="qty-span" title="">{{item.UnidadeMedida.toUpperCase()}}</span>
+                      <span *ngIf="!item.Id" class="tooltip-content">
+                        <span class="tooltip-text">
+                          Produto não encontrado no sistema
+                        </span>
+                      </span>
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+
+  <div class="container-floating">
+
+    <div class="floating-button">
+      <span class="letter">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <button (click)="importarNota()" class="btn-clean">
+            <span class="letter">
+              <span class="fa fa-floppy-o"></span>
+            </span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading || isImporting">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

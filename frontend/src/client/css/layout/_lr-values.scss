@@ -1,0 +1,34 @@
+.lr-values {
+  width: 100%;
+  @include pseudoclearfix;
+  color: color(primary,base);
+
+  .lr-value {
+    width: 50%;
+    min-height: 27px;
+    text-align: right;
+    font-size: em(14px);
+    float: left;
+
+    .lr-txt {
+      vertical-align: -5px;
+    }
+
+    .price {
+      font-size: em(20px);
+      padding: 0;
+    }
+
+    &.lr-title {
+      text-align: left;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+
+  &:last-child {
+    margin-top: 0;
+    padding: 16px 10px 13px 20px;
+    border-top: 1px solid color(input,border);
+  }
+}

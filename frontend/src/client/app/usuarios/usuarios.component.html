@@ -1,0 +1,110 @@
+<div class="container-fluid main-container">
+
+  <modal-confirmacao #modalConfirmar (onConfirmar)="excluirUsuario($event)"></modal-confirmacao>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-9">
+        <h3 class="toolbar-title">
+          Lista de usuários
+        </h3>
+      </div>
+
+      <div class="col-md-3">
+        <div class="input-with-btn">
+          <input type="text" placeholder="Buscar" ngui-auto-complete [(ngModel)]="inputSearch" [source]="listUsuarios" min-chars=1
+            max-num-list=5 value-formatter="nome" list-formatter="codigo - nome" match-formatted=true display-property-name="nome"
+            (valueChanged)="selectAutoComplete($event)" no-match-found-text="Usuário não encontrado" />
+          <button>
+            <i class="icon-loupe"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+
+    <table class="table order-table">
+      <tr>
+        <th style='width:150px;' (click)="SortList(listUsuarios, 'codigo')" [ngClass]="{ 'asc': sortingDesc['codigo'], 'desc': !sortingDesc['codigo'], 'active': selectTableRow == 'codigo' }">
+          <div>
+            <label>Código</label>
+          </div>
+
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style='width:150px;' (click)="SortList(listUsuarios, 'nome')" [ngClass]="{ 'asc': sortingDesc['nome'], 'desc': !sortingDesc['nome'], 'active': selectTableRow == 'nome' }">
+          <div>
+            <label>Nome</label>
+          </div>
+
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style='width:150px;' (click)="SortList(listUsuarios, 'cpf')" [ngClass]="{ 'asc': sortingDesc['cpf'], 'desc': !sortingDesc['cpf'], 'active': selectTableRow == 'cpf' }">
+          <div>
+            <label>CPF</label>
+          </div>
+
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th style='width:150px;' (click)="SortList(listUsuarios, 'perfil')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'perfil' }">
+          <div>
+            <label>Perfil</label>
+          </div>
+
+          <span class="order-icons-wrapper">
+            <i class="fa fa-chevron-up order-icons"></i>
+            <i class="fa fa-chevron-down order-icons"></i>
+          </span>
+        </th>
+        <th>
+        </th>
+      </tr>
+      <tr *ngFor='let usuario of listUsuarios | paginate: { itemsPerPage: 8, currentPage: p }' (click)="onSelect(usuario)" [class.selected]="usuario === selectedUser">
+        <td>{{usuario.codigo}}</td>
+        <td>{{usuario.nome}}</td>
+        <td>{{usuario.cpf}}</td>
+        <td>{{usuario.descPerfil}}</td>
+        <td>
+          <a href="" [routerLink]="['/updateUsuario', usuario.id]">
+            <i class="icon-pen-2"></i>
+          </a>
+          <a href="javascript:void(0)" (click)="abrirConfirmacaoExclusao(usuario); $event.stopPropagation()">
+            <i class="icon-x c-error"></i>
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <div class="toolbar-bottom">
+      <pagination-controls (pageChange)="p = $event" nextLabel="Próximo" previousLabel="Anterior" maxSize=7 autoHide=true directionLinks=true></pagination-controls>
+    </div>
+  </div>
+
+  <div class="container-floating">
+
+    <div class="floating-button">
+      <span class="letter">
+        <div class="t-left t-sm" data-tooltip="Novo usuário">
+          <button [routerLink]="['/addUsuario']" class="btn-clean">
+            <span class="letter">
+              <span class="fa fa-plus"></span>
+            </span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+
+</div>

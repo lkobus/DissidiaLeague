@@ -73,7 +73,7 @@ namespace Dissidia.League.Domain.Services.Matches
                     var m = match.FirstOrDefault();
                     result = Factory.From(result)
                         .WithDate(
-                            DateTime.ParseExact(match.Key, "yyyy:MM:dd hh:mm:ss", CultureInfo.InvariantCulture))
+                            DateTime.ParseExact(match.Key, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture))
                         .Instance;
                     m.Value.ForEach(player =>
                     {
@@ -94,8 +94,8 @@ namespace Dissidia.League.Domain.Services.Matches
                     });
                     
                 });
-            _matchRepository.Upsert(result);            
-
+            _matchRepository.Upsert(result);
+            OnMatchResolved?.Invoke(this, args);
         }
 
         public Dictionary<string, List<string>> GroupMatchesByDate(List<string> matchInfos)

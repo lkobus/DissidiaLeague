@@ -1,0 +1,522 @@
+.card {
+  @include pseudoclearfix;
+  margin: 38px 32px 38px 32px;
+  box-shadow: 0 3px 9px 0 rgba(0, 0, 0, 0.05);
+  background-color: color(backgroundLight);
+
+  &.type-2 {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .card-title {
+    color: color(primary, base);
+    text-align: left;
+    font-size: em(26px);
+    margin: 0;
+    padding: 21px 29px 19px 29px;
+    font-weight: 100;
+    border-bottom: 1px solid color(input,border);
+  }
+
+  .subtitle {
+    font-size: em(20px);
+    font-weight: 100;
+    float: left;
+    margin: 0;
+    padding: 12px 30px;
+    color: color(primary, light);
+  }
+
+  .lr-values {
+    float: left;
+    padding: 5px 10px 5px 20px;
+    box-sizing: border-box;
+  }
+
+  .content {
+    @include pseudoclearfix;
+    padding: 25px 25px 0;
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+
+    @include breakpoint(xs) {
+      padding: 15px 15px 0;
+    }
+
+    @include breakpoint(sm) {
+      padding: 15px 15px 0;
+    }
+  }
+
+  .scrollable-content {
+    .table {
+      width: calc(100% + 20px);
+      margin: -10px -10px 10px -10px;
+      table-layout: fixed;
+
+      th {
+        font-size: em(14px);
+        text-align: center;
+        padding: 4px 11px 3px 18px;
+
+        &:first-child {
+          text-align: left;
+        }
+
+        &:last-child {
+          text-align: right;
+        }
+      }
+
+      td {
+        text-align: center;
+        line-height: 16px;
+        padding: 8px 13px 5px 8px;
+
+        @include breakpoint(xs) {
+          padding: 5px 6px!important;
+        }
+
+        &:first-child {
+          text-align: left;
+          padding-left: 19px;
+          padding-top: 2px;
+        }
+
+        &:nth-child(2) {
+          padding-top: 4px;
+        }
+
+        &:last-child {
+          padding-left: 24px;
+          padding-top: 18px;
+          position: relative;
+          text-align: right;
+        }
+      }
+
+      tr {
+        &:first-child {
+          &:hover,
+          &.active {
+            background-color: transparent;
+          }
+        }
+
+        &:hover,
+        &.active {
+          background-color: color(primary,base);
+
+          td {
+            color: color(txt,light)!important;
+
+            .price,
+            .qty-label,
+            .product-name,
+            .final-price {
+              color: color(txt,light)!important;
+            }
+          }
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      .product-name {
+        font-weight: bold;
+        display: inline-block;
+        width: 100%;
+        font-size: em(12px);
+        text-align: center;
+        color: color(txt,dark);
+        @include truncate;
+      }
+
+      .price {
+        font-weight: normal;
+        font-size: em(16px);
+        display: inline-block;
+        width: 100%;
+        text-align: left;
+        padding: 3px 5px;
+        margin: 0;
+        color: color(txt,dark);
+
+        &.final-price {
+          font-size: em(15px);
+          text-align: right;
+          width: auto;
+          padding: 0;
+        }
+      }
+
+      .bubble {
+        margin: 3px 13px 0 0;
+      }
+
+      .btn-remove {
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0;
+        color: color(status,error);
+        margin-left: 5px;
+
+        @include breakpoint(xs) {
+          float: right;
+        }
+      }
+    }
+
+    .tooltip {
+      left: 56%;
+
+      &.tooltip-bottom {
+        bottom: -24px;
+        z-index: 10;
+      }
+    }
+  }
+
+  & > {
+    .button-wrapper {
+      padding: 0 21px 12px 0;
+      //@TODO refatorar linha abaixo
+      //width: auto;
+
+      &:first-child {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    form {
+      .button-wrapper {
+        &:last-child {
+          padding: 0 21px 12px 0;
+        }
+      }
+    }
+  }
+
+  .values {
+    margin: 20px 0 2px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 34px;
+
+      @include breakpoint(xs) {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &.card-fixed {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    margin: 0!important;
+    max-width: 32%;
+    height: 100%;
+
+    @include breakpoint(sm) {
+      max-width: 290px;
+    }
+
+    @include breakpoint(xs) {
+      position: relative;
+      top: 0;
+      max-width: inherit;
+      width: 100%;
+    }
+
+    .toolbar {
+      padding-left: 10px;
+
+      .toolbar-title {
+        font-size: em(16px);
+        text-transform: uppercase;
+      }
+    }
+
+    .menu-btns {
+      margin-top: 10px;
+      margin-bottom: 0;
+      padding: 0 10px;
+      box-sizing: border-box;
+      display: inline-block;
+
+      .menu-btn {
+        display: inline-block;
+        width: 50%;
+        margin-right: 0;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+
+        &:nth-child(2n) {
+          padding-right:0;
+        }
+
+        &:nth-child(2n+1) {
+          padding-left: 0;
+        }
+      }
+    }
+
+    .fog-container {
+      border-bottom: 1px solid color(input,border);
+    }
+
+    .content {
+      float: left;
+      width: 100%;
+      padding: 10px 10px 0;
+      box-sizing: border-box;
+
+      input,
+      select {
+        margin-bottom: 5px;
+      }
+
+      input {
+        padding: 5px;
+      }
+
+      select {
+        padding: 4px;
+      }
+
+      label {
+        font-size: em(12px);
+        letter-spacing: 0.2px;
+      }
+
+      &:nth-child(2) {
+        padding-bottom: 14px;
+        border-bottom: 1px solid color(input,border);
+      }
+    }
+  }
+
+  &.card-anchor {
+    position: fixed;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+
+    .toolbar {
+      .toolbar-title {
+        color: color(txt,base);
+      }
+    }
+  }
+
+  &.card-transparent {
+    margin-bottom: 0;
+    position: relative;
+    z-index: 51;
+    background-color: rgba(color(backgroundLight), 0.8);
+
+    &.below {
+      z-index: 50;
+    }
+
+    select {
+      background-color: rgba(color(backgroundLight), 0.4);
+    }
+
+    input {
+      background-color: transparent;
+    }
+
+    .name {
+      max-width: 150px;
+      display: inline-block;
+      @include truncate;
+    }
+
+    .toolbar-title {
+      line-height: 37px;
+    }
+
+    .table {
+      margin: 0;
+
+      th {
+        text-align: center;
+      }
+
+      td {
+        text-align: center;
+        padding: 5px 18px;
+
+        &.active {
+          color: color(txt,light);
+          background-color: color(action-bg);
+        }
+      }
+
+      &.type-3 {
+        td {
+          padding: 12px 8px;
+        }
+      }
+    }
+  }
+
+  &.slim-col {
+    margin-top: 12px;
+    margin-left: 0;
+    @include pseudoclearfix;
+
+    .toolbar {
+      border-bottom: none;
+
+      button {
+        padding: 10px 15px;
+        float: right;
+      }
+
+      .fa {
+        font-size: em(20px);
+      }
+    }
+
+    select {
+      margin-bottom: 0;
+    }
+
+    .sidebar {
+      float: left;
+      width: 100%;
+
+      .btn-full {
+        font-size: em(12px);
+        padding: 5px;
+        border-radius: 0 0 10px 10px;
+        margin-bottom: 10px;
+      }
+    }
+
+    .btn-full {
+      padding: 9px 10px;
+    }
+  }
+
+  & > {
+    .table {
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.double-sidebar {
+  .sidebar {
+    max-width: 48%;
+  }
+
+  .side-2 {
+    position: relative;
+    padding-left: 4%;
+
+    &:before {
+      content: "\f0ec";
+      position: absolute;
+      left: -1%;
+      font-size: 25px;
+      top: 50%;
+      color: color(primary,base);
+      font-family: "FontAwesome";
+    }
+  }
+}
+
+.cards-2,
+.cards-3 {
+  & > [class^="col-"] {
+    .input-with-btn {
+      &.wide-input {
+        width: 100%;
+        float: left;
+        box-sizing: border-box;
+        background-color: color(backgroundLight);
+        margin-top: 36px;
+        border: none;
+        padding: 7px 7px 6px 14px;
+
+        @include breakpoint(xs) {
+          margin-top: 10px;
+        }
+
+        input[type="text"] {
+          font-weight: bold;
+        }
+      }
+    }
+
+    .card {
+      margin: 38px 5px 0 5px;
+
+      .button-wrapper {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    &:nth-child(2n+2) {
+      padding-left: 0;
+
+      .card {
+        margin-left: 0;
+      }
+    }
+
+    &:nth-last-child(-n+2) {
+      .card {
+        margin-bottom: 38px;
+      }
+    }
+  }
+
+  .content-head {
+    margin-left: 12px;
+    margin-bottom: 38px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .button-wrapper {
+    margin: 30px 0 15px;
+    padding: 0 15px;
+  }
+
+}
+
+.cards-3 {
+  & > [class^="col-"] {
+    &:nth-child(2n+2) {
+      padding-left: 15px;
+    }
+
+    &:nth-child(2n+3) {
+      padding-left: 0;
+    }
+  }
+
+  .content-head {
+    margin-right: 20px;
+    margin-bottom: 0;
+  }
+}

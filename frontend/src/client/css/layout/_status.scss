@@ -1,0 +1,20 @@
+.status {
+  @include pseudoclearfix;
+
+  .status-txt {
+    display: inline-block;
+    margin-right: 10px;
+    line-height: 15px;
+  }
+
+  .icon {
+    margin: 0;
+    float: right;
+  }
+
+  &.dl {
+    .icon {
+      margin: 8px 0 0;
+    }
+  }
+}

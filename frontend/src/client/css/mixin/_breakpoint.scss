@@ -1,0 +1,58 @@
+// media query mixin
+// -------------------------------------------------
+@mixin breakpoint($point) {
+  @if $point == xlg {
+    @media (min-width: 1800px) { @content; }
+  }
+  @if $point == lg {
+    @media (min-width: 1200px) { @content; }
+  }
+  @if $point == ltbigger {
+    @media (max-width: 1280px) { @content; }
+  }
+  @else if $point == md {
+    @media (min-width: 992px)  and (max-width: 1199px) { @content; }
+  }
+  @else if $point == sm {
+    @media (min-width: 768px) and (max-width: 991px) { @content; }
+  }
+  @else if $point == smxs {
+    @media (max-width: 991px) { @content; }
+  }
+  @else if $point == xs {
+    @media (max-width: 767px) { @content; }
+  }
+  @else if $point == mobile-small {
+    @media (min-width: 480px) and (max-width: 767px) { @content; }
+  }
+  @else if $point == small {
+    @media (max-width: 480px) { @content; }
+  }
+}
+
+@mixin breakpointH($point) {
+  @if $point == xlg {
+    @media (min-height: 1024px) { @content; }
+  }
+  @else if $point == lg {
+    @media (max-height: 964px) { @content; }
+  }
+  @else if $point == md {
+    @media (max-height: 802px) { @content; }
+  }
+  @else if $point == mdsm {
+    @media (max-height: 860px) { @content; }
+  }
+  @else if $point == sm {
+    @media (max-height: 770px) { @content; }
+  }
+  @else if $point == xs {
+    @media (max-height: 602px) { @content; }
+  }
+  @else if $point == small {
+    @media (max-height: 600px) { @content; }
+  }
+  @else if $point == tiny {
+    @media (max-height: 480px) { @content; }
+  }
+}

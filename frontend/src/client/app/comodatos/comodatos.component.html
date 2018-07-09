@@ -1,0 +1,307 @@
+<div class="container-fluid main-container">
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="toolbar">
+          <div class="col-md-3">
+            <h3 class="toolbar-title">
+              Comodatos
+            </h3>
+          </div>
+
+          <div class="col-md-5" *ngIf="isTabEstoque"></div>
+          <div class="col-md-4" *ngIf="isTabEstoque">
+            <div class="input-with-btn">
+              <input type="text"
+                     placeholder="Buscar"
+                     ngui-auto-complete
+                     min-chars=1
+                     max-num-list=5
+                     value-formatter="nome"
+                     list-formatter="codigo - nome"
+                     match-formatted=true
+                     display-property-name="nome"
+                     no-match-found-text="Refrigerador não encontrado"
+                     [(ngModel)]="inputSearchRefrigerador"
+                     (keyup)="inputSearchRefrigeradorOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-3" *ngIf="isTabComodato">
+            <div class="input-with-btn">
+              <input type="text"
+                     placeholder="Buscar"
+                     ngui-auto-complete
+                     min-chars=1
+                     max-num-list=5
+                     value-formatter="nome"
+                     list-formatter="codigo - nome"
+                     match-formatted=true
+                     display-property-name="nome"
+                     no-match-found-text="Comodato não encontrado"
+                     [(ngModel)]="inputSearchComodatos"
+                     (keyup)="inputSearchComodatoOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2 mdp-with-lb" *ngIf="isTabComodato">
+            <label>
+              De
+            </label>
+            <my-date-picker name="dataInicio"
+                            [locale]="pt-br"
+                            (dateChanged)="onDateInicialChanged($event)"
+                            [selDate]="selectedDateDe"
+                            [options]="myDatePickerOptions">
+            </my-date-picker>
+          </div>
+
+          <div class="col-md-2 mdp-with-lb" *ngIf="isTabComodato">
+            <label>
+              Até
+            </label>
+            <my-date-picker name="dataFim"
+                            [locale]="pt-br"
+                            (dateChanged)="onDateFinalChanged($event)"
+                            [selDate]="selectedDateAte"
+                            [options]="myDatePickerOptions">
+            </my-date-picker>
+          </div>
+
+          <div class="col-md-2" *ngIf="isTabComodato">
+            <select name="filtro-comodatos" id="filtro-comodatos" (change)="filtroGeralComodato($event.target.value)">
+              <option selected value="1">Todos</option>
+              <option value="2">Em vigor</option>
+              <option value="3">Vencidos</option>
+              <option value="4">Solicitações</option>
+            </select>
+          </div>
+        </div>
+
+        <tabs (OnTabSelected)="OnTabSelected($event)">
+          <tab tabTitle="Comodatos" *ngIf="comodatos">
+            <div class="products-grid2-container tiny-cards">
+              <ul class="products-list">
+
+                <li class="{{changeCssLi(comodato)}}" *ngFor="let comodato of comodatos | paginate: { itemsPerPage: 10, currentPage: p }">
+
+                  <div class="float-indicator">
+                    <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    <small>{{changeStatusComodato(comodato)}}</small>
+                  </div>
+
+                  <div class="float-indicator right appear-on-hover">
+                    <div class="check-wrapper">
+                      <input type="checkbox" value="" name="" class="check" id="com1">
+                      <label for="com1"></label>
+                    </div>
+                  </div>
+
+                  <div class="card-flip">
+                    <div class="front" *ngIf="carregou">
+                      <a href="" [routerLink]="" class="product-container">
+                        <div class="product-image">
+                          <img [src]='getRefrigeradorImageURL(comodato.refrigeradorId)' height="128" width="128" />
+                        </div>
+                        <p class="product-name" title="{{changeNameRefrigeradorComodato(comodato.refrigeradorId)}}">
+                          {{changeNameRefrigeradorComodato(comodato.refrigeradorId)}}
+                        </p>
+                        <p class="product-un-price" title="{{changeNameClienteComodato(comodato.clienteId)}}">
+                          {{changeNameClienteComodato(comodato.clienteId)}}
+                        </p>
+                        <span class="product-un-price">
+                          <small class="col-md-6 no-padding">De: {{formatDate(comodato.dataSolicitacao)}}</small>
+                          <small class="col-md-6 no-padding">Até: {{formatDate(comodato.dataVencimento)}}</small>
+                        </span>
+                      </a>
+                    </div>
+                  </div>
+
+                </li>
+
+              </ul>
+            </div>
+
+            <div class="toolbar-bottom">
+              <pagination-controls (pageChange)="p = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR"></pagination-controls>
+            </div>
+
+          </tab>
+
+          <tab tabTitle="Estoque">
+            <div class="products-grid2-container tiny-cards">
+              <ul class="products-list">
+
+                <li class="product enabled" *ngFor="let refrigerador of listRefrigeradores | paginate: { id:'paginationEstoque', itemsPerPage: 10, currentPage: teste };"
+                  (click)="onRefrigeradorSelected(refrigerador)" (dblclick)="onRefrigeradorSelected(refrigerador);IncluirNovaSolicitacao(refrigerador)"
+                  [class.selected]="refrigerador === selectedRefrigerador">
+
+                  <div class="float-indicator">
+                    <i class="fa fa-calendar-plus-o" aria-hidden="true"></i>
+                    <small>Disponível</small>
+                  </div>
+
+                  <div class="float-indicator right appear-on-hover">
+                    <i class="fa" aria-hidden="true"></i>
+                    <small>Estoque: {{refrigerador.quantidadeEmEstoque}} &nbsp;&nbsp;&nbsp;</small>
+                  </div>
+
+                  <div class="card-flip">
+                    <div class="front">
+                      <a href="" [routerLink]="" class="product-container">
+                        <div class="product-image">
+                          <img [src]='getRefrigeradorImageURL(refrigerador.documentId)' height="128" width="128" />
+                        </div>
+                        <p class="product-name" title={{refrigerador.nomeAmigavel}}>
+                          {{refrigerador.nomeAmigavel}}
+                          <br>
+                          <small>{{refrigerador.codigo}}</small>
+                        </p>
+
+                      </a>
+                    </div>
+                  </div>
+
+                </li>
+              </ul>
+            </div>
+
+            <div class="toolbar-bottom">
+              <pagination-controls id="paginationEstoque" (pageChange)="teste = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO" previousLabel="ANTERIOR" #paginationEstoque>
+              </pagination-controls>
+            </div>
+          </tab>
+        </tabs>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-floating">
+
+  <div class="nds nd1" *ngIf="isTabEstoque">
+    <button [disabled]="!selectedRefrigerador" (click)="IncluirNovaSolicitacao(selectedRefrigerador)">
+      <span class="t-left t-sm" data-tooltip="Enviar">
+        <span class="letter">
+          <i class="fa fa-level-up"></i>
+        </span>
+      </span>
+    </button>
+  </div>
+  <div class="nds nd1" *ngIf="isTabComodato">
+    <button>
+      <div class="t-left t-sm" data-tooltip="Recolher">
+        <span class="letter">
+          <i class="fa fa-level-down"></i>
+        </span>
+      </div>
+    </button>
+  </div>
+
+  <div class="floating-button">
+    <span class="letter">
+      <i class="fa fa-bars"></i>
+    </span>
+  </div>
+</div>
+
+<modal #modalSolicitarComodato title="Gerar Pedido de Comodato" [closeOnOutsideClick]="false" *ngIf="listClientes">
+  <modal-header>
+    <span>Gerar Pedido de Comodato</span>
+  </modal-header>
+
+  <modal-content>
+
+    <form #solicitacaoComodatoForm="ngForm" *ngIf="solicitacaoComodato.refrigerador.documentId" (ngSubmit)="CadastrarComodato(solicitacaoComodatoForm)"
+      id="solicitacaoComodatoForm">
+      <div class="row">
+        <div class="col-md-3 txt-c">
+          <img [src]="getRefrigeradorImageURL(solicitacaoComodato.refrigerador.documentId)" height="240" width="200" />
+        </div>
+        <div class="col-md-9">
+          <div class="col-md-3">
+            <label for="codigo">Código</label>
+            <input [(ngModel)]="solicitacaoComodato.refrigerador.codigo" name="codigo" type="text" disabled />
+          </div>
+          <div class="col-md-9">
+            <label for="nome">Nome</label>
+            <input [(ngModel)]="solicitacaoComodato.refrigerador.nomeAmigavel" name="nome" type="text" disabled />
+          </div>
+          <div class="col-md-3">
+            <label for="quantidade">Estoque</label>
+            <input [(ngModel)]="solicitacaoComodato.refrigerador.quantidadeEmEstoque" name="quantidade" type="text" disabled />
+          </div>
+          <div class="col-md-4">
+            <label for="custo-medio">Custo médio (R$)</label>
+            <input [(ngModel)]="solicitacaoComodato.refrigerador.custoMedio" name="estoque-minimo" type="text" disabled />
+          </div>
+
+          <div class="col-md-5 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && valor.errors && (valor.errors.required || !valor.pristine)) }">
+            <label for="valor">Valor Nota</label>
+            <input kzMaskCurrency (ngModelChange)="OnValorChange($event)" type="text" class="form-control" name="valor" id="valor" placeholder="0,00"
+              [(ngModel)]="solicitacaoComodato.valor" #valor="ngModel" required>
+            <div *ngIf="valor.errors && valor.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+          </div>
+
+          <div class="col-md-8">
+
+            <div *ngIf="listClientes">
+              <div *ngIf="listClientes" class="tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cliente.errors && (cliente.errors.required || !cliente.pristine)) }">
+                <label for="">Cliente:</label>
+                <div class="input-with-btn">
+                  <input ngui-auto-complete class="form-control" type="text" placeholder="Buscar" [(ngModel)]="solicitacaoComodato.cliente"
+                    [source]="listClientes" min-chars=1 max-num-list=5 value-formatter="NomeFantasia" list-formatter="CnpjCpf - NomeFantasia"
+                    match-formatted=true display-property-name="nomeFantasia" (customSelected)="customCallback($event)" (valueChanged)="selectAutoCompleteEstoque($event)"
+                    no-match-found-text="Cliente não encontrado" id="cliente" name="cliente" #cliente="ngModel" required/>
+                  <button tabindex="-1" type="button" autocomplete="off">
+                    <i class="icon-loupe"></i>
+                  </button>
+                  <div *ngIf="cliente.errors && cliente.errors.required" class="tooltip tooltip-bottom">Campo obrigatório</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4 tooltip-holder">
+            <label for="dataVencimento">Data do vencimento</label>
+            <my-date-picker name="dataVencimento" id="dataVencimento" [locale]="pt-br" (dateChanged)="onDateVencimentoChanged($event)"
+              [selDate]="selectedDateVencimento" [options]="myDatePickerOptions">
+            </my-date-picker>
+          </div>
+
+        </div>
+      </div>
+
+
+    </form>
+
+  </modal-content>
+
+  <modal-footer>
+    <button [disabled]="isImporting" form="solicitacaoComodatoForm" type="submit" class="btn btn-primary">
+      Gerar Pedido
+    </button>
+  </modal-footer>
+</modal>
+
+<div *ngIf="isLoading">
+  <md-spinner></md-spinner>
+  <div class="loading-overlay">
+    <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+    <div class="spinner">
+      <div class="bounce1"></div>
+      <div class="bounce2"></div>
+      <div class="bounce3"></div>
+    </div>
+  </div>
+</div>

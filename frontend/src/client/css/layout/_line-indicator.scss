@@ -1,0 +1,21 @@
+.line-indicator{
+  width: 100%;
+  @include pseudoclearfix;
+
+  .tooltip-help {
+    min-width: 33%;
+    float: left;
+    margin: 0;
+    z-index: 0;
+  }
+
+  .tooltip-item {
+    width: 100%;
+  }
+
+  .slice {
+    width: 100%;
+    float: left;
+    height: 5px;
+  }
+}

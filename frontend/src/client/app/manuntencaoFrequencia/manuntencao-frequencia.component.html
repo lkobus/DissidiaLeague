@@ -1,0 +1,350 @@
+<div class="container-fluid main-container">
+  <div [ngBusy]="{busy: busy, template: templateLoading, message: 'Carregando, aguarde...'}"></div>
+  <!-- adição cliente -->
+  <modal #clienteModal title="Adicionar cliente" [closeOnOutsideClick]="false" class="col-md-6">
+    <modal-header>
+      <span>Insira sua senha atual</span>
+    </modal-header>
+
+    <modal-content>
+      <div class="row">
+        <div class="col-md-12">
+          <label for="password">Escolha um cliente</label>
+          <input #inputSearchCliente ngui-auto-complete class="form-control" type="text" placeholder="Buscar" [(ngModel)]="clienteParaAdicionar" [source]="clientesSemFrequencia"
+            min-chars=1 max-num-list=5 value-formatter="CnpjCpf - NomeFantasia" list-formatter="CnpjCpf - NomeFantasia" match-formatted=true
+            display-property-name="CnpjCpf - NomeFantasia" no-match-found-text="Cliente não encontrado" id="cliente" name="cliente" />
+        </div>
+      </div>
+      <alert></alert>
+    </modal-content>
+
+    <modal-footer>
+      <div class="button-wrapper">
+        <button (click)="adicionarNovoCliente();" class="btn-action">Adicionar</button>
+      </div>
+    </modal-footer>
+  </modal>
+
+  <modal #modalImportar title="Importar" [closeOnOutsideClick]="false">
+    <modal-header>
+      <span>Importar Frequência de Visitas</span>
+    </modal-header>
+
+    <modal-content>
+      <image-upload *ngIf="!isImporting" [max]="1" [preview]="false" [buttonCaption]="'Selecione o arquivo CSV'" [dropBoxMessage]="''"
+        [extensions]="['csv', 'txt', 'CSV', 'TXT', '*.*']" (onFileUploadFinish)="uploadCSV($event)" (uploadFinished)="onUploadFinished($event)">
+      </image-upload>
+
+      <div *ngIf="isImporting">
+        <md-spinner></md-spinner>
+        <div class="loading-overlay">
+          <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+        </div>
+      </div>
+    </modal-content>
+
+    <modal-footer>
+      <button class="btn btn-primary" [disabled]="isImporting" (click)="importar()">Importar</button>
+    </modal-footer>
+  </modal>
+
+  <div class="map-wrapper">
+    <ngui-map #mapa minZoom="3" zoom="13" styles='[
+    {
+        "featureType": "all",
+        "elementType": "all",
+        "stylers": [
+            {
+                "hue": "#008eff"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "0"
+            },
+            {
+                "lightness": "0"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "saturation": "-60"
+            },
+            {
+                "lightness": "-20"
+            }
+        ]
+    }
+]' mapTypeControl="true" [zoomControlOptions]="{position: 'LEFT_CENTER'}" [streetViewControlOptions]="{position: 'LEFT_BOTTOM'}" center="0, 0" (mapReady$)="onMapReady($event)" (mapClick)="onMapClick($event)" (idle)="onIdle($event)"
+      mapTypeId="roadmap">
+      <marker *ngFor="let pos of positions" [label]="pos.label" [position]="pos.position" [icon]="pos.icon" (initialized$)="onMarkerInit($event)"
+        (click)="ontMarkerMapaClick($event, pos)">
+      </marker>
+
+      <marker [position]="[empresa.latitude, empresa.longitude]" icon="assets/home-pin.png" [position]="[empresa.latitude, empresa.longitude]">
+      </marker>
+
+      <info-window id="clienteInfoDetail">
+        <div *ngIf="markerCliente">
+          <div class="col-md-5">
+            <img [src]="getImagemFachada()" height="150" width="300 " class="user-image w100i" />
+          </div>
+          <div class="col-md-7 no-padding">
+            <table class="table type-2" style="margin-top: 42px;">
+              <tr>
+                <th style="width: 102px;">Nome Fantasia</th>
+                <th>Razão social</th>
+              </tr>
+              <tr>
+                <td>{{markerCliente.NomeFantasia}}</td>
+                <td>{{markerCliente.RazaoSocial}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </info-window>
+    </ngui-map>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card card-transparent card-anchor block-toggle active" [ngClass]="{'active': !showBlock}">
+      <div class="toolbar">
+        <div class="col-md-6">
+          <h3 class="toolbar-title">
+            Selecionar vendedor e dia
+
+            <span class="tooltip-help">
+              <span class="tooltip-item">
+                <i class="fa fa-question-circle"></i>
+              </span>
+              <span class="tooltip-content tooltip-content-bigger">
+                <span class="tooltip-text">
+                  Clique em um dia de determinado vendedor para alterar a ordenação de visitas
+                </span>
+              </span>
+            </span>
+
+          </h3>
+        </div>
+
+        <div class="col-md-6 txt-r">
+          <!--@TODO Filtro de vendedores
+          <select id="" name="">
+            <option value="">Status</option>
+          </select>
+        -->
+        </div>
+
+        <div class="toggle-button" (click)="showBlock= !showBlock">
+          <i class="fa fa-chevron-down"></i>
+        </div>
+
+      </div>
+
+      <div class="block-content">
+        <table class="table ">
+          <tr>
+            <th>Nome</th>
+            <th>Segunda</th>
+            <th>Terça</th>
+            <th>Quarta</th>
+            <th>Quinta</th>
+            <th>Sexta</th>
+            <th>Sábado</th>
+            <th>Domingo</th>
+          </tr>
+          <tr class="hover" *ngFor="let contagemFrequencia of contagensFrequenciaVendedores;let d = index" [attr.data-index]="d">
+            <td>
+              <span class="name" title="VDE">{{contagemFrequencia.nomeVendedor}}</span>
+            </td>
+            <td (click)="onDayClick(contagemFrequencia.idVendedor, i)" *ngFor="let frequencia of contagemFrequencia.contagens; let i = index"
+              [class.active]="selectedDay1 == i && contagemFrequencia?.idVendedor == selectedGrid?.idVendedor">
+              {{ frequencia.quantidade}}
+            </td>
+            <td>-</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="selectedGrid" [ngClass]="[currentCol === 1? 'col-md-6 col-md-offset-6 double-sidebar' : 'col-md-3 col-md-offset-9']"
+    class="trztion">
+    <div class="card card-transparent slim-col">
+      <div class="toolbar">
+        <div class="col-md-8">
+          <h3 class="toolbar-title">
+            <span *ngIf="currentCol != 1">Ordenar</span>
+            <span *ngIf="currentCol === 1">Trocar</span>
+
+            <span class="tooltip-help">
+              <span class="tooltip-item">
+                <i class="fa fa-question-circle"></i>
+              </span>
+              <span class="tooltip-content tooltip-content-big">
+                <span class="tooltip-text">
+                  Ordene as visitas, ou clique no botão ao lado para trocar entre vendedores
+                </span>
+              </span>
+            </span>
+          </h3>
+        </div>
+        <div class="col-md-4">
+          <button class="btn-action" (click)="toggleCols(1);">
+            <i class="fa fa-exchange"></i>
+          </button>
+        </div>
+      </div>
+
+      <!--@TODO 3- Coluna do VDE Atual-->
+      <div class="sidebar side-1 trztion">
+        <div class="col-md-12">
+          <select (change)="onChangeSelectVD1($event.target.value)" [disabled]="disabled1 == true">
+            <option *ngFor="let frequenciaVendedores of contagensFrequenciaVendedores" [value]="frequenciaVendedores.idVendedor" [attr.selected]="selectedGrid?.idVendedor == frequenciaVendedores?.idVendedor ? true : null"
+              [disabled]='changeSalesCanBeDone(frequenciaVendedores.idVendedor, selectedUser2) == false'>
+              {{frequenciaVendedores.nomeVendedor}}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-12">
+          <select [ngModel]="selectedDay1" (change)="onChangeSelectDay1($event.target.value)" [disabled]="disabled1 == true">
+            <option [value]="0" [disabled]='changeDayCanBeDone(0, selectedDay2) == false'>Segunda</option>
+            <option [value]="1" [disabled]='changeDayCanBeDone(1, selectedDay2) == false'>Terça</option>
+            <option [value]="2" [disabled]='changeDayCanBeDone(2, selectedDay2) == false'>Quarta</option>
+            <option [value]="3" [disabled]='changeDayCanBeDone(3, selectedDay2) == false'>Quinta</option>
+            <option [value]="4" [disabled]='changeDayCanBeDone(4, selectedDay2) == false'>Sexta</option>
+            <option [value]="5" [disabled]='changeDayCanBeDone(5, selectedDay2) == false'>Sabado</option>
+          </select>
+        </div>
+
+        <div [dragula]='"first-bag"' class="dragndrop-container" id="bag1" [dragulaModel]="clientes">
+          <div *ngFor="let cliente of clientes" [attr.id]="cliente.Id">
+            <i class="fa fa-bars"></i>
+            <div class="dragndrop-txt">
+              {{cliente.NomeFantasia}}
+            </div>
+
+            <!--@TODO Adicionar função de exclusão deste item, diretamente no elemento abaixo-->
+
+            <i class="fa icon-x" (click)="excluir(cliente.Id, selectedDay1, selectedGrid.idVendedor)"></i>
+          </div>
+        </div>
+
+        <!--@TODO Adiciona visita chamando pop-up-->
+        <div class="col-md-12">
+          <button (click)="openModal(1);" class="btn-full b-ok">
+            <i class="icon-plus"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!--@TODO 4- Coluna para troca entre vendendores (é permitido colocar o VDE da coluna anterior)-->
+      <div class="sidebar side-2 trztion" *ngIf="currentCol === 1">
+        <div class="col-md-12">
+          <select (change)="onChangeSelectVD2($event.target.value)">
+            <option *ngFor="let frequenciaVendedores of contagensFrequenciaVendedores2" [value]="frequenciaVendedores.idVendedor" [attr.selected]="selectedUser2 == frequenciaVendedores.idVendedor ? true : null"
+              [disabled]='changeSalesCanBeDone(frequenciaVendedores.idVendedor, selectedGrid?.idVendedor) == false'>
+              {{frequenciaVendedores.nomeVendedor}}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-12">
+          <select [ngModel]="selectedDay2" (change)="onChangeSelectDay2($event.target.value)">
+            <option [value]="0" [disabled]='changeDayCanBeDone(0, selectedDay1) == false'>Segunda</option>
+            <option [value]="1" [disabled]='changeDayCanBeDone(1, selectedDay1) == false'>Terça</option>
+            <option [value]="2" [disabled]='changeDayCanBeDone(2, selectedDay1) == false'>Quarta</option>
+            <option [value]="3" [disabled]='changeDayCanBeDone(3, selectedDay1) == false'>Quinta</option>
+            <option [value]="4" [disabled]='changeDayCanBeDone(4, selectedDay1) == false'>Sexta</option>
+            <option [value]="5" [disabled]='changeDayCanBeDone(5, selectedDay1) == false'>Sabado</option>
+          </select>
+        </div>
+
+        <div [dragula]='"first-bag"' class="dragndrop-container" id="bag2" [dragulaModel]="clientes2" [attr.disabled]="readonly">
+          <div *ngFor="let cliente of clientes2" [attr.id]="cliente.Id">
+            <i class="fa fa-bars"></i>
+            <div class="dragndrop-txt">
+              {{cliente.NomeFantasia}}
+            </div>
+            <!--@TODO Adicionar função de exclusão deste item, diretamente no elemento abaixo-->
+            <i class="fa icon-x"></i>
+          </div>
+        </div>
+
+        <!--@TODO Adiciona visita chamando pop-up-->
+        <div class="col-md-12">
+          <button (click)="openModal(2);" class="btn-full b-ok">
+            <i class="icon-plus"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <button class="btn-full" (click)="atualizaFrequencia()">Atualizar</button>
+
+    </div>
+
+  </div>
+</div>
+
+
+<div class="container-floating">
+  <div class="nds nd2">
+    <button (click)="modalImportar.open();">
+      <div class="t-left t-sm" data-tooltip="Importar">
+        <span class="letter">I</span>
+      </div>
+    </button>
+  </div>
+  <div class="nds nd1">
+    <button (click)="exportar();">
+      <div class="t-left t-sm" data-tooltip="Exportar">
+        <span class="letter">E</span>
+      </div>
+    </button>
+  </div>
+
+  <div class="floating-button">
+    <span class="letter">
+      <i class="fa fa-bars"></i>
+    </span>
+  </div>
+</div>
+
+
+<!--@TODO FINISH HIM! ᕦ(ò_óˇ)ᕤ Remover TODOs-->

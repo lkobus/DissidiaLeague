@@ -1,0 +1,180 @@
+<div class="container-fluid main-container flexbox cards-2">
+  <div class="row">
+
+    <div class="col-md-12">
+      <div class="card">
+
+        <div class="toolbar">
+          <div class="col-md-4">
+            <h3 class="toolbar-title">
+              Ativos de giro
+            </h3>
+          </div>
+
+          <div class="col-md-8">
+            <div class="input-with-btn">
+              <input type="text" placeholder="Buscar" ngui-auto-complete min-chars=1 max-num-list=5 value-formatter="nome" list-formatter="codigo - nome"
+                match-formatted=true display-property-name="nome" no-match-found-text="Nada encontrado" [(ngModel)]="inputSearch"
+                (keyup)="inputSearchOnFilter($event.target.value)" />
+              <button>
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <table class="table">
+          <tr>
+            <th (click)="SortList(dataList, 'Item.Codigo')"
+            [ngClass]="{ 'asc': sortingDesc['Item.Codigo'], 'desc': !sortingDesc['Item.Codigo'], 'active': selectTableRow == 'Item.Codigo' }">
+              <div>
+                <label>Código</label>
+              </div>
+            </th>
+            <th (click)="SortList(dataList, 'Item.Nome')"
+            [ngClass]="{ 'asc': sortingDesc['Item.Nome'], 'desc': !sortingDesc['Item.Nome'], 'active': selectTableRow == 'Item.Nome' }">
+              <div>
+                <label>Nome</label>
+              </div>
+            </th>
+            <th (click)="SortList(dataList, 'Quantidade')"
+            [ngClass]="{ 'asc': sortingDesc['Quantidade'], 'desc': !sortingDesc['Quantidade'], 'active': selectTableRow == 'Quantidade' }">
+              <div>
+                <label>Qtde</label>
+              </div>
+            </th>
+            <th></th>
+          </tr>
+          <tr *ngFor="let estoque of dataList | paginate: { id: 'paginationOrigem', itemsPerPage: 10, currentPage: p1 }">
+            <td>{{estoque.Item.Codigo}}</td>
+            <td>{{estoque.Item.Nome}}</td>
+            <td>{{estoque.Quantidade}} UN</td>
+            <td>
+              <a href="" title="Visualizar" [routerLink]="" (click)="editarEstoqueProduto(estoque.Id, 1)">
+                <i class="icon-loupe"></i>
+              </a>
+            </td>
+          </tr>
+        </table>
+
+        <div class="toolbar-bottom">
+          <pagination-controls id="paginationOrigem" (pageChange)="p1 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+            previousLabel="ANTERIOR" #paginationOrigem>
+          </pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-floating left">
+    <div class="floating-button">
+      <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>
+
+<modal #modalEditar title="Estoque do ativo de giro" [closeOnOutsideClick]="false">
+
+  <modal-header>
+    <span>Estoque do ativo de giro</span>
+  </modal-header>
+
+  <modal-content *ngIf="estoqueEdicao">
+    <div class="row">
+      <div class="col-md-3 txt-c">
+        <img [src]="urlImageProdutoEdicao" height="160" width="160" />
+      </div>
+      <div class="col-md-9">
+        <div class="col-md-3">
+          <label for="codigo">Código</label>
+          <input [(ngModel)]="estoqueEdicao.Item.Codigo" id="codigo" placeholder="Código" type="text" disabled />
+        </div>
+        <div class="col-md-9">
+          <label for="nome">Nome</label>
+          <input [(ngModel)]="estoqueEdicao.Item.Nome" id="nome" placeholder="Nome" type="text" disabled />
+        </div>
+        <div class="col-md-12">
+          <label for="quantidade">Quantidade ({{estoqueEdicao.Item.UnidadeMedida}})</label>
+          <input [(ngModel)]="estoqueEdicao.Quantidade" id="quantidade" placeholder="Quantiadade" type="number" disabled />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="toolbar">
+
+        <div class="col-md-12">
+          <h3 class="toolbar-title">
+            Movimentacao
+          </h3>
+        </div>
+      </div>
+
+      <table class="table">
+        <tr>
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Data')" [ngClass]="{ 'asc': sortingDesc['Data'], 'desc': !sortingDesc['Data'], 'active': selectTableRow == 'Data' }">
+            <label>Data</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Valor')" [ngClass]="{ 'asc': sortingDesc['Valor'], 'desc': !sortingDesc['Valor'], 'active': selectTableRow == 'Valor' }">
+            <label>Qtde</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Nome')" [ngClass]="{ 'asc': sortingDesc['Nome'], 'desc': !sortingDesc['Nome'], 'active': selectTableRow == 'Nome' }">
+            <label>Usuário</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'Origem')" [ngClass]="{ 'asc': sortingDesc['Origem'], 'desc': !sortingDesc['Origem'], 'active': selectTableRow == 'Origem' }">
+            <label>Origem</label>
+          </th>
+
+          <th (click)="SortList(listEstoqueEdicaoMovimentacao, 'TipoMovimento')" [ngClass]="{ 'asc': sortingDesc['TipoMovimento'], 'desc': !sortingDesc['TipoMovimento'], 'active': selectTableRow == 'TipoMovimento' }">
+            <label>Entrada/Saída</label>
+          </th>
+        </tr>
+
+        <tr *ngIf="isLoadingMovimentacao">
+          <td>
+            <div>
+              <label>Carregando ...</label>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngFor="let movimento of listEstoqueEdicaoMovimentacao | paginate: { id: 'paginationEstoqueEdicao', itemsPerPage: 6, currentPage: p3 }">
+          <td>{{movimento.Data}}</td>
+          <td>{{movimento.Valor}} UN</td>
+          <td>{{movimento.Usuario.Nome}}</td>
+          <td>{{getMovimentoOrigemDescricao(movimento.Origem)}}</td>
+          <td *ngIf="movimento.TipoMovimento == 1" title="Entrada">
+            <i class="fa fa-sign-in entrada"></i>
+          </td>
+          <td *ngIf="movimento.TipoMovimento == 2" title="Saída">
+            <i class="fa fa-sign-out saida"></i>
+          </td>
+        </tr>
+      </table>
+      <div class="toolbar-bottom">
+        <pagination-controls id="paginationEstoqueEdicao" (pageChange)="p3 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+          previousLabel="ANTERIOR" #paginationEstoqueEdicao>
+        </pagination-controls>
+      </div>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="fecharEdicaoEstoque()">OK</button>
+  </modal-footer>
+
+</modal>

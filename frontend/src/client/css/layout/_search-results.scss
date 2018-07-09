@@ -1,0 +1,167 @@
+.search-box {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: -1px;
+  z-index: 99;
+  border: 1px solid color(input,border);
+  border-top: none;
+  background-color: color(input,border);
+  box-shadow: 0 6px 6px 1px rgba(color(shadow-dark), 0.5);
+  max-height: 0;
+  transition: max-height 250ms ease-out;
+  overflow: scroll;
+  opacity: 0;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+
+  &.active {
+    max-height: 500px;
+    opacity: 1;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    transition: max-height 250ms ease-in;
+  }
+
+  .qty-bar {
+    width: 30%;
+    height: 24px;
+    float: none;
+    display: inline-block;
+    margin-top: 5px;
+
+    .qty-btn {
+      padding: 1px 6px;
+      font-size: em(19px);
+    }
+
+    .qty-status {
+      padding-top: 0;
+    }
+  }
+}
+
+.search-results {
+  .category-title {
+    color: color(txt,light);
+    background-color: color(primary,base);
+
+    .fa {
+      margin-right: 5px;
+      margin-left: 3px;
+    }
+  }
+
+  .search-result {
+    @include pseudoclearfix;
+    width: 100%;
+    display: table;
+    padding: 5px 10px 8px 5px;
+    box-sizing: border-box;
+    background-color: color(txt,light);
+    border-top: 1px solid color(input,border);
+
+    &.last,
+    &:last-child {
+      padding-bottom: 10px;
+    }
+
+    &.type-2 {
+      background-color: color(input,border);
+    }
+  }
+
+  .search-details {
+    width: 70%;
+    float: left;
+    color: color(txt,dark);
+    padding: 0 5px;
+    margin-top: 7px;
+    font-size: em(14px);
+    box-sizing: border-box;
+    @include pseudoclearfix;
+
+    &.search-details-inline {
+      width: 100%;
+      color: color(txt,base);
+    }
+  }
+
+  .qty-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+    height: 100%;
+  }
+
+  .search-name {
+    width: 45%;
+    float: left;
+    text-align: left;
+    display: inline-block;
+    font-weight: bold;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  .search-packing-type {
+    width: 22%;
+    float: left;
+    text-align: right;
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  .search-price {
+    width: 33%;
+    float: left;
+    text-align: right;
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 11px;
+    margin-top: 1px;
+    box-sizing: border-box;
+
+    .with-input {
+      border: 1px solid color(input,border);
+      border-right: none;
+      padding: 1px 4px;
+      outline: none;
+    }
+
+    input[type="text"]{
+      width: 65px;
+      float: none;
+      color: color(txt,dark);
+      padding: 1px 5px;
+      background: none transparent;
+      border: 1px solid color(input,border);
+      border-left: none;
+      font-weight: bold;
+    }
+  }
+
+  .search-item {
+    float: left;
+  }
+
+  .search-cod {
+    width: 12%;
+    line-height: 38px;
+  }
+
+  .search-company {
+    width: 38%;
+  }
+
+  .search-status {
+    width: 50%;
+    text-align: right;
+    line-height: 38px;
+
+    .fa {
+      margin-left: 5px;
+    }
+  }
+}

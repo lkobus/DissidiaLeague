@@ -1,0 +1,79 @@
+<div class="container-fluid main-container">
+
+  <div class="card">
+    <h3 class="card-title">
+      <span *ngIf="caminhao?.DocumentId">Atualizar Caminhão</span>
+      <span *ngIf="!(caminhao?.DocumentId)">Adicionar Caminhão</span>
+    </h3>
+
+    <div *ngIf="restError">
+      <div class="alert alert-danger">
+        <span>{{restError}}</span>
+      </div>
+    </div>
+
+    <form #caminhaoForm="ngForm" (ngSubmit)="save(caminhaoForm)" id="caminhaoForm" *ngIf="caminhao">
+
+      <div class="content">
+
+        <div class="col-md-6 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uCaminhaoDescricao.errors && (uCaminhaoDescricao.errors.required || !uCaminhaoDescricao.pristine)) }">
+          <label for="uCaminhaoDescricao">Descrição</label>
+          <input [(ngModel)]="caminhao.Descricao" #uCaminhaoDescricao="ngModel" required id="uCaminhaoDescricao" name="uCaminhaoDescricao"
+            placeholder="Descrição" type="text" />
+
+          <div *ngIf="uCaminhaoDescricao.errors && uCaminhaoDescricao.errors.required" class="tooltip tooltip-bottom">Descrição é obrigatória</div>
+        </div>
+
+        <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uCaminhaoCapacidade.errors && (uCaminhaoCapacidade.errors.required || !uCaminhaoCapacidade.pristine)) }">
+          <label for="uCaminhaoCapacidade">Capacidade (m3)</label>
+          <input [(ngModel)]="caminhao.Capacidade" #uCaminhaoCapacidade="ngModel" required id="uCaminhaoCapacidade" name="uCaminhaoCapacidade"
+            [kzMaskCurrency]="{prefixo:''}" placeholder="Capacidade" type="text" />
+          <div *ngIf="uCaminhaoCapacidade.errors && uCaminhaoCapacidade.errors.required" class="tooltip tooltip-bottom">Capacidade é obrigatório</div>
+        </div>
+
+        <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && uCaminhaoPlaca.errors && (uCaminhaoPlaca.errors.required || !uCaminhaoPlaca.pristine)) }">
+          <label for="uCaminhaoPlaca">Placa</label>
+          <input [(ngModel)]="caminhao.Placa" #uCaminhaoPlaca="ngModel" required minlength="7" maxlength="7" id="uCaminhaoPlaca" name="uCaminhaoPlaca"
+            placeholder="Placa do veículo" type="text" />
+          <div *ngIf="uCaminhaoPlaca.errors && uCaminhaoPlaca.errors.required" class="tooltip tooltip-bottom">Placa é obrigatória</div>
+          <div *ngIf="uCaminhaoPlaca.errors && uCaminhaoPlaca.errors.minlength" class="tooltip tooltip-bottom">Placa precisa ter 7 caracteres</div>
+        </div>
+
+        <div class='col-md-2 tooltip-holder'>
+          <label for="">UF</label>
+          <select [(ngModel)]="caminhao.UF" name="uf" id="uf">
+            <option *ngFor="let estado of estados" [value]="estado.Valor">
+              {{estado.Valor}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="container-floating left">
+      <div class="floating-button">
+        <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+          <span class="letter">
+            <span class="fa fa-chevron-left"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-floating">
+      <div class="floating-button">
+        <span class="letter">
+          <div class="t-left t-sm" data-tooltip="Salvar">
+            <button [disabled]="desabilitaBotao" form="caminhaoForm" type="submit" class="btn-clean">
+              <span class="letter">
+                <span class="fa fa-floppy-o"></span>
+              </span>
+            </button>
+          </div>
+        </span>
+      </div>
+    </div>
+
+  </div>
+</div>

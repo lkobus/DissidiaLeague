@@ -1,0 +1,762 @@
+.products-grid-container {
+  width: 100%;
+  float: left;
+  @include pseudoclearfix;
+
+  .products-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 1em;
+  }
+
+  .product {
+    flex: 2 0 23%;
+    max-width: 23%;
+    margin: 0 0 1em 2.6%;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 500ms linear 0s;
+    background-color: color(backgroundLight);
+
+    @include breakpoint(sm) {
+      max-width: 48%;
+    }
+
+    @include breakpoint(xs) {
+      max-width: 49%;
+      margin-left: 1%;
+
+      &:first-child,
+      &:nth-child(2n+1) {
+        margin-left: 0;
+      }
+    }
+
+    .product-container {
+      padding-bottom: 11px;
+
+      &:focus {
+        outline: 0;
+        background-color: rgba(color(primary, base),0.2);
+        box-shadow: 0 5px 10px rgba(119, 119, 119, 0.63);
+      }
+    }
+
+    &:hover,
+    &.active {
+      transition: background-color 100ms linear 0s;
+      background-color: color(primary, base);
+
+      .product-name,
+      .product-qty,
+      .product-un-price,
+      .product-btns .icon {
+        color: color(txt,light);
+      }
+
+      .product-btns {
+        display: block;
+      }
+    }
+
+    &:first-child,
+    &:nth-child(4n+1) {
+      margin-left: 0;
+
+      @include breakpoint(sm) {
+        margin-left: 2.6%;
+      }
+
+      @include breakpoint(xs) {
+        margin-left: 0;
+      }
+    }
+
+    &:first-child,
+    &:nth-child(2n+1) {
+      @include breakpoint(sm) {
+        margin-left: 0;
+      }
+    }
+
+    .product-image {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 0;
+      user-select: none;
+      background-color: color(backgroundImage);
+
+      img {
+        height: 100px;
+        width: auto;
+
+        @include breakpoint(xs) {
+          height: 68px;
+        }
+      }
+    }
+
+    .product-name {
+      width: 100%;
+      padding: 0 5px;
+      box-sizing: border-box;
+      text-align: center;
+      font-weight: bold;
+      font-size: em(13px);
+      margin-bottom: 2px;
+      color: color(txt,dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-qty {
+      width: 100%;
+      text-align: center;
+      font-size: em(13px);
+      color: color(primary,light);
+    }
+
+    .product-un-price {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 8px;
+      display: inline-block;
+      font-size: em(18px);
+      color: color(primary,base);
+    }
+
+    .product-btns {
+      position: absolute;
+      top: 5px;
+      right: 8px;
+      z-index: 2;
+      display: none;
+    }
+  }
+}
+
+.products-grid2-container {
+  @include pseudoclearfix;
+
+  .product {
+    .float-indicator {
+      position: absolute;
+      left: 6px;
+      top: 12px;
+      z-index: 10;
+      color: color(primary, base);
+
+      &.right {
+        left: inherit;
+        right: -4px;
+      }
+    }
+  }
+
+  &.small-cards {
+    .product {
+      max-width: inherit;
+    }
+
+    .card-flip {
+      height: 375px;
+
+      & > {
+        .front {
+          border-top: 3px solid color(primary,base);
+          box-shadow: 0 6px 18px rgba(0,0,0, 0.2), inset 0px -2px 3px rgba(0,0,0, 0.2);
+        }
+      }
+    }
+  }
+
+  &.tiny-cards {
+    .product {
+      max-width: 22%;
+      margin-bottom: 0;
+    }
+
+    .card-flip {
+      height: 180px;
+      min-height: inherit;
+
+      & > {
+        .front {
+          border-top: 3px solid color(status,error);
+          box-shadow: 0 6px 18px rgba(0,0,0, 0.2),
+          inset 0px -2px 3px rgba(0,0,0, 0.2);
+        }
+      }
+    }
+
+    .plus {
+      .card-flip {
+        & > {
+          .front {
+            border-top: 3px solid color(primary,base);
+
+            .product-name,
+            .product-un-price {
+              color: color(primary,base);
+            }
+          }
+        }
+      }
+    }
+
+    .minus {
+      &.product {
+        .float-indicator {
+          color: color(status,error);
+        }
+      }
+
+      .card-flip {
+        & > {
+          .front {
+            border-top: 3px solid color(status,error);
+
+            .product-name,
+            .product-un-price {
+              color: color(status,error);
+            }
+          }
+        }
+      }
+    }
+
+    .disabled {
+      &.product {
+        .float-indicator {
+          color: darken(color(input,border),35%);
+        }
+      }
+
+      .card-flip {
+        & > {
+          .front {
+            border-top: 3px solid color(input,border);
+
+            .product-name,
+            .product-un-price {
+              color: darken(color(input,border),35%);
+            }
+          }
+        }
+      }
+    }
+
+    .enabled {
+
+      &.product {
+        .float-indicator {
+          color: color(status,ok);
+        }
+      }
+
+      .card-flip {
+        & > {
+          .front {
+            border-top: 3px solid color(status,ok);
+
+            .product-name,
+            .product-un-price {
+              color: color(status,ok);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .products-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 1em;
+  }
+
+  .product {
+    flex: 2 0 20%;
+    margin: 0 0.5em 1em 0.5em;
+    padding: 5px 0;
+    position: relative;
+
+    @include breakpoint(lg){
+      max-width: 15.13%;
+    }
+
+    &:hover {
+      .product-btns {
+        display: block;
+      }
+    }
+
+    .product-image {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      @include pseudoclearfix;
+
+      img {
+        width: auto;
+        height: 100px;
+      }
+    }
+
+    .product-name {
+      width: 100%;
+      padding: 0 5px;
+      box-sizing: border-box;
+      text-align: center;
+      font-weight: bold;
+      font-size: em(12px);
+      margin-bottom: 2px;
+      color: color(txt,dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-state {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 5px;
+      display: inline-block;
+      font-size: em(14px);
+      color: color(txt,black);
+    }
+
+    .product-qty {
+      width: 100%;
+      text-align: center;
+      font-size: em(12px);
+      color: color(primary,light);
+    }
+
+    .product-un-price {
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 5px;
+      display: inline-block;
+      font-size: em(19px);
+      color: color(primary,base);
+    }
+
+    .product-btns {
+      position: absolute;
+      top: 19px;
+      left: 8px;
+      z-index: 2;
+      display: none;
+    }
+  }
+}
+
+/* Another type of products list */
+/* Itens */
+.itens-wrapper {
+  padding: 10px 0.4%;
+  box-sizing: border-box;
+  background-color: $txt-color-10;
+}
+
+.itens {
+  width: 100%;
+  padding: 5px 5px 0;
+  @include pseudoclearfix;
+
+  &.only-img {
+    .item {
+      .content {
+        padding-left: 0;
+
+        .item-image {
+          width: 100%;
+          margin-top: 0;
+
+          .mCS_img_loaded {
+            width: 100%;
+            margin-left: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .item {
+    width: 11.70%;
+    float: left;
+    outline: 1px solid color(input,border);
+    margin: 0 0.4% 5px 0.4%;
+    background-color: $txt-color-6;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:nth-child(8n+1) {
+      margin-left: 0;
+    }
+    &:nth-child(8n) {
+      margin-right: 0;
+    }
+
+    @include breakpoint(sm) {
+      width: 19.2%;
+      margin-bottom: 15px;
+    }
+
+    @include breakpoint(xs) {
+      width: 32.5%;
+    }
+
+    @include breakpoint(small) {
+      width: 49%;
+      margin-bottom: 15px;
+    }
+
+    .heading-container {
+      width: 100%;
+      display: table;
+      box-sizing: border-box;
+      @include pseudoclearfix;
+
+      .select-name-txt {
+        width: 100%;
+        height: 53px;
+        word-break: break-all;
+        display: table-cell;
+        vertical-align: middle;
+        text-align: left;
+        overflow: hidden;
+        float: none;
+        border: none;
+        font-weight: bold;
+        font-size: em(13px);
+        line-height: em(15px);
+        color: color(txt,primary);
+        outline: none;
+        box-sizing: border-box;
+        padding: 8px 3px 9px 5px;
+        background-color: color(txt,primary);
+
+        .txt {
+          display: inline-block;
+          height: 48px;
+          overflow: hidden;
+          width: 100%;
+        }
+
+        [class^="icon-"],
+        .fa {
+          cursor: pointer;
+        }
+
+        p {
+          width: 100%;
+          text-align: center;
+          padding-bottom: 3px;
+          border-bottom: 1px solid color(txt,primary);
+          margin-bottom: 3px;
+
+          &.last,
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+
+      .goal-wrapper {
+        float: left;
+        width: 20%;
+        text-align: center;
+        font-size: em(13px);
+        color: color(txt,primary);
+        background-color: color(txt,primary);
+
+        .goal {
+          width: 100%;
+          display: inline-block;
+          border-bottom: 1px solid color(txt,primary);
+          padding: 2px 0 3px 0;
+
+          &.last,
+          &:last-child {
+            border-bottom: none;
+            padding-bottom: 2px;
+          }
+        }
+      }
+    }
+
+    .content {
+      padding-left: 6px;
+      position: relative;
+      @include pseudoclearfix;
+
+      .more-info {
+        position: absolute;
+        right: 5px;
+        top: 2px;
+        color: color(txt,primary);
+        cursor: pointer;
+      }
+
+      .values {
+        width: 55%;
+        float: left;
+        line-height: 12px;
+
+        @include breakpoint(sm) {
+          min-height: 123px;
+        }
+      }
+
+      .item-image {
+        width: 45%;
+        float: left;
+        text-align: center;
+        margin-top: 7px;
+        overflow: hidden;
+
+        img {
+          max-width: 100%;
+        }
+
+        .mCS_img_loaded,
+        .mCS_img_loaded_error {
+          max-width: inherit;
+          width: 145%;
+          margin-left: -29%;
+        }
+      }
+    }
+
+    .sku {
+      width: 100%;
+      display: inline-block;
+      color: color(txt,primary);
+      font-size: em(16px);
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+
+    .packing-type {
+      width: 100%;
+      line-height: 13px;
+      display: inline-block;
+      font-size: em(12px);
+      margin-bottom: 5px;
+      visibility: hidden;
+      color: color(txt,primary);
+    }
+
+    .unitary-price {
+      width: 100%;
+      font-size: em(12px);
+      display: inline-block;
+      margin-bottom: 5px;
+      color: color(txt,primary);
+    }
+
+    .bundle-price {
+      width: 100%;
+      font-size: em(12px);
+      display: inline-block;
+      color: $txt-color-7;
+      @include pseudoclearfix;
+
+      @include breakpoint(xs) {
+        width: 102%;
+      }
+
+
+      &.discount {
+        b {
+          &.with-input {
+            color: #090a0e;
+            min-height: 16px;
+            border-color: color(txt,primary);
+          }
+
+        }
+        input[type="text"] {
+          color: #090a0e;
+          border-color: color(txt,primary);
+        }
+      }
+
+      b {
+        color: color(txt,primary);
+
+        &.with-input {
+          float: left;
+          width: 27%;
+          padding: 3px 0 3px 2px;
+          box-sizing: border-box;
+          border: 1px solid color(input,border);
+          border-right: none;
+          outline: none;
+          color: color(txt,base);
+        }
+
+      }
+
+      input[type="text"] {
+        float: left;
+        width: 68%;
+        padding: 2px 0 3px 2px;
+        box-sizing: border-box;
+        margin: 0;
+        font-weight: bold;
+        color: color(txt,base);
+        border: 1px solid color(input,border);
+        border-left: none;
+      }
+
+    }
+  }
+}
+
+.btn-slim {
+  width: 100%;
+  text-align: center;
+  background-color: #a4d235;
+  display: inline-block;
+  box-sizing: border-box;
+  color: white;
+  float: none;
+  padding: 0;
+  font-size: 12px;
+  border: none;
+}
+
+.qty-bar {
+  width: 100%;
+  text-align: center;
+  @include pseudoclearfix;
+  background-color: color(input,border);
+  transition: background-color 250ms linear 0s;
+
+  &.b-error {
+    .qty-span,
+    .qty-btn,
+    .qty {
+      color: color(txt,light);
+      background-color: color(status,error2);
+    }
+  }
+
+  .qty {
+    width: 46%;
+    border: none;
+    float: left;
+    margin: 0;
+    padding: 2px 0;
+    color: inherit;
+    text-align: right;
+    background-color: color(input,border);
+    transition: background-color 250ms linear 0s;
+  }
+
+  .qty-btn {
+    max-width: 23%;
+    border: none;
+    padding: 7px 7px 5px 8px;
+    background-color: color(input,border);
+    transition: background-color 250ms linear 0s;
+
+    @include breakpoint(md) {
+      padding: 5px 2px 5px 2px;
+    }
+
+    .fa {
+      font-size: em(16px);
+      margin: 0;
+      color: color(txt,fourty);
+    }
+
+    &.minus-btn {
+      float: left;
+    }
+
+    &.plus-btn {
+      float: right;
+    }
+  }
+
+  .qty-status {
+    width: 54%;
+    display: inline-block;
+    font-size: em(16px);
+    padding-top: 4px;
+    @include pseudoclearfix;
+  }
+
+  .qty-span {
+    width: 50%;
+    display: inline-block;
+    text-align: left;
+    text-indent: 5px;
+    float: left;
+    padding: 2px 0;
+  }
+
+  .qty-static {
+    padding: 2px 0 0;
+    display: inline-block;
+  }
+
+  &.active,
+  &.color1 {
+    color: $txt-color-6;
+    transition: background-color 250ms linear 0s;
+    background-color: color(input,border);
+
+    @include breakpoint(xs) {
+      display: inline-block;
+    }
+
+    .qty-btn {
+      transition: background-color 250ms linear 0s;
+      background-color: color(input,border);
+
+      .fa {
+        color: color(input,border);
+      }
+    }
+
+    .qty {
+      transition: background-color 250ms linear 0s;
+      background-color: color(input,border);
+    }
+  }
+}
+
+.col-md-12 {
+  & > .card {
+    .tiny-cards {
+      .card-flip {
+        height: 218px;
+      }
+
+      .product {
+        max-width: 18.6%;
+      }
+
+      .enabled {
+        .card-flip {
+          height: 155px;
+        }
+      }
+    }
+  }
+}

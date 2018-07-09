@@ -1,0 +1,104 @@
+<div class="main-title">
+  <div [ngBusy]="{busy: busy, template: templateLoading, message: msg}"></div>
+  <img src="assets/logo-ambev.png" alt="logo Ambev" />
+  <span class="divider"></span>
+  <img src="assets/logo-promax.png" alt="logo Promax" />
+  <small>{{nomeFranquia}}</small>
+</div>
+
+<sd-navbar></sd-navbar>
+<modal #modalSobra title="Upload partida" [closeOnOutsideClick]="false">
+    <modal-content class="content">
+      <div class="card-subtitle">
+        <label>colocar o butão de upload aqui gato</label>
+      </div>
+      <image-upload [max]="1" [buttonCaption]="'Coloque ai magem da partida aqui'" [dropBoxMessage]="'Coloque ai magem da partida aqui'"
+        (onFileUploadFinish)="imageUploaded($event)">
+      </image-upload>
+      <div class="button-wrapper">
+          <button (click)="uploadMatch()" class="btn-action">Upload</button>          
+          <button (click)="modalSobra.close()" class="btn-action">Cancelar</button>          
+      </div>
+    </modal-content>
+
+</modal>
+<ul class="list-icons">  
+  <li class="list-icon">
+      <i title="Upload image" class="fa fa-cloud-upload"
+      (click)="modalSobra.open()"></i>
+  </li>
+  <li class="list-icon dropdown-container">
+    <i class="icon-bell bubble-container">
+      <span *ngIf="notificacaoService.notificacoesNaoLidas.length > 0" class="bubble-value animation-bounce">{{notificacaoService.notificacoesNaoLidas.length}}</span>
+    </i>
+
+    <div class="dropdown dropdown-big">
+      <ul class="dropdown-list">
+        <!-- <li class="dropdown-item">
+          <i class="fa fa-exclamation-triangle c-warning" aria-hidden="true"></i>
+          <span class="dropdown-item-txt">Notificação de alerta</span>
+        </li>
+         <li class="dropdown-item">
+          <i class="fa fa-exclamation c-error" aria-hidden="true"></i>
+          <span class="dropdown-item-txt">Notificação de erro</span>
+        </li>
+        <li class="dropdown-item">
+          <i class="fa fa-bell" aria-hidden="true"></i>
+          <span class="dropdown-item-txt">Notificação normal</span>
+        </li> -->
+
+        <!--li class="dropdown-item" *ngIf="notificacaoService.notificacoesNaoLidas.length == 0">
+          <span class="dropdown-item-txt">Nenhuma notificação recente</span>
+        </li -->
+
+        <li class="dropdown-item" *ngFor="let n of notificacaoService.notificacoesNaoLidas" (click)="marcarComoLida($event, n)" [routerLink]="['/estoque']"
+          [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+          <div class="dropdown-img">
+            <a>
+              <img src="{{getUrlImagemNotificacao(n.ImagemUri)}}" alt="">
+            </a>
+          </div>
+          <a [routerLink]="['/estoque']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <span class="dropdown-item-subtitle" [ngClass]="{'c-error': n.Tipo == 1, 'c-warning': n.Tipo == 2}">
+              <i *ngIf="n.Tipo == 1" class="fa fa-exclamation-circle" aria-hidden="true"></i>
+              <i *ngIf="n.Tipo == 2" class="fa fa-exclamation" aria-hidden="true"></i>
+              <i *ngIf="n.Tipo == 3" class="fa fa-bell" aria-hidden="true"></i>
+              {{n.Titulo}}
+            </span>
+            <span class="dropdown-item-title">
+              {{n.SubTitulo}}
+            </span>
+          </a>
+          <i (click)="marcarComoLida($event, n)" class="icon-x c-error" title="Remover notificação"></i>
+        </li>
+        <li class="dropdown-item" *ngIf="notificacaoService.notificacoesNaoLidas.length > 0" [routerLink]="['/timeline-notif']" [routerLinkActive]="['router-link-active']">
+          <a>Ver todas</a>
+        </li>
+      </ul>
+    </div>
+  </li>
+  <li class="list-icon dropdown-container">
+    <i class="icon-user">
+    </i>
+    <span class="user-name">
+      {{userLogged}}
+    </span>
+    <span class="arrow"></span>
+
+    <div class="dropdown">
+      <ul class="dropdown-list">
+        <li class="dropdown-item hidden">
+          <label>Linguagem</label>
+          <a (click)="selectLanguage('pt-br')" *ngIf="lang !== 'pt-br'">Português</a>
+          <a (click)="selectLanguage('en')" *ngIf="lang !== 'en'">English</a>
+        </li>
+        <li class="dropdown-item" *ngIf="ultimaVersao">
+            <span (click)="updating();">Atualizar para {{ultimaVersao}}</span>
+          </li>
+        <li class="dropdown-item">
+          <span (click)="logout()">Sair</span>
+        </li>
+      </ul>
+    </div>
+  </li>
+</ul>

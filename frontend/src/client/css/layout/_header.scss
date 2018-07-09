@@ -1,0 +1,102 @@
+.header {
+  @include pseudoclearfix;
+  width: 100%;
+  display: inline-block;
+  padding: 0;
+  box-sizing: border-box;
+  color: color(txt,light);
+  min-height: 60px;
+  line-height: 50px;
+  z-index: 101;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: color(primary,base);
+
+  @include breakpoint(xs) {
+    position: relative;
+
+    .no-padding-r {
+      padding: 0;
+    }
+  }
+}
+
+.current-page {
+  float: left;
+  margin: 2px 0 0;
+  font-weight: 300;
+  font-size: em(26px);
+  line-height: 55px;
+  display: none;
+  text-transform: none;
+  color: color(txt,light);
+
+  &:active {
+    color: color(txt,light);
+  }
+
+  &.router-link-active {
+    display: inline-block;
+  }
+}
+
+.list-icons {
+  float: right;
+  line-height: 52px;
+  @include pseudoclearfix;
+
+  @include breakpoint(xs) {
+    width: 100%;
+    display: table;
+    float: left;
+  }
+
+  .list-icon {
+    float: left;
+    font-size: em(23px);
+    padding: 4px 18px;
+    min-width: 61px;
+    box-sizing: border-box;
+    min-height: 60px;
+    position: relative;
+    border-left: 1px solid rgba(color(txt,light),0.2);
+
+    @include breakpoint(xs) {
+      display: table-cell;
+      text-align: center;
+      float: none;
+    }
+
+    .user-name {
+      font-size: 11px;
+      padding-right: 5px;
+      line-height: 12px;
+      display: inline-block;
+    }
+
+    .arrow {
+      @include triangle(down,5px, color(txt,light));
+      position: absolute;
+      right: 7px;
+      top: 32px;
+    }
+
+    &:last-child {
+      padding-left: 12px;
+      padding-right: 20px;
+    }
+
+    .v-dash {
+      position: absolute;
+      width: 2px;
+      height: 32px;
+      background: color(status,error);
+      transform: rotate(60deg);
+      top: 14px;
+      right: 28px;
+      border-right: 2px solid color(primary,base);
+    }
+  }
+}
+

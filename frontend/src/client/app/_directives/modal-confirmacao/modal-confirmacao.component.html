@@ -1,0 +1,28 @@
+<modal #modal title="Atenção" [closeOnOutsideClick]="closeOutSide">
+  <modal-header>
+    <span [innerText]="title"></span>
+  </modal-header>
+
+  <modal-content>
+    <div class="row">
+      <div class="col-md-12">
+        <p>{{message}}</p>
+      </div>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" [hidden]="hiddenCancelar" [disabled]="isLoading" (click)="clickCancelar()">Cancelar</button>
+    <button class="btn btn-primary" [hidden]="hiddenConfirmar" [disabled]="isLoading" (click)="clickConfirmar()">Confirmar</button>
+  </modal-footer>
+
+</modal>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

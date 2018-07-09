@@ -1,0 +1,112 @@
+<div class="container-fluid main-container">
+
+  <div class="row">
+    <div *ngIf="(statusCaixa?.CaixaDisponivel)" class="content-head type-2">
+      <venda-balcao-menu></venda-balcao-menu>
+    </div>
+  </div>
+
+  <form #form="ngForm" name="form" (ngSubmit)="form.form.valid && OpenModal()">
+    <div class="card">
+      <alert></alert>
+
+      <div *ngIf="statusCaixa">
+        <div class="content">
+          <div class="col-md-12 toolbar">
+            <h3 class="toolbar-title">
+              Confira o caixa antes de realizar a troca de operador
+            </h3>
+          </div>
+
+          <div class="row">
+            <div class="col-md-5">
+              <label class="title">Total no caixa</label>
+              <b class="price">{{SaldoDinheiroCheque() | currencyFormat}}</b>
+            </div>
+
+            <div class="col-md-7">
+              <ul class="icos-list type-2">
+                <li class="icos-list-item-header money">
+                  <div class="left-side">
+                    <span class="title">Dinheiro/Cheque</span>
+                    <span class="value">{{SaldoDinheiroCheque() | currencyFormat}}</span>
+                    <span class="title">Cartão</span>
+                    <span class="value">{{SaldoCartao() | currencyFormat}}</span>
+                    <span class="title">Saldo</span>
+                    <span class="value">{{statusCaixa?.Saldo | currencyFormat}}</span>
+                  </div>
+                </li>
+              </ul>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-floating">
+      <div class="floating-button">
+        <span class="letter">
+          <div class="t-left t-sm" data-tooltip="Salvar a troca de operador">
+            <button type="submit" class="btn-clean">
+              <span class="letter">
+                <span class="fa fa-floppy-o"></span>
+              </span>
+            </button>
+          </div>
+        </span>
+      </div>
+    </div>
+  </form>
+
+
+  <!-- Senha supervisor -->
+  <modal #passwordAtualModal title="Insira sua senha atual" [closeOnOutsideClick]="false">
+    <modal-header>
+      <span>Insira sua senha atual</span>
+    </modal-header>
+
+    <modal-content>
+      <div class="row">
+        <div class="col-md-12">
+          <label for="password">Digite aqui a senha</label>
+          <input [autofocus]="true" type="password" [(ngModel)]="senhaAntiga" id="password" />
+
+        </div>
+      </div>
+      <alert></alert>
+    </modal-content>
+
+    <modal-footer>
+      <div class="button-wrapper">
+        <button (click)="ValidateLoggedUser()" class="btn-action">Confirmar</button>
+      </div>
+    </modal-footer>
+  </modal>
+
+  <modal #passwordNovoModal title="Inserir senha novo funcionário" [closeOnOutsideClick]="false">
+
+    <modal-header>
+      <span>Inserir senha novo funcionário</span>
+    </modal-header>
+
+    <modal-content>
+      <div class="row">
+        <div class="col-md-12">
+          <label for="newLogin">Login novo usuario</label>
+          <input [autofocus]="true" type="text" id="newLogin" [(ngModel)]="novoUsuario" />
+
+          <label for="newPassword">Senha novo usuario</label>
+          <input type="password" id="newPassword" [(ngModel)]="novaSenha" />
+        </div>
+      </div>
+      <alert></alert>
+    </modal-content>
+    <modal-footer>
+      <div class="button-wrapper">
+        <button (click)="TrocarOperador()" class="btn-action">Confirmar</button>
+      </div>
+    </modal-footer>
+  </modal>
+</div>

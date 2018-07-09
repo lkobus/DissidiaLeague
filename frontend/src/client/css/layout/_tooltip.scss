@@ -1,0 +1,374 @@
+.tooltip-holder {
+  position: relative;
+
+  &.error-msg {
+    &:hover {
+      .tooltip {
+        opacity: 1;
+        visibility: visible;
+        -webkit-transform: translateX(-50%) scale(1);
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    input, select {
+      border-color: color(status,error);
+    }
+  }
+}
+
+.tooltip-holder-type-2 {
+  position: relative;
+
+  &.error-msg {
+    &:hover {
+      .tooltip {
+        opacity: 1;
+        visibility: visible;
+        -webkit-transform: translateX(-50%) scale(1);
+        transform: translateX(-50%) scale(1);
+      }
+    }
+
+    input, select {
+      border-color: color(status,error);
+    }
+  }
+}
+
+.tooltip {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: 10px;
+  left: 45%;
+  line-height: 15px;
+  font-size: em(12px);
+  padding: 0 10px;
+  white-space: nowrap;
+  border-radius: 20px;
+  color: color(txt,light);
+  background: color(status,error);
+  -webkit-transform: translateX(-50%) scale(0);
+  transform: translateX(-50%) scale(0);
+  -webkit-transform-origin: center bottom;
+  transform-origin: center bottom;
+  transition: all 200ms ease-in-out;
+
+  &.tooltip-bottom {
+    bottom: -5px;
+
+    &:before {
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      margin-left: -3px;
+      display: block;
+      width: 0;
+      height: 0;
+      border: 3px solid transparent;
+      border-bottom-color: color(status,error);
+      content: '';
+    }
+  }
+
+  &:before {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -3px;
+    display: block;
+    width: 0;
+    height: 0;
+    border: 3px solid transparent;
+    border-top-color: color(status,error);
+    content: '';
+  }
+}
+
+.tooltip-count-container {
+  position: relative;
+}
+
+.tooltip-help {
+  color: color(primary,base);
+  border-radius: 100%;
+  display: inline-block;
+  font-size: 18px;
+  margin-left: 4px;
+
+  .fa {
+    font-size: 18px!important;
+  }
+}
+
+.tooltip-help {
+  cursor: pointer;
+  position: relative;
+  z-index: 102;
+  display: inline-block;
+
+  &:hover,
+  &.active {
+    .tooltip-content {
+      pointer-events: auto;
+      opacity: 1;
+      -webkit-transform: translate3d(0,0,0) rotate3d(0,0,0,0);
+      transform: translate3d(0,0,0) rotate3d(0,0,0,0);
+    }
+
+    .tooltip-item {
+      &:after {
+        pointer-events: auto;
+      }
+    }
+  }
+}
+
+.tooltip-item {
+  &:after {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    bottom: 100%;
+    left: 50%;
+    pointer-events: none;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+}
+
+.tooltip-text {
+  color: color(txt,light);
+  text-transform: none;
+}
+
+.tooltip-content {
+  width: 72px;
+  padding: 5px;
+  border-radius: 2px;
+  -webkit-transform-origin: 50% calc(100% + 6em);
+  transform-origin: 50% calc(100% + 6em);
+  -webkit-transform: rotate3d(0,0,1,15deg);
+  transform: rotate3d(0,0,1,15deg);
+  -webkit-transition: opacity 0.2s, -webkit-transform 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
+  -webkit-transition-timing-function: ease, cubic-bezier(.17,.67,.4,1.39);
+  transition-timing-function: ease, cubic-bezier(.17,.67,.4,1.39);
+  position: absolute;
+  z-index: 9999;
+  left: 50%;
+  margin: 0 0 20px -32px;
+  bottom: 100%;
+  text-align: center;
+  font-size: 0.765em;
+  line-height: 1.4;
+  background: color(primary,dark);
+  opacity: 0;
+  cursor: default;
+  pointer-events: none;
+
+  &.tooltip-content-big {
+    width: 188px;
+    margin-left: -98px;
+    bottom: 62%;
+  }
+
+  &.tooltip-content-bigger {
+    width: 280px;
+    margin-left: -144px;
+    bottom: 62%;
+  }
+
+  &:after {
+    content: '';
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-color: transparent;
+    border-top-color: color(primary,dark);
+    border-width: 10px;
+    margin-left: -10px;
+  }
+}
+
+/*
+Example HTML:
+<div class="t-top t-sm" data-tooltip="XXX">XXX</div>
+
+Simply choose your preferred Content, Alignment, and Size.
+
+Content:
+  * data-tooltip='XXX'
+
+Alignment:
+  * Top = t-top
+  * Right = t-right
+  * Bottom = t-bottom
+  * Left = t-left
+
+Size:
+  * Extra Small = t-xs
+  * Small = t-sm
+  * Medium = t-md
+  * Large = t-lg
+  * Extra Large = t-xl
+*/
+
+/* Another group of tooltips */
+[data-tooltip]{
+  cursor: pointer;
+  position: relative;
+
+  &:before, &:after {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: all .15s cubic-bezier(.5, 1, .25, 1);
+    z-index: 1;
+  }
+
+  &:before{
+    padding: 5px;
+    width: 110px;
+    border-radius: 3px;
+    background: color(primary,dark);
+    color: color(txt,light);
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.2;
+  }
+
+  &:after {
+    border: 8px solid transparent;
+    width: 0;
+    content: "";
+    font-size: 0;
+    line-height: 0;
+  }
+
+  &:hover:before,
+  &:hover:after {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  /********** Tooltip Sizes **********/
+  &.t-xl:before {
+    width: 200px;
+  }
+  &.t-lg:before {
+    width: 170px;
+  }
+  &.t-md:before {
+    width: 140px;
+  }
+  &.t-sm:before {
+    width: 110px;
+  }
+  &.t-xs:before {
+    width: 80px;
+  }
+
+  /********** Top Tooltip **********/
+  &.t-top {
+    &:before {
+      bottom: 100%;
+      left: 50%;
+      margin-bottom: 5px;
+      transform: translateX(-50%);
+    }
+
+    &:after {
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-top: 8px solid color(primary,dark);
+      border-bottom: none;
+    }
+
+    &:hover:before,
+    &:hover:after {
+      transform: translateX(-50%) translateY(-5px);
+    }
+  }
+
+  /********** Right Tooltip **********/
+  &.t-right {
+    &:before {
+      top: 50%;
+      left: 100%;
+      margin-left: 5px;
+      transform: translateY(-50%);
+    }
+
+    &:after {
+      top: 50%;
+      left: 100%;
+      transform: translateY(-50%);
+      border-right: 8px solid color(primary,dark);
+      border-left: none;
+    }
+
+    &:hover:before,
+    &:hover:after {
+      transform: translateX(5px) translateY(-50%);
+    }
+  }
+
+
+  /********** Bottom Tooltip **********/
+  &.t-bottom {
+    &:before {
+      top: 100%;
+      left: 50%;
+      margin-top: 5px;
+      transform: translateX(-50%);
+
+      &:after {
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-bottom: 8px solid color(primary,dark);
+        border-top: none;
+      }
+    }
+
+    &:hover:before,
+    &:hover:after {
+      transform: translateX(-50%) translateY(5px);
+    }
+  }
+
+  /********** Left Tooltip **********/
+  &.t-left {
+    &:before {
+      top: 50%;
+      right: 100%;
+      margin-right: 5px;
+      transform: translateY(-50%);
+    }
+
+    &:after {
+      top: 50%;
+      right: 100%;
+      transform: translateY(-50%);
+      border-left: 8px solid color(primary,dark);
+      border-right: none;
+    }
+
+    &:hover:before,
+    &:hover:after {
+      transform: translateX(-5px) translateY(-50%);
+    }
+  }
+}

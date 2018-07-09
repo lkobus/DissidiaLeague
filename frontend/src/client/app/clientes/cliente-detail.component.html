@@ -1,0 +1,408 @@
+<div class="container-fluid main-container">
+  <div class="card">
+    <h3 class="card-title">
+        <span *ngIf="cliente?.Id && cliente?.NomeFantasia">Atualizar Cliente - {{cliente.NomeFantasia.toLocaleLowerCase()}}</span>
+        <span *ngIf="cliente?.Id">Atualizar Cliente</span>
+      <span *ngIf="!cliente?.Id">Adicionar Cliente</span>
+    </h3>
+
+    <form #clienteForm="ngForm" (ngSubmit)="salvarCliente(clienteForm)" *ngIf="cliente" id="clienteForm">
+
+      <div class="content">
+        <div class="row">
+          <div class='col-md-2' *ngIf="cliente.Id">
+            <label for="">Situação</label>
+            <select required [(ngModel)]="cliente.Status" id="status" name="status">
+              <option *ngFor="let status of statusCliente" [value]="status.Codigo">{{status.Valor}}</option>
+            </select>
+          </div>
+
+          <div class='col-md-2 tooltip-holder' [ngClass]="{ 'error-msg': (submitted && tipoPessoa.errors && tipoPessoa.errors.required) }">
+            <label for="">Tipo</label>
+            <select required [(ngModel)]="cliente.TipoPessoa" name="tipoPessoa" id="tipoPessoa" #tipoPessoa="ngModel" (change)="tipoPessoaOnChange()">
+              <option *ngFor="let tipo of tiposPessoa" [value]="tipo.Codigo">{{tipo.Valor}}</option>
+            </select>
+            <div class="tooltip tooltip-bottom">Tipo Pessoa é obrigatório</div>
+          </div>
+
+          <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cnpj.errors && (cnpj.errors.required || !cnpj.pristine)) }"
+            *ngIf="cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1">
+            <label for="">CNPJ</label>
+            <input [(ngModel)]="cliente.CnpjCpf" type="text" id="cnpj" required name="cnpj" maxlength="18" placeholder="99.999.999/9999-99"
+              kz-cnpj kzMask="99.999.999/9999-99" #cnpj="ngModel" />
+            <div *ngIf="cnpj.errors && cnpj.errors.required" class="tooltip tooltip-bottom">CNPJ é obrigatório</div>
+            <div *ngIf="cnpj.errors && !cnpj.errors.required && !cnpj.pristine" class="tooltip tooltip-bottom">CNPJ inválido</div>
+          </div>
+          <div class="col-md-2 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cpf.errors && (cpf.errors.required || !cpf.pristine)) }"
+            *ngIf="cliente.TipoPessoa == 2">
+            <label for="">CPF</label>
+            <input [(ngModel)]="cliente.CnpjCpf" type="text" id="cpf" required name="cpf" maxlength="14" kz-cpf kzMask="999.999.999-99"
+              placeholder="999.999.999-99" #cpf="ngModel">
+            <div *ngIf="cpf.errors && cpf.errors.required" class="tooltip tooltip-bottom">CPF é obrigatório</div>
+            <div *ngIf="cpf.errors && !cpf.errors.required && !cpf.pristine" class="tooltip tooltip-bottom">CPF inválido</div>
+          </div>
+
+          <div class="tooltip-holder" [ngClass]="{ 'error-msg': (submitted && razaoSocial.errors), 'col-md-8': (!cliente.Id && (cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1)), 'col-md-6': (cliente.Id && (cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1)), 'col-md-4': (!cliente.Id && (cliente.TipoPessoa == 2)), 'col-md-3': (cliente.Id && (cliente.TipoPessoa == 2)) }">
+            <label *ngIf="cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1" for="">Razão Social</label>
+            <label *ngIf="cliente.TipoPessoa == 2" for="">Nome Completo</label>
+            <input [(ngModel)]="cliente.RazaoSocial" type="text" id="razaoSocial" #razaoSocial="ngModel" required placeholder={{placeHolderRazaoSocial}}
+              name="razaoSocial" #razaoSocial="ngModel">
+            <div *ngIf="cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1" class="tooltip tooltip-bottom">Razão Social é obrigatorio</div>
+            <div *ngIf="cliente.TipoPessoa == 2" class="tooltip tooltip-bottom">Nome é obrigatório</div>
+          </div>
+
+          <div [ngClass]="{ 'col-md-3': ((cliente?.TipoPessoa == undefined || cliente?.TipoPessoa == 1) || (cliente.Id && (cliente.TipoPessoa == 2))), 'col-md-4': (!cliente.Id && (cliente.TipoPessoa == 2)) }">
+            <label for="">Fantasia</label>
+            <input [(ngModel)]="cliente.NomeFantasia" type="text" id="fantasia" placeholder="Fantasia" name="fantasia">
+          </div>
+
+          <div class="col-md-3" *ngIf="cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1">
+            <label for="">Tipo de Tributação</label>
+            <select required [(ngModel)]="cliente.TipoTributacao" name="tipoTributacao" id="tipoTributacao" #tipoTributacao="ngModel">
+              <option *ngFor="let tipo of tiposTributacao" [value]="tipo.Codigo">{{tipo.Valor}}</option>
+            </select>
+          </div>
+
+          <div class="col-md-3" *ngIf="cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1">
+            <label for="">Inscrição Estadual</label>
+            <input [(ngModel)]="cliente.InscricaoEstadual" type="text" id="inscricaoEstadual" name="inscricaoEstadual" placeholder="Inscrição Estadual">
+          </div>
+
+          <div class="col-md-3" *ngIf="cliente.TipoPessoa == undefined || cliente.TipoPessoa == 1">
+            <label for="">Inscrição Municipal</label>
+            <input [(ngModel)]="cliente.InscricaoMunicipal" type="text" id="inscricaoMunicipal" name="inscricaoMunicipal" placeholder="Inscrição Municipal">
+          </div>
+
+          <div *ngFor="let tipoFone of tiposTelefone; let i=index">
+            <ng-container *ngIf="tipoFone.Codigo == 1; then fixoTemplate; else outroTemplate"></ng-container>
+            <ng-template #fixoTemplate>
+              <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && foneFixo.errors) }">
+                <label for="">Telefone {{tipoFone.Valor}}</label>
+                <input [(ngModel)]="cliente.Telefones[i].NumeroTelefoneCompleto" type="text" required [id]="'telefone' + tipoFone.Valor"
+                  [name]="'telefone' + tipoFone.Valor" kzMask="(99) 9999-9999" placeholder="(99) 9999-9999" #foneFixo="ngModel">
+                <div class="tooltip tooltip-bottom">Telefone é obrigatório</div>
+              </div>
+            </ng-template>
+            <ng-template #outroTemplate>
+              <div class="col-md-3">
+                <label for="">Telefone {{tipoFone.Valor}}</label>
+                <input [(ngModel)]="cliente.Telefones[i].NumeroTelefoneCompleto" type="text" [id]="'telefone' + tipoFone.Valor" [name]="'telefone' + tipoFone.Valor"
+                  kzMask="(99) 99999-9999" placeholder="(99) 99999-9999">
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="col-md-3">
+            <label for="">E-mail</label>
+            <input type="text" id="email" name="email" placeholder="e-mail" [(ngModel)]="cliente.Email">
+          </div>
+
+          <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && segmento.errors) }">
+            <label for="">Segmento</label>
+            <select required [(ngModel)]="cliente.Segmento" name="segmento" id="segmento" #segmento="ngModel">
+              <option *ngFor="let s of segmentos" [value]="s.Codigo">
+                {{s.Descricao}}
+              </option>
+            </select>
+            <div class="tooltip tooltip-bottom">Segmento é obrigatório</div>
+          </div>
+        </div>
+      </div>
+
+      <br/>
+      <hr class="style6">
+      <br/>
+
+      <tabs>
+        <tab tabTitle="Endereço">
+          <div class="content">
+
+            <!-- Cep -->
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && cep.errors) }">
+              <label for=" ">CEP</label>
+              <input (change)="cepOnChange($event.target.value)" kz-cep kzMask="99999-999" required type="text" id="cep" name="cep" maxlength="9" placeholder="99999-999"
+                [(ngModel)]="cliente.Endereco.Logradouro.CEP" #cep="ngModel" (change)="enderecoOnChange()">
+              <div class="tooltip tooltip-bottom ">CEP é obrigatório</div>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && estado.errors) }">
+              <label for="">Estado</label>
+              <select required [(ngModel)]="cliente.Endereco.Estado" (change)="onChangeEstado($event.target.value)" name="estado" id="estado"
+                #estado="ngModel" (change)="estadoOnChange()">
+                <option *ngFor="let e of estados" [value]="e.Codigo">{{e.Nome}}</option>
+              </select>
+              <div class="tooltip tooltip-bottom">Estado é obrigatório</div>
+            </div>
+
+            <!-- Munícipio -->
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && municipio.errors) }">
+              <label for="">Município</label>
+              <select required [(ngModel)]="cliente.Endereco.Municipio" name="municipio" id="municipio"
+                #municipio="ngModel" (change)="enderecoOnChange($event.target.value)">
+                <option *ngFor="let m of municipios" [value]="m.Codigo">{{m.Nome}}</option>
+              </select>
+              <div class="tooltip tooltip-bottom">Município é obrigatório</div>
+            </div>
+
+            <!-- Bairro -->
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && bairro.errors) }">
+              <label for=" ">Bairro</label>
+              <input required type="text" id="bairro" name="bairro" placeholder="Bairro" [(ngModel)]="cliente.Endereco.Logradouro.Bairro"
+                #bairro="ngModel" (input)="enderecoOnChange()">
+              <div class="tooltip tooltip-bottom">Bairro é obrigatório</div>
+            </div>
+
+            <!-- Rua -->
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && rua.errors) }">
+              <label for="">Rua</label>
+              <input required type="text" id="rua" name="rua" placeholder="Rua" [(ngModel)]="cliente.Endereco.Logradouro.Rua" #rua="ngModel"
+                (input)="enderecoOnChange()">
+              <div class="tooltip tooltip-bottom">Rua é obrigatório</div>
+            </div>
+
+            <!-- Número -->
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && numero.errors) }">
+              <label for="">Número</label>
+              <input required type="text" id="numero" name="numero" placeholder="Número" [(ngModel)]="cliente.Endereco.Logradouro.Numero"
+                #numero="ngModel" (input)="enderecoOnChange()" (keypress)="validateOnlyNumbers($event)">
+              <div class=" tooltip tooltip-bottom ">Número é obrigatório</div>
+            </div>
+
+            <!-- Complemento -->
+            <div class="col-md-5">
+              <label for=" ">Complemento</label>
+              <input type="text" id="complemento" name="complemento" placeholder="Complemento" [(ngModel)]="cliente.Endereco.Complemento">
+            </div>
+
+            <div class="col-md-1" style="margin-top: 20px " (click)="modalMapa.open()">
+              <button type="button" class="btn-singleicon" title="Visualizar localização" [disabled]="!verifyEndereco()">
+                <i class="fa fa-map-marker" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </tab>
+        <tab tabTitle="Contato">
+          <div class="content">
+            <div class="col-md-3">
+              <label for=" ">RG</label>
+              <input type="text" id="contato-rg" placeholder="RG" name="contato-rg" [(ngModel)]="cliente.Contato.RG" onkeypress="return String.fromCharCode(event.charCode).match(/[0-9]/) != null">
+            </div>
+            <div class="col-md-3">
+              <label for=" ">CPF</label>
+              <input type="text" id="contato-cpf" name="contato-cpf" [(ngModel)]="cliente.Contato.CPF" kzMask="999.999.999-99" placeholder="999.999.999-99">
+            </div>
+            <div class="col-md-6">
+              <label for=" ">Nome</label>
+              <input type="text" id="contato-nome" name="contato-nome" placeholder="Nome" [(ngModel)]="cliente.Contato.Nome">
+            </div>
+            <div class="col-md-3 tooltip-holder" [ngClass]="{ 'error-msg': (submitted && tipoTelefoneContato.errors) }">
+              <label for=" ">Tipo Telefone</label>
+              <select [(ngModel)]="cliente.Contato.Fone.TipoTelefone" id="tipo-telefone-contato" name="tipo-telefone-contato" #tipoTelefoneContato="ngModel">
+                <option *ngFor="let tipoFone of tiposTelefone " [value]="tipoFone.Codigo ">{{tipoFone.Valor}}</option>
+              </select>
+              <div class="tooltip tooltip-bottom">Tipo telefone é obrigatório</div>
+            </div>
+            <div class="col-md-3">
+              <label for=" ">Telefone</label>
+              <input type="text" id="telefone-contato" name="telefone-contato" placeholder="(99) 9999-9999" kzMask="(99) 9999-9999" [(ngModel)]="cliente.Contato.Fone.NumeroTelefoneCompleto">
+            </div>
+            <div class="col-md-6">
+              <label for=" ">E-mail</label>
+              <input type="text" id="email-contato" name="email-contato" placeholder="e-mail" [(ngModel)]="cliente.Contato.Email">
+            </div>
+          </div>
+        </tab>
+
+        <tab tabTitle="Formas de pagamento">
+          <div class="content">
+            <div class="row">
+              <br>
+              <br>
+              <table class="table type-2" style="margin-left: 10px;" cellspacing="0" cellpadding="0">
+                <tr>
+                  <th style="width: 150px;">&nbsp;</th>
+                  <th style="width: 90px;">Prazo</th>
+                  <th>&nbsp;</th>
+                </tr>
+                <tr *ngFor="let option of formasPagamento">
+                  <td style="width: 150px;">
+                    <div class="switches-container">
+                      <ui-switch [checked]="isFormaPagamentoChecked(option)" (change)="onChangeFormaPagamento($event, option)"></ui-switch>
+                      <label>{{option.Descricao}}</label>
+                    </div>
+                  </td>
+                  <td style="width: 90px;">
+                    <input type="number" name="prazoMaximo" min=0 max={{option.PrazoMaximo}} id="prazoMaximo" (change)="setPrazoMaximo($event, option)"
+                      [disabled]="!isFormaPagamentoChecked(option)" [hidden]="option.Descricao.toUpperCase() == 'DINHEIRO'"
+                      [value]="getPrazoMaximo(option)">
+                  </td>
+                  <td>&nbsp;</td>
+                </tr>
+              </table>
+            </div>
+            <div class="row">
+              <br>
+              <div class="col-md-2">
+                <label for=" ">Limite de Crédito</label>
+                <input type="number" min=0 id="limiteCredito" name="limiteCredito" [(ngModel)]="cliente.LimiteCredito">
+              </div>
+            </div>
+          </div>
+        </tab>
+
+        <tab tabTitle="Imagem" *ngIf="cliente.Id">
+          <div class="content">
+            <div class="row">
+              <div class="col-md-12 txt-c" *ngIf="cliente.Id">
+                <img [src]="getImagemFachada() " height="500 " width="800 " class="user-image" />
+              </div>
+            </div>
+              <div class="row" hidden>
+                <div class="col-md-12">
+                  <image-upload [max]="1" [buttonCaption]="'Selecione a imagem'" [dropBoxMessage]="'Arraste a imagem aqui'" (onFileUploadFinish)="imageUploaded($event) ">
+                  </image-upload>
+                </div>
+              </div>
+          </div>
+        </tab>
+        <tab tabTitle="Frequência de visita" *ngIf="cliente.Id">
+          <div class="container-fluid rcorners" *ngIf="vendedores">
+            <sd-frequencia-visita *ngFor="let vendedor of vendedores" [cliente]="cliente" [vendedores]="vendedor"></sd-frequencia-visita>
+          </div>
+        </tab>
+      </tabs>
+    </form>
+
+    <modal #modalMapa title="Localização Geográfica" [closeOnOutsideClick]="false" (onOpen)="modalMapaOnOpen()" modalClass="modal-lg">
+
+      <modal-header>
+        <span>Localização Geográfica</span>
+      </modal-header>
+
+      <modal-content *ngIf="cliente">
+        <ngui-map
+          #mapa minZoom="3"
+          zoom="15"
+          styles='[
+    {
+        "featureType": "all",
+        "elementType": "all",
+        "stylers": [
+            {
+                "hue": "#008eff"
+            }
+        ]
+    },
+    {
+        "featureType": "poi",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "road",
+        "elementType": "all",
+        "stylers": [
+            {
+                "saturation": "0"
+            },
+            {
+                "lightness": "0"
+            }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "off"
+            }
+        ]
+    },
+    {
+        "featureType": "water",
+        "elementType": "all",
+        "stylers": [
+            {
+                "visibility": "simplified"
+            },
+            {
+                "saturation": "-60"
+            },
+            {
+                "lightness": "-20"
+            }
+        ]
+    }
+]'
+          mapTypeId="roadmap"
+          (mapReady$)="mapOnReady($event)">
+        </ngui-map>
+        <br/>
+        <div class="row" *ngIf="!position">
+          <div class="col-md-3">
+            <span>Carregando coordenadas...</span>
+          </div>
+        </div>
+        <div class="row" *ngIf="position">
+          <div class="col-md-3">
+            <label for=" ">Latitude:</label>
+            <span>{{position[0]}}</span>
+          </div>
+          <div class="col-md-3">
+            <label for=" ">Longitude:</label>
+            <span>{{position[1]}}</span>
+          </div>
+        </div>
+      </modal-content>
+
+      <modal-footer>
+        <button class="btn btn-primary" (click)="modalMapa.close()">Cancelar</button>
+        <button class="btn btn-primary" (click)="modalMapaConfirm()">Confirmar</button>
+      </modal-footer>
+
+    </modal>
+
+
+  </div>
+
+  <div class="container-floating left">
+    <div class="floating-button">
+      <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating">
+
+    <div class="floating-button">
+      <span class="letter">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <button [disabled]="desabilitaBotao" form="clienteForm" type="submit" class="btn-clean">
+            <span class="letter">
+              <span class="fa fa-floppy-o"></span>
+            </span>
+          </button>
+        </div>
+      </span>
+    </div>
+  </div>
+
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

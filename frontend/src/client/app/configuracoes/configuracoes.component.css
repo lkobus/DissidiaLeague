@@ -1,0 +1,22 @@
+ .selected {
+   background-color: #4381f3 !important;
+   color: white;
+ }
+
+ .rcorners {
+   margin: 12px;
+   margin-block-end: 12px;
+   border-radius: 0px;
+   border-style: solid;
+   border-color: #DADFE5;
+   border-width: 1px;
+   padding: 12px;
+ }
+
+ .example-radio-button {
+   margin: 5px;
+ }
+
+ .example-selected-value {
+   margin: 15px 0;
+ }

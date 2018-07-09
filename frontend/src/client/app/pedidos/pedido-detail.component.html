@@ -1,0 +1,306 @@
+<div class="container-fluid main-container order-page">
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-10">
+        <h3 class="toolbar-title">
+          <span *ngIf="isInserting">Novo Pedido</span>
+          <span *ngIf="!isInserting">Resumo Pedido</span>
+        </h3>
+      </div>
+
+      <div class="col-md-2" *ngIf="!isInserting">
+        <select name="" id="" disabled>
+          <option value="">{{pedido.StatusValor}}</option>
+        </select>
+      </div>
+    </div>
+
+    <table class="table" *ngIf="isInserting">
+      <tr>
+        <th style="width: 50%">Cliente</th>
+        <th style="text-align: left">Forma de pagamento</th>
+        <th *ngIf="pedido.FormaPagamentoCodigo && pedido.FormaPagamentoCodigo != 1" style="text-align: left">Vencimento</th>
+        <th>
+          Valor total
+          <span class="tooltip-help">
+            <span class="tooltip-item">
+              <i class="fa fa-question-circle"></i>
+            </span>
+            <span class="tooltip-content tooltip-content-big">
+              <span class="tooltip-text">
+                Sem desconto: {{pedido.Valor + pedido.Desconto | currencyFormat}}
+              </span>
+            </span>
+          </span>
+        </th>
+        <th>Valor Desconto</th>
+      </tr>
+      <tr>
+        <td>
+          <div class="input-with-btn" style="position: relative; padding: 1px">
+            <div *ngIf="!pedido.Cliente.Id">
+              <input #inputClienteSearch type="text" placeholder="Buscar o cliente desejado, CNPJ ou nome fantasia" [(ngModel)]="inputSearchCliente"
+                (keyup)="onSearchTypeCliente($event.target.value)" (keyup.enter)="quickAddCliente()" style="text-align: left">
+
+              <button tabindex="-1">
+                <i class="icon-loupe"></i>
+              </button>
+            </div>
+
+            <div *ngIf="pedido.Cliente.Id">
+              <input type="text" style="text-align: left" [value]="pedido.Cliente.Nome" disabled>
+              <button tabindex="-1" (click)="onClearClienteSelected()" title="Limpar cliente selecionado">
+                <i class="fa fa-times c-error"></i>
+              </button>
+            </div>
+
+            <div class="search-box" [ngClass]="{ 'active': listClientes.length > 0 }" style="overflow-y: auto;">
+              <ul class="search-results" id="listSearchClientes">
+                <li class="search-result last selection" *ngFor="let cliente of listClientes" (click)="onSelectCliente(cliente)" style="cursor: pointer">
+                  <div class="search-details" style="width: 100%; margin: 10px 0; color: inherit;">
+                                        <span class="search-name">
+                                            {{cliente.CnpjCpf}} - {{cliente.NomeFantasia}}
+                                        </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </td>
+        <td>
+          <select *ngIf="isInserting" [(ngModel)]="pedido.FormaPagamentoCodigo" [disabled]="!pedido.Cliente.Id" (change)="onChangeFormaPagamento($event.target.value)">
+            <option *ngFor="let fp of listFormasPagamento" [value]="fp.Codigo">{{fp.Descricao}}</option>
+          </select>
+        </td>
+        <td *ngIf="pedido.FormaPagamentoCodigo && pedido.FormaPagamentoCodigo != 1">
+          <my-date-picker name="dataVenc" [locale]="pt-br" (dateChanged)="onChangeDataVencimento($event)" [selDate]="dataVencimentoPag"
+            [options]="myDatePickerOptions">
+          </my-date-picker>
+        </td>
+        <td>{{pedido.Valor | currencyFormat}}</td>
+        <td>{{pedido.Desconto | currencyFormat}}</td>
+      </tr>
+    </table>
+
+    <table class="table" *ngIf="!isInserting">
+      <tr>
+        <th>
+          Data da venda
+        </th>
+        <th>Cliente</th>
+        <th>Vendedor</th>
+        <th style="width: 150px;">
+          Valor total
+          <span class="tooltip-help">
+            <span class="tooltip-item">
+              <i class="fa fa-question-circle"></i>
+            </span>
+            <span class="tooltip-content tooltip-content-big">
+              <span class="tooltip-text">
+                Sem desconto: {{pedido.Valor + pedido.Desconto | currencyFormat}}
+              </span>
+            </span>
+          </span>
+        </th>
+        <th>Valor Desconto</th>
+        <th>Mapa</th>
+        <th>Data de entrega</th>
+        <th>Forma de pagamento</th>
+      </tr>
+      <tr>
+        <td>
+          {{pedido.Data}}
+        </td>
+        <td>
+          <a href="" [routerLink]="['/updateCliente', pedido.Cliente.Id]" title="Clique para ver os dados do cliente">
+            {{pedido.Cliente.Nome}}
+          </a>
+        </td>
+        <td>{{pedido.Vendedor.Nome}}</td>
+        <td>{{pedido.Valor | currencyFormat}}</td>
+        <td>
+          {{pedido.Desconto | currencyFormat}}
+        </td>
+        <td>
+          <span *ngIf="pedido.MapaCodigo" [title]="pedido.MapaCodigo + '-' + pedido.MapaDescricao">{{pedido.MapaCodigo}} - {{pedido.MapaDescricao}}</span>
+          <span *ngIf="!pedido.MapaCodigo">-</span>
+          <br>
+          <small [class]="getStateClassMapa(pedido.MapaStatusCodigo)">{{pedido.MapaStatusDescricao}}</small>
+        </td>
+        <td>
+          <input type="text" disabled [(ngModel)]="pedido.DataEntrega">
+        </td>
+        <td>
+          <select>
+            <option value="">{{pedido.FormaPagamento}} - {{pedido.Valor | currencyFormat}}</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+
+  <div class="col-md-12">
+    <tp-accordion-group>
+      <tp-accordion [title]="['Produtos']" [active]="pedido.Cliente.Id">
+        <div *ngIf="isInserting && !pedido.Cliente.Id" style="padding: 10px">
+          <span>
+            Por favor, selecione um cliente antes de listar os produtos
+          </span>
+        </div>
+        <div *ngIf="(allowEdit || isInserting) && pedido.Cliente.Id" class="input-with-btn" style="position: relative;">
+          <input #inputProdutoSearch type="text" placeholder="Buscar o produto desejado, sku ou código de barra" [(ngModel)]="inputSearch"
+            (keyup)="onSearchType($event.target.value)" (keyup.enter)="quickAddProduto()">
+          <button tabindex="-1">
+            <i class="icon-loupe"></i>
+          </button>
+
+          <div class="search-box" [ngClass]="{ 'active': listProdutos.length > 0 }" style="overflow-y: auto;">
+            <ul class="search-results" id="listSearchProducts">
+              <li class="search-result last" *ngFor="let produto of listProdutos">
+                <div class="search-details">
+                  <span class="search-name" title="">
+                    <span class="fa fa-info-circle more-info" [title]="produto.Nome"></span>
+                    {{produto.Codigo}} - {{produto.Nome}}
+                  </span>
+                  <span class="search-price" title="" style="width: 40%">
+                    <label [for]="produto.Id"></label>
+                    <input [id]="produto.Id" [name]="produto.Id" kzMaskCurrency type="text" [(ngModel)]="produto.PrecoVenda" placeholder="Preço"
+                      style="width: 60%; border: 1px solid #d9dce1">
+                  </span>
+                </div>
+                <div class="qty-bar" style="width: 25%">
+                  <button class="buttonMinus qty-btn minus-btn" (click)="decQuantidade(produto)">
+                    <span class="fa fa-minus-circle" title="Diminuí Quantidade"></span>
+                  </button>
+                  <div class="qty-status">
+                    <input class="qty-search-p qty qty-product" type="text" [(ngModel)]="produto.Quantidade">
+                  </div>
+                  <button class="qty-btn plus-btn" (click)="incQuantidade(produto)">
+                    <span class="fa fa-plus-circle" title="Aumenta Quantidade"></span>
+                  </button>
+                </div>
+                <div class="search-details" style="width: 5%; float: right; text-align: center">
+                  <button class="btn-absolute" title="Adicionar produto" (click)="addProdutoEdicao(produto)">
+                    <span>
+                      <i class="icon-plus c-ok"></i>
+                    </span>
+                  </button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="products-grid-container">
+          <ul class="itens">
+            <li class="item" *ngFor="let produto of pedido.Produtos">
+              <div class="heading-container">
+                <span class="select-name-txt" [title]="produto.Nome">
+                  <span class="txt">{{produto.Nome}}</span>
+                </span>
+                <div [hidden]="!allowEdit">
+                  <span class="select-name-txt" (click)="removerProduto(produto.Id)">
+                    <i class="icon-x c-error"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="content">
+                <span class="fa fa-info-circle more-info" title="{{produto.Nome}}"></span>
+
+                <div class="values">
+                  <span class="sku" title="">{{produto.Codigo}}</span>
+                  <span class="unitary-price unitarioP1745" title="">{{produto.ValorUnitario | currencyFormat}} UN</span>
+                  <span class="bundle-price" title="">
+                    <span class="tooltip-help">
+                      <span class="tooltip-item">
+                        <b class="with-input">R$</b>
+                        <input type="text" kzMaskCurrency [(ngModel)]="produto.ValorUnidade" placeholder="0,00" [disabled]="!allowEdit" [readonly]="!allowEdit"
+                          (change)="onChangeProduto(produto)">
+                      </span>
+                    </span>
+                  </span>
+                </div>
+                <div class="item-image">
+                  <img class="mCS_img_loaded" [src]="getProdutoImageURL(produto.Id)">
+                </div>
+              </div>
+              <button *ngIf="allowEdit" class="btn-slim estoque" [ngClass]="{ 'b-ok': (produto.Alert == 0 || produto.Alert == 4), 'b-warning': (produto.Alert == 1 || produto.Alert == 5), 'b-error':  (produto.Alert == 2 || produto.Alert == 6) }">Estoque: {{produto.Estoque}} {{produto.UnidadeMedida}}</button>
+              <div class="qty-bar" [ngClass]="{ 'b-error': allowEdit && (produto.Alert == 4 || produto.Alert == 5 || produto.Alert == 6) }">
+                <button class="qty-btn minus-btn" (click)="decProdutoQuantidade(produto)" [disabled]="!allowEdit">
+                  <span class="fa fa-minus-circle gray" title="Diminuí Quantidade"></span>
+                </button>
+                <div class="qty-status">
+                  <span class="tooltip-help">
+                    <span class="tooltip-item">
+                      <input class="qty qty-product" type="text" [(ngModel)]="produto.Quantidade" (change)="onChangeProduto(produto)" [disabled]="!allowEdit">
+                      <span class="qty-span" title="">{{produto.UnidadeMedida}}</span>
+                    </span>
+                    <span class="tooltip-content" *ngIf="allowEdit && (produto.Alert == 4 || produto.Alert == 5 || produto.Alert == 6)">
+                      <span class="tooltip-text">
+                        Estoque insuficiente
+                      </span>
+                    </span>
+                  </span>
+                </div>
+                <button class="qty-btn plus-btn" (click)="incProdutoQuantidade(produto)" [disabled]="!allowEdit">
+                  <span class="fa fa-plus-circle gray" title="Aumenta Quantidade"></span>
+                </button>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+
+  <div class="container-floating left">
+    <div class="floating-button">
+      <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating" [hidden]="!allowCancel && !allowEdit">
+    <div class="nds nd2">
+      <button [hidden]="!allowCancel" (click)="cancelarPedido()">
+        <div class="t-left t-sm" data-tooltip="Cancelar pedido">
+          <span class="letter">
+            C
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="nds nd1">
+      <button [hidden]="!allowEdit" (click)="salvar()">
+        <div class="t-left t-sm" data-tooltip="Salvar">
+          <span class="letter">
+            <span class="fa fa-floppy-o"></span>
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="floating-button">
+      <span class="letter">
+        <i class="fa fa-bars"></i>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

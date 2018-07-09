@@ -1,0 +1,71 @@
+tp-accordion-group {
+  width: 100%;
+  display: inline-block;
+  box-shadow: 0 3px 9px 0 rgba(0, 0, 0, 0.05);
+  background-color: color(backgroundLight);
+  @include pseudoclearfix;
+}
+
+tp-accordion {
+  &:last-child {
+    .accordion-body {
+      border-bottom: none;
+    }
+  }
+}
+
+.accordion-head {
+  border-bottom: 1px solid color(input,border);
+
+  .accordion-head-title {
+    display: inline-block;
+    padding: 0 22px;
+    margin: 8px 0;
+    font-size: em(26px);
+    font-weight: 100;
+    color: color(primary,base);
+  }
+
+  .fa {
+    float: right;
+    color: color(primary,base);
+    margin: 11px 25px 0 0;
+    transition: transform linear 250ms 0s;
+  }
+
+  &.active {
+    .fa {
+      transform: translateY(4px) rotate(180deg);
+    }
+  }
+}
+
+.accordion-body {
+  overflow: inherit;
+  @include pseudoclearfix;
+  border-bottom: 1px solid color(input,border);
+
+  .input-with-btn {
+    margin: 5px;
+  }
+
+  .tooltip-help {
+    float: left;
+    font-size: inherit;
+    color: inherit;
+    margin-left: 0;
+    z-index: 9;
+  }
+
+  .table {
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    tr {
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}

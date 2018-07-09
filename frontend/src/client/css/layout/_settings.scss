@@ -1,0 +1,51 @@
+.setting-block {
+  width: 100%;
+  border-bottom: 10px solid color(bodyBg);
+  padding: 10px 0 25px;
+  box-sizing: border-box;
+  @include pseudoclearfix;
+
+  .row {
+    .subtitle {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px 0;
+    }
+
+    &:last-child {
+
+      input {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  & + .button-wrapper {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  &:nth-last-child(2) {
+    border-bottom: none;
+  }
+}
+
+.switches-container {
+  text-align: center;
+
+  label {
+    text-align: center;
+    vertical-align: 10px;
+  }
+}
+
+.col-md-12,
+.col-sm-12 {
+  & > {
+    .switches-container {
+      label {
+        width: 100%;
+      }
+    }
+  }
+}

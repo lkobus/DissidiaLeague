@@ -1,0 +1,69 @@
+.values {
+  float: left;
+  width: 100%;
+  @include pseudoclearfix;
+
+  &.type-2 {
+    margin: 35px 0 20px 0;
+  }
+
+  @include breakpoint(xs) {
+    width: 100%;
+
+    [class^="col-"] {
+      padding: 0!important;
+    }
+  }
+
+  &:first-child {
+    padding-left: 0!important;
+  }
+
+  b {
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .title {
+    width: 100%;
+    float: left;
+    font-size: em(14px);
+    color: color(primary,light);
+  }
+
+  .value {
+    width: 100%;
+    float: left;
+    font-size: em(30px);
+    color: color(status,ok);
+
+    @include breakpoint(xs) {
+      font-size: em(20px);
+    }
+  }
+
+  .description {
+    width: 100%;
+    float: left;
+    font-size: em(12px);
+    color: color(primary,light);
+
+    @include breakpoint(xs) {
+      margin-bottom: 15px;
+    }
+  }
+}
+
+.card {
+  .values {
+    width: 100%;
+
+    .value {
+      font-size: em(24px);
+    }
+
+    .title {
+      color: color(txt,dark);
+    }
+  }
+}

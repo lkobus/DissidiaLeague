@@ -1,0 +1,150 @@
+<nav class="navbar-left" *ngIf="showModulos">
+  <ul class="nav-links">
+    <li class="nav-link" [routerLinkActive]="['active']">
+      <a [routerLink]="['/welcome']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-bar-chart"></i>
+        <span class="txt-title">Ranking</span>
+      </a>
+    </li>
+
+    <!-- 
+    <li class="nav-link with-status" *ngIf="(moduloDisponivel(2))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/venda-balcao']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-coin"></i>
+        <span class="txt-title">Venda balcão</span>
+        <span *ngIf="statusCaixa?.CaixaDisponivel"  class="txt-subtitle c-ok">
+          <span>caixa</span> aberto
+        </span>
+        <span *ngIf="!(statusCaixa?.CaixaDisponivel)" class="txt-subtitle">
+          <span>caixa</span> fechado
+        </span>
+      </a>
+    </li>
+    <li class="nav-link" *ngIf="(moduloDisponivel(3))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/pedidos']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-tag"></i>
+        <span class="txt-title">Venda Externa</span>
+      </a>
+    </li>
+    
+    <li class="nav-link" *ngIf="(moduloDisponivel(4))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/notas-fiscais']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-file-text-o"></i>
+        <span class="txt-title">Notas Fiscais</span>
+      </a>
+    </li>
+    <li class="nav-link level-1" *ngIf="(moduloDisponivel(5))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/entrega/mapa']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-flag"></i>
+        <span class="txt-title">Mapa de entrega</span>
+      </a>
+      <ul class="nav-links sub-nav">
+        <li class="nav-link level-2" [routerLinkActive]="['active']">
+          <a [routerLink]="['/entrega/mapa']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-flag"></i>
+            <span class="txt-title">Carregamento</span>
+          </a>
+        </li>
+        <li class="nav-link level-2" [routerLinkActive]="['active']">
+          <a [routerLink]="['/entrega/mapa/resumo']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-flag"></i>
+            <span class="txt-title">Visualizar Mapas</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+    <li class="nav-link" *ngIf="(moduloDisponivel(6))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/entrada-nota']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-cloud-upload"></i>
+        <span class="txt-title">Entrada Nota</span>
+      </a>
+    </li>
+    <li class="nav-link" *ngIf="(moduloDisponivel(7))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/estoque']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-inbox"></i>
+        <span class="txt-title">Estoque</span>
+      </a>
+    </li>
+
+    <li class="nav-link" *ngIf="(moduloDisponivel(12))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/indicador-meta']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-bar-chart"></i>
+        <span class="txt-title">Indicadores</span>
+      </a>
+    </li>
+    <li class="nav-link" *ngIf="(moduloDisponivel(12))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/financas']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-calculator"></i>
+        <span class="txt-title">Finanças</span>
+      </a>
+    </li>
+
+    <li class="nav-link" [routerLinkActive]="['active']">
+      <a [routerLink]="['/comodatos']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="fa fa-handshake-o"></i>
+        <span class="txt-title">Comodatos</span>
+      </a>
+    </li>
+
+    <li class="nav-link level-1" *ngIf="(moduloDisponivel(13))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/configuracoes']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-pen-2"></i>
+        <span class="txt-title">Cadastros</span>
+      </a>
+      <ul class="nav-links sub-nav">
+        <li class="nav-link" *ngIf="(moduloDisponivel(8))" [routerLinkActive]="['active']">
+          <a [routerLink]="['/produtos']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-bottle"></i>
+            <span class="txt-title">Produtos</span>
+          </a>
+        </li>
+        <li class="nav-link" *ngIf="(moduloDisponivel(9))" [routerLinkActive]="['active']">
+          <a [routerLink]="['/usuarios']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-user"></i>
+            <span class="txt-title">Usuários</span>
+          </a>
+        </li>
+        <li class="nav-link" *ngIf="(moduloDisponivel(10))" [routerLinkActive]="['active']">
+          <a [routerLink]="['/clientes']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-users"></i>
+            <span class="txt-title">Clientes</span>
+          </a>
+        </li>
+        <li class="nav-link" *ngIf="(moduloDisponivel(11))" [routerLinkActive]="['active']">
+          <a [routerLink]="['/manuntencao']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-map-pin"></i>
+            <span class="txt-title">Frequencia</span>
+          </a>
+        </li>
+        <li class="nav-link" *ngIf="(moduloDisponivel(15))" [routerLinkActive]="['active']">
+          <a [routerLink]="['/caminhao']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="fa fa-truck"></i>
+            <span class="txt-title">Caminhões</span>
+          </a>
+        </li>
+        <li class="nav-link" *ngIf="(moduloDisponivel(14))" [routerLinkActive]="['active']">
+          <a [routerLink]="['/configuracoes']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+            <i class="icon-cog"></i>
+            <span class="txt-title">Configurações</span>
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <li class="nav-link hidden" *ngIf="(moduloDisponivel(14))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/puxada']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-truck"></i>
+        <span class="txt-title">Puxada (TEMPLATE)</span>
+      </a>
+    </li>
+    <li class="nav-link hidden" *ngIf="(moduloDisponivel(15))" [routerLinkActive]="['active']">
+      <a [routerLink]="['/retorno']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-download"></i>
+        <span class="txt-title">Retorno (TEMPLATE)</span>
+      </a>
+    </li>
+  -->
+  </ul>
+</nav>
+
+<span *ngIf="version" class="version">{{version}}</span>

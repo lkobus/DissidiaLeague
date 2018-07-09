@@ -1,0 +1,130 @@
+.dragndrop-container {
+  float: left;
+  width: 100%;
+  min-height: 25px;
+  box-sizing: border-box;
+  padding: 0 15px;
+  margin: 5px 0 0 0;
+  counter-reset: section;
+
+  .dragndrop-txt {
+    width: 100%;
+    text-transform: uppercase;
+    font-size: em(11px);
+    @include truncate;
+
+    &:before {
+      counter-increment: section;
+      content: counter(section) " ";
+    }
+  }
+
+  & > {
+    div {
+      cursor: move;
+      cursor: grab;
+      cursor: -moz-grab;
+      cursor: -webkit-grab;
+      padding: 6px 30px;
+      border: 1px solid color(input,border);
+      border-bottom: none;
+      position: relative;
+
+      &:first-child {
+        border-radius: 10px 10px 0 0;
+      }
+
+      &:last-child {
+        border-radius: 0;
+        border-bottom: none;
+      }
+
+      & > .fa {
+        &:first-child {
+          position: absolute;
+          left: 7px;
+          top: 50%;
+          margin-top: -10px;
+          font-size: em(20px);
+          cursor: move;
+          color: color(primary,base);
+        }
+        &:last-child {
+          position: absolute;
+          right: 7px;
+          top: 50%;
+          margin-top: -6px;
+          font-size: 12px;
+          cursor: pointer;
+          color: color(status,error);
+        }
+      }
+    }
+  }
+}
+
+.gu-mirror {
+  position: fixed!important;
+  margin: 0!important;
+  z-index: 9999!important;
+  opacity: .8;
+  border-radius: 10px;
+  padding: 6px 34px 6px 8px;
+  box-sizing: border-box;
+  border: 1px solid color(txt,dark);
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+
+  .dragndrop-txt {
+    width: 100%;
+    text-transform: uppercase;
+    font-size: em(11px);
+    @include truncate;
+  }
+
+  & > .fa {
+    &:first-child {
+      position: absolute;
+      left: 7px;
+      top: 50%;
+      margin-top: -10px;
+      font-size: em(20px);
+      cursor: move;
+      color: color(primary,base);
+    }
+    &:last-child {
+      position: absolute;
+      right: 7px;
+      top: 50%;
+      margin-top: -10px;
+      font-size: em(20px);
+      cursor: pointer;
+      color: color(status,error);
+    }
+  }
+}
+
+.gu-hide {
+  display: none!important
+}
+
+.gu-unselectable {
+  -webkit-user-select: none!important;
+  -moz-user-select: none!important;
+  -ms-user-select: none!important;
+  user-select: none!important
+}
+
+.gu-transit {
+  opacity: .2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);
+  cursor: move;
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.ex-moved {
+  background-color: color(action-bg);
+}

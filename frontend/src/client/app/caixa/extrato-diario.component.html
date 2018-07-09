@@ -1,0 +1,55 @@
+<div class="no-padding">
+  <div *ngIf="restError" class="alert alert-danger">
+    <span>{{restError}}</span>
+  </div>
+</div>
+
+<div class="card">
+  <div class="toolbar">
+    <h3 class="toolbar-title col-md-9" i18n>Atividades do dia</h3>
+
+    <div class="col-md-3">
+      <button class="btn-singleicon" (click)='showBlock= !showBlock'>
+        <i class="fa fa-eye" *ngIf="!showBlock"></i>
+        <i class="fa fa-eye-slash" *ngIf="showBlock"></i>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="statusCaixa" class="container-fluid">
+
+    <ul class="icos-list type-2" *ngIf="showBlock">
+
+      <!-- Totalizador  -->
+      <li class="icos-list-item-header money">
+        <div class="left-side">
+          <span class="title">Dinheiro/Cheque</span>
+          <span class="value">{{SaldoDinheiroCheque() | currencyFormat}}</span>
+          <span class="title">Cartão</span>
+          <span class="value">{{SaldoCartao() | currencyFormat}}</span>
+        </div>
+
+        <div class="right-side">
+          <span class="title">Saldo</span>
+          <span class="value">{{statusCaixa?.Saldo | currencyFormat}}</span>
+        </div>
+      </li>
+
+      <li class="icos-list-item-header" [class.ac]="movimento.Operacao.Codigo == 1" [class.fc]="movimento.Operacao.Codigo == 2"
+        [class.plus]="movimento.Operacao.Codigo == 3 || movimento.Operacao.Codigo == 5" [class.minus]="movimento.Operacao.Codigo == 4 || movimento.Operacao.Codigo == 7"
+        *ngFor='let movimento of statusCaixa.Movimentos;let i = index'>
+        <span class="icos-list-time">{{SetDate(movimento.Data)}}</span>
+        <div class="left-side">
+          <span class="title">{{movimento.Operacao.Descricao}}{{TipoMovimento(movimento)}}</span>
+          <span class="value" *ngIf="movimento.Operacao.Codigo != 6 && !movimento.Venda">{{movimento.Valor | currencyFormat}}</span>
+          <span class="value" *ngIf="movimento.Operacao.Codigo != 6 && movimento.Venda">{{movimento.Valor | currencyFormat}}&emsp;#{{movimento.Venda.Codigo}}</span>
+          <span class="value" *ngIf="movimento.Operacao.Codigo == 6">{{movimento.Usuario.nome}}</span>
+        </div>
+        <div class="right-side">
+          <span class="title">Saldo</span>
+          <span class="value">{{GetBalancoTotal(0+i) | currencyFormat}}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

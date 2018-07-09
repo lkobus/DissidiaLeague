@@ -1,0 +1,233 @@
+<div class="container-fluid main-container order-page">
+  <div class="col-md-12 some-space">
+    <tp-accordion-group>
+      <tp-accordion [active]="true" [title]="['Mapa #' + mapaEntrega.Codigo]">
+        <table class="table">
+          <tr>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Valor Planejado</th>
+            <th>Valor Real</th>
+            <th>Qtde. Notas</th>
+            <th>Veículo</th>
+            <th>Usuário</th>
+            <th>Data</th>
+            <th *ngIf="mapaEntrega.StatusCodigo == 1 || mapaEntrega.StatusCodigo == 2 || mapaEntrega.StatusCodigo == 4" style='width:150px;'></th>
+          </tr>
+          <tr>
+            <td>{{mapaEntrega.Descricao}}</td>
+            <td style="color: #4381f3">{{mapaEntrega.StatusValor}}</td>
+            <td>{{mapaEntrega.ValorTotal | currencyFormat}}</td>
+            <td>
+              <span style="margin-right: 5px">{{mapaEntrega.ValorReal | currencyFormat}}</span>
+              <i *ngIf="(mapaEntrega.StatusCodigo == 2 || mapaEntrega.StatusCodigo == 4) && mapaEntrega.ValorReal < mapaEntrega.ValorTotal"
+                class="c-error fa fa-angle-double-down" title="Valor real menor que o valor planejado"></i>
+            </td>
+            <td>{{mapaEntrega.PedidosQuantidade}}</td>
+            <td>{{formatarPlaca(mapaEntrega.VeiculoPlaca)}}</td>
+            <td>{{mapaEntrega.UsuarioNome}}</td>
+            <td>{{mapaEntrega.Data}}</td>
+            <td *ngIf="mapaEntrega.StatusCodigo == 1">
+              <button class="btn-secondary" *ngIf="mapaEntrega.PedidosQuantidade > 0" (click)="faturarMapa()" title="Faturar Mapa">
+                Faturar Mapa
+              </button>
+              <button class="btn-secondary" *ngIf="mapaEntrega.PedidosQuantidade < 1" disabled title="Nenhum pedido vinculado ao mapa de entrega">
+                Faturar Mapa
+              </button>
+            </td>
+            <td *ngIf="mapaEntrega.StatusCodigo == 2 || mapaEntrega.StatusCodigo == 4">
+              <button class="btn-secondary" *ngIf="mapaEntrega.PedidosQuantidade > 0" (click)="imprimirMapa(mapaEntrega)" title="Imprimir mapa">
+                Imprimir
+              </button>
+              <button class="btn-secondary" *ngIf="mapaEntrega.PedidosQuantidade < 1" disabled title="Nenhum pedido vinculado ao mapa de entrega">
+                Imprimir
+              </button>
+            </td>
+          </tr>
+        </table>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+  <div class="col-md-12">
+    <tp-accordion-group>
+      <tp-accordion [title]="['Detalhes']" [active]="true" #tabDetalhes>
+        <div class="col-md-5 pane">
+          <div class="col-md-12 no-padding">
+            <div class="toolbar">
+              <div class="col-md-6">
+                <h3 class="toolbar-title">
+                  Prestação financeira
+                </h3>
+              </div>
+            </div>
+            <table class="table" style="margin-top: 50px">
+              <tr>
+                <th>Formas de pagamento</th>
+                <th>Valor</th>
+              </tr>
+              <tr *ngFor="let conta of mapaEntrega.ContasFinanceiras">
+                <td>{{conta.FormaPagamentoDescricao}}</td>
+                <td>
+                  <span style="margin-right: 5px">{{conta.ValorReal | currencyFormat}}</span>
+                  <i *ngIf="(mapaEntrega.StatusCodigo == 2 || mapaEntrega.StatusCodigo == 4) && conta.ValorReal < conta.Valor" class="c-error fa fa-angle-double-down"
+                    title="Valor menor que o planejado"></i>
+                </td>
+                <!-- <td>{{conta.Valor | currencyFormat}}</td> -->
+              </tr>
+            </table>
+          </div>
+          <hr>
+          <div class="col-md-12 no-padding">
+            <div class="toolbar">
+              <div class="col-md-6">
+                <h3 class="toolbar-title">
+                  Prestação fisíca
+                </h3>
+              </div>
+            </div>
+            <div *ngIf="mapaEntrega.ContasFisicas.length < 1" class="col-md-12" style="font-weight: bold; margin: 15px 5px">
+              <span>Nenhuma informação a ser exibida</span>
+            </div>
+            <table *ngIf="mapaEntrega.ContasFisicas.length > 0" class="table type-2" style="margin-top: 50px">
+              <tr>
+                <th>Retornáveis</th>
+                <th>Quantidade</th>
+                <th>Retorno</th>
+              </tr>
+              <tr *ngFor="let conta of mapaEntrega.ContasFisicas">
+                <td>
+                  {{conta.AtivoGiroCodigo}} - {{conta.AtivoGiroDescricao}}
+                </td>
+                <td style="text-align: right">
+                  <span style="margin-right: 5px">{{conta.QuantidadeReal}}</span>
+                  <i *ngIf="(mapaEntrega.StatusCodigo == 2 || mapaEntrega.StatusCodigo == 4) && conta.QuantidadeReal < conta.Quantidade" class="c-error fa fa-angle-double-down"
+                    title="Quantidade real menor que a quantidade planejada"></i>
+                </td>
+                <td>
+                  <div class="tooltip-holder" [ngClass]="{ 'error-msg': submitted && conta.QuantidadeRetorno != 0 && !conta.QuantidadeRetorno }">
+                    <input type="number" [(ngModel)]="conta.QuantidadeRetorno" (change)="onChangeContaFisicaRetorno(conta)" [disabled]="mapaEntrega.StatusCodigo != 4">
+                    <div class="tooltip tooltip-bottom">Informe a quantidade de retorno</div>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="mapaEntrega.ContasFisicas.length < 1">
+                <td colspan="3" style="text-align: center">Nenhuma informação a ser exibida</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-7 pane big-border-left">
+          <div class="toolbar">
+            <div class="col-md-6">
+              <h3 class="toolbar-title">
+                Notas
+              </h3>
+            </div>
+          </div>
+          <table class="table txt-l" style="margin-top: 50px;">
+            <tr>
+              <th>Dados da nota</th>
+              <th>Cliente</th>
+              <th>Forma Pagamento</th>
+              <th>Situação</th>
+              <th *ngIf="existNotaRejeitada()"></th>
+            </tr>
+            <tr *ngFor="let pedido of mapaEntrega.Pedidos">
+              <td>
+                Série: {{pedido.NotaFiscal.Serie}} | Nr: {{pedido.NotaFiscal.Numero}}
+                <br> {{pedido.Valor | currencyFormat}}
+              </td>
+              <td>
+                {{pedido.ClienteFantasia}}
+              </td>
+              <td>
+                {{pedido.FormaPagamento}}
+              </td>
+              <td>
+                <div *ngIf="pedido.NotaFiscal.StatusCodigo == 1 || pedido.NotaFiscal.StatusCodigo == 2" class="tooltip-holder" [ngClass]="{ 'error-msg': submitted && pedido.NotaFiscal.StatusCodigo != 1 && pedido.NotaFiscal.StatusCodigo != 2 }">
+                  <select name="notaStatus1" id="notaStatus1" [(ngModel)]="pedido.NotaFiscal.StatusCodigo" (change)="recalcularMapa()" [class.c-ok]="pedido.NotaFiscal.StatusCodigo == 1"
+                    [class.c-error]="pedido.NotaFiscal.StatusCodigo == 2" [disabled]="mapaEntrega.StatusCodigo != 4">
+                    <option value="1" class="c-ok">Entregue</option>
+                    <option value="2" class="c-error">Não entregue (Cancelar Nota)</option>
+                  </select>
+                  <div class="tooltip tooltip-bottom">Situação inválida</div>
+                </div>
+                <div *ngIf="pedido.NotaFiscal.StatusCodigo != 1 && pedido.NotaFiscal.StatusCodigo != 2">
+                  <select name="notaStatus2" id="notaStatus2" [(ngModel)]="pedido.NotaFiscal.StatusCodigo" [class.c-error]="pedido.NotaFiscal.StatusCodigo == 5 || pedido.NotaFiscal.StatusCodigo == 6  || pedido.NotaFiscal.StatusCodigo == 7"
+                    [class.c-warning]="pedido.NotaFiscal.StatusCodigo == 3 || pedido.NotaFiscal.StatusCodigo == 4" disabled>
+                    <option value="3" class="c-warning">Pendente de faturamento</option>
+                    <option value="4" class="c-warning">Em faturamento</option>
+                    <option value="5" class="c-error">Rejeitada pela SEFAZ</option>
+                    <option value="6" class="c-error">Cancelada</option>
+                    <option value="7" class="c-error">Devolvida</option>
+                  </select>
+                  <br>
+                  <small>{{pedido.NotaAlerta}}</small>
+                </div>
+              </td>
+              <td *ngIf="pedido.NotaFiscal.StatusCodigo == 5" style="padding-left: 0">
+                <a href="javascript:void(0)" [routerLink]="[]" (click)="removerNotaRejeitada(pedido.NotaFiscal)">
+                  <i class="icon-x c-error" title="Remover nota rejeitada" style="margin-left: 5px; padding: 10px 5px"></i>
+                </a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </tp-accordion>
+    </tp-accordion-group>
+  </div>
+
+  <div class="container-floating left">
+    <div class="floating-button">
+      <div class="t-right t-sm" data-tooltip="Voltar" (click)="goBack()">
+        <span class="letter">
+          <span class="fa fa-chevron-left"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating" *ngIf="mapaEntrega.StatusCodigo == 4">
+    <div class="nds nd1">
+      <button (click)="openModalConfirmacao()">
+        <div class="t-left t-sm" data-tooltip="Fechar mapa">
+          <span class="letter">
+            F
+          </span>
+        </div>
+      </button>
+    </div>
+
+    <div class="floating-button">
+    <span class="letter">
+      <i class="fa fa-bars"></i>
+    </span>
+    </div>
+  </div>
+</div>
+
+<modal #modalConfirmacao title="Fechar Mapa de Entrega" [closeOnOutsideClick]="false">
+  <modal-header>
+    <span>Fechar Mapa de Entrega</span>
+  </modal-header>
+
+  <modal-content>
+    <h2 style="color: black">Confirma o fechamento do mapa de entrega "{{mapaEntrega.Codigo}} - {{mapaEntrega.Descricao}}"?</h2>
+    <h3 *ngIf="existsNotasEntregue()" style="color: black">*Os títulos de pagamento em dinheiro seráo baixados.</h3>
+    <h3 *ngIf="existsNotasNaoEntregue()" style="color: black">*As notas fiscais marcadas como "Não Entregue" serão canceladas/devolvidas.</h3>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" (click)="closeModalConfirmacao()">Não</button>
+    <button class="btn btn-primary" (click)="fecharMapa()">Sim</button>
+  </modal-footer>
+</modal>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

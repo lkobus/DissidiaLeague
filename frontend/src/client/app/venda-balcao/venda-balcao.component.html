@@ -1,0 +1,105 @@
+<div class="container-fluid main-container">
+
+  <div *ngIf="restError" class="no-padding alert alert-danger">
+    <div>
+      <span>{{restError}}</span>
+    </div>
+  </div>
+
+  <div *ngIf="!restError">
+    <div *ngIf="!(statusCaixa?.CaixaDisponivel);then content else other">here is ignored</div>
+  </div>
+
+  <ng-template #content>
+    <abertura-caixa>
+    </abertura-caixa>
+  </ng-template>
+
+  <ng-template #other>
+    <div class="cards-3 flexbox">
+
+      <div class="row">
+        <div class="col-md-12" *ngIf="!(statusCaixa?.CaixaDisponivel)">
+          <div class="alert alert-danger">
+            <span>Caixa Fechado para o dia atual</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div *ngIf="(statusCaixa?.CaixaDisponivel)" class="content-head">
+          <venda-balcao-menu></venda-balcao-menu>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+          <div class="card">
+            <div class="toolbar">
+              <div class="col-md-6">
+                <h3 class="toolbar-title">
+                  Estoque
+                </h3>
+              </div>
+
+              <div class="col-md-6">
+                <select (change)="onChangeOrderFilter($event.target.value)" name="orderFilter" id="orderFilter">
+                  <option value="1">Menor - maior</option>
+                  <option value="-1">Maior - menor</option>
+                </select>
+              </div>
+
+            </div>
+            <table *ngIf="produtosEstoque" class="table">
+              <tr>
+                <th (click)="sortList(produtosEstoque, 'Item.Nome')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                  <div>
+                    <label>Produto</label>
+                  </div>
+                </th>
+                <th (click)="sortList(produtosEstoque, 'Quantidade')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                  <div>
+                    <label>Quantidade</label>
+                  </div>
+                </th>
+              </tr>
+              <tr [ngClass]="{'c-error':  IsEstoqueBaixo(estoque)}" *ngFor="let estoque of produtosEstoque | paginate: { itemsPerPage: 8, currentPage: p }">
+                <td>{{estoque.Item.Nome}}</td>
+                <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}}</td>
+              </tr>
+            </table>
+
+            <div class="toolbar-bottom">
+                <pagination-controls (pageChange)="p = $event" nextLabel="Próximo" previousLabel="Anterior" maxSize=5 autoHide=true directionLinks=true></pagination-controls>
+            </div>
+            <p class="txt-tip">Fique atento aos seus produtos com baixo estoque.</p>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-12">
+          <extrato-diario>
+          </extrato-diario>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <export-modal #exportModal [isLoading]="showLoading" (exportCsv)="exportarCsv($event)" [hiddenXmlExport]="true"></export-modal>
+
+  <div class="container-floating" *ngIf="statusCaixa != null && statusCaixa.CaixaDisponivel">
+    <div class="nds nd1">
+      <button (click)="exportModal.openModal()" [disabled]='isExporting'>
+        <div class="t-left t-sm" data-tooltip="Exportar vendas">
+          <span class="letter">E</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="floating-button">
+      <span class="letter">
+        <i class="fa fa-bars"></i>
+      </span>
+    </div>
+  </div>
+
+</div>

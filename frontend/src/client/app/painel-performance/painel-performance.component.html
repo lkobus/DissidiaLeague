@@ -1,0 +1,83 @@
+<div class="container-fluid main-container">
+  <div class="card">
+
+    <div class="toolbar">
+      <div class="col-md-3">
+        <h3 class="toolbar-title">
+          Painel de Performance
+        </h3>
+      </div>
+
+      <div class="col-md-6">
+        <div class="input-with-btn">
+          <input type="text" placeholder="Busca" />
+          <button>
+            <i class="icon-loupe"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <select>
+          <option>Dia</option>
+          <option>Mês</option>
+          <option>Trimestre</option>
+          <option>Semestre</option>
+          <option>Ano</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="products-grid2-container small-cards">
+      <ul class="products-list">
+        <li class="product" *ngFor = "let numbers of [0,1,2,3]">
+
+          <div class="card-flip" [class.active]="isParaActive">
+            <div class="front">
+              <p class="card-name-container" title="Nome">
+                <i class="fa fa-user-circle-o card-icon"></i>
+                <span class="card-name">João das Neves</span>
+              </p>
+              <div class="product-image">
+                <div echarts [options]="ChartIndicators" style="height: 118px;" class="col-md-12 no-padding"></div>
+              </div>
+
+              <div class="col-md-6 no-padding-r data-inline">
+                <b>Meta:</b> <span>105</span><br/>
+                <b>Real:</b> <span>101</span><br/>
+                <b>Tendência:</b> <span>105</span>
+              </div>
+              <div class="col-md-6 beer-chart-container">
+                <div echarts [options]="ChartBeer" style="height: 80px;" class="col-md-12 no-padding"></div>
+              </div>
+              <div class="col-md-6 no-padding-r data-inline">
+                <b>Meta:</b> <span>105</span><br/>
+                <b>Real:</b> <span>101</span><br/>
+                <b>Tendência:</b> <span>105</span>
+              </div>
+              <div class="col-md-6 soda-chart-container">
+                <div echarts [options]="ChartSoda" style="height: 80px;" class="col-md-12 no-padding"></div>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="toolbar-bottom">
+      <pagination-controls
+        (pageChange)="p = $event"
+        maxSize="4"
+        directionLinks="true"
+        nextLabel="PRÓXIMO"
+        previousLabel="ANTERIOR">
+      </pagination-controls>
+
+      <csv-downloader [data]='data' [fileName]='"produtos.csv"' [downloaderName]='"Exportar"'
+                      [headers]='["Codigo", "Nome", "EAN", "Origem Produto", "Tipo de Produto", "NCM", "CEST", "CST Venda Externa - NFe (Editavel)", "CST Venda Balcao - NFCe (Editavel)", "CFOP Venda Balcao (Editavel)", "Aliquota ICMS (Editavel)", "Valor Base ICMS-ST (Editavel)", "% Reducao ICMS (Editavel)", "CST PIS", "CST COFINS"]'
+                      [keysToExport]='["codigo", "nome", "codigoEAN", "produtoExterno", "tipo", "ncm", "cest", "cstNFe", "cstNFCe", "cfopNFCe", "aliquotaIcms", "valorBaseIcmsSt", "reducaoIcms", "cstPIS", "cstCOFINS"]'>
+      </csv-downloader>
+    </div>
+
+  </div>
+</div>

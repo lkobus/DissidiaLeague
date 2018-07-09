@@ -1,0 +1,81 @@
+<div *ngIf="frequencia">
+
+  <div class="toolbar">
+
+    <div class="col-md-3">
+      <h3 class="toolbar-title">
+        {{GetPerfil()}}
+      </h3>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="no-padding">
+      <div *ngIf="error" class="alert alert-danger">
+        <span>{{error}}</span>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <label for="">Vendedor</label>
+      <select [(ngModel)]="frequencia.Vendedor" name="vendedorId" id="vendedorId">
+          <option *ngFor="let item of vendedores" [value]="item.id">{{item.nome}}</option>
+        </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="">Sazonalidade</label>
+      <select [(ngModel)]="frequencia.Sazonalidade" (change)="onChangePeriodo($event.target.value)" name="sazonalidade" id="sazonalidade">
+          <option *ngFor="let item of periodicidade" [value]="item.codigo">{{item.valor}}</option>
+        </select>
+    </div>
+
+    <div class="col-md-3" [hidden]="dayIsNotSelected()">
+      <label for="">Data próxima visita</label>
+      <my-date-picker name="mydate"
+      [locale]="pt-br"
+      (dateChanged)="onDateChanged($event)"
+      [selDate]="selectedDate"
+      [options]="myDatePickerOptions">
+    </my-date-picker>
+
+    </div>
+
+    <div [hidden]="true" class="col-md-2">
+      <label for="">Próxima visita</label> 10.09.2017
+    </div>
+
+    <div class="col-md-9">
+      <table class="table">
+        <tr>
+          <th colspan="7">
+            Dia da semana
+          </th>
+          <th *ngFor="let day of daysOfWeek" colspan="2">
+            {{GetLabelForWeek(day)}}
+          </th>
+        </tr>
+
+        <tr>
+          <th colspan="7">
+            Visita
+          </th>
+
+          <td *ngFor="let number of daysOfWeek" colspan="2">
+            <mat-checkbox
+            (change)="OnCheck($event)"
+            [checked]="checkedValues[number] == true"
+            [value]="number">
+            </mat-checkbox>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="button-wrapper">
+    <button (click)="SalvarFrequencia()" class="btn-action">
+      <span>Salvar</span>
+    </button>
+  </div>
+</div>

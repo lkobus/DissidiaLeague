@@ -1,0 +1,38 @@
+<modal #modalExport title="Exportar" [closeOnOutsideClick]="closeOutSide">
+  <modal-header>
+    <span [innerText]="title"></span>
+  </modal-header>
+
+  <modal-content>
+    <div class="col-md-3 mdp-with-lb">
+      <label>
+        De
+      </label>
+      <my-date-picker name="initialDate" [locale]="pt-br" (dateChanged)="initialDateChange($event)" [selDate]="initialDate" [options]="myDatePickerOptions">
+      </my-date-picker>
+    </div>
+
+    <div class="col-md-3 mdp-with-lb">
+      <label>
+        Até
+      </label>
+      <my-date-picker name="finalDate" [locale]="pt-br" (dateChanged)="finalDateChange($event)" [selDate]="finalDate" [options]="myDatePickerOptions">
+      </my-date-picker>
+    </div>
+  </modal-content>
+
+  <modal-footer>
+    <button class="btn btn-primary" [hidden]="hiddenXmlExport" [disabled]="isLoading" (click)="export(false)">Exportar XML</button>
+    <button class="btn btn-primary" [hidden]="hiddenCsvExport" [disabled]="isLoading" (click)="export(true)">Exportar CSV</button>
+  </modal-footer>
+
+</modal>
+
+<div class="loading-overlay" *ngIf="isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

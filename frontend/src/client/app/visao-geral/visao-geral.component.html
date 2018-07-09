@@ -1,0 +1,162 @@
+<div class="container-fluid main-container flexbox cards-2">
+
+  <div class="row">
+    <div class="content-head">
+      <h3 class="content-title" i18n>
+        Resumo geral
+      </h3>
+
+      <div class="col-md-4 col-sm-4">
+        <select [autofocus] (ngModelChange)="OnFilterChanged($event)" [(ngModel)]="dateFilter" id="filter" #filtro="ngModel">
+          <option *ngFor="let opt of filterOptions" [value]="opt.path">{{opt.value}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <p class="values">
+        <span class="col-md-3 col-sm-6 col-xs-12 no-padding-l">
+          <b class="title">Entradas</b>
+          <span class="value">
+            {{entradasAtual | currencyFormat}}
+          </span>
+          <span class="description">
+            {{GetLabel()}} anterior {{entradasAnterior | currencyFormat}}
+          </span>
+        </span>
+        <span class="col-md-3 col-sm-6 col-xs-12 no-padding-r">
+          <b class="title">Saídas</b>
+          <span class="value c-error">
+            {{saidasAtual | currencyFormat}}
+          </span>
+          <span class="description">
+            {{GetLabel()}} anterior {{saidasAnterior | currencyFormat}}
+          </span>
+        </span>
+      </p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-7 col-sm-6">
+      <visao-geral-historico-vendas #vHistoricoVendas [dateFilter]="optionFilter">
+      </visao-geral-historico-vendas>
+    </div>
+
+    <div class="col-md-5 col-sm-6">
+      <visao-geral-vendas-agrupadas #vVendasAgrupadas (dataLoaded)="OnDataLoaded($event)" [dateFilter]="optionFilter">
+      </visao-geral-vendas-agrupadas>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-7 col-sm-12">
+      <visao-geral-produtos-mais-vendidos #vProdutosMaisVendidos [dateFilter]="optionFilter">
+      </visao-geral-produtos-mais-vendidos>
+    </div>
+
+    <div class="col-md-5 col-sm-12 col-xs-12">
+      <div class="card">
+
+        <tabs>
+          <tab tabTitle="Estoque balcão">
+            <table *ngIf="estoqueBalcao" class="table order-table">
+              <tr>
+                <th (click)="sortList(estoqueBalcao, 'Item.Nome')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                  <div>
+                    <label>Produto</label>
+                  </div>
+                  <span class="order-icons-wrapper">
+                    <i class="fa fa-chevron-up order-icons"></i>
+                    <i class="fa fa-chevron-down order-icons"></i>
+                  </span>
+                </th>
+                <th (click)="sortList(estoqueBalcao, 'Quantidade')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                  <div>
+                    <label>Quantidade</label>
+                  </div>
+                  <span class="order-icons-wrapper">
+                    <i class="fa fa-chevron-up order-icons"></i>
+                    <i class="fa fa-chevron-down order-icons"></i>
+                  </span>
+                </th>
+                <th (click)="sortList(estoqueBalcao, 'DiasPrevisao')" [ngClass]="{ 'asc': sortingDesc, 'desc': !sortingDesc }">
+                  <div>
+                    <label>Previsão</label>
+                  </div>
+                  <span class="order-icons-wrapper">
+                    <i class="fa fa-chevron-up order-icons"></i>
+                    <i class="fa fa-chevron-down order-icons"></i>
+                  </span>
+                </th>
+
+              </tr>
+              <tr [ngClass]="{'c-error':  IsEstoqueBaixo(estoque)}" *ngFor="let estoque of estoqueBalcao | paginate: { id: 'paginateBalcao', itemsPerPage: 5, currentPage: p1 }">
+                <td>{{estoque.Item.Nome}}</td>
+                <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}} </td>
+                <td *ngIf="estoque.DiasPrevisao >= 0">{{estoque.DiasPrevisao}} dia(s)</td>
+                <td *ngIf="estoque.DiasPrevisao < 0" title="Previsão indisponível">--</td>
+              </tr>
+            </table>
+            <div class="toolbar-bottom">
+              <pagination-controls id="paginateBalcao" (pageChange)="p1 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+                                   previousLabel="ANTERIOR">
+              </pagination-controls>
+            </div>
+          </tab>
+          <tab tabTitle="Estoque externo">
+            <table *ngIf="estoqueExterno" class="table order-table">
+              <tr>
+                <th>
+                  Produto
+                  <span class="order-icons-wrapper">
+                    <i class="fa fa-chevron-up order-icons"></i>
+                    <i class="fa fa-chevron-down order-icons"></i>
+                  </span>
+                </th>
+                <th>
+                  Quantidade
+                  <span class="order-icons-wrapper">
+                    <i class="fa fa-chevron-up order-icons"></i>
+                    <i class="fa fa-chevron-down order-icons"></i>
+                  </span>
+                </th>
+                <th>
+                  Previsão
+                  <span class="order-icons-wrapper">
+                    <i class="fa fa-chevron-up order-icons"></i>
+                    <i class="fa fa-chevron-down order-icons"></i>
+                  </span>
+                </th>
+              </tr>
+              <tr [ngClass]="{'c-error':  IsEstoqueBaixo(estoque)}" *ngFor="let estoque of estoqueExterno | paginate: { id: 'paginateExterno', itemsPerPage: 5, currentPage: p2 }">
+                <td>{{estoque.Item.Nome}}</td>
+                <td>{{estoque.Quantidade}} {{estoque.Item.UnidadeMedida}} </td>
+                <td *ngIf="estoque.DiasPrevisao >= 0">{{estoque.DiasPrevisao}} dia(s)</td>
+                <td *ngIf="estoque.DiasPrevisao < 0" title="Previsão indisponível">--</td>
+              </tr>
+            </table>
+            <div class="toolbar-bottom">
+              <pagination-controls id="paginateExterno" (pageChange)="p2 = $event" maxSize="4" directionLinks="true" nextLabel="PRÓXIMO"
+                                   previousLabel="ANTERIOR">
+              </pagination-controls>
+            </div>
+          </tab>
+        </tabs>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="loading-overlay" *ngIf="vHistoricoVendas.isLoading || vVendasAgrupadas.isLoading || vProdutosMaisVendidos.isLoading">
+  <img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />
+  <div class="spinner">
+    <div class="bounce1"></div>
+    <div class="bounce2"></div>
+    <div class="bounce3"></div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
-﻿using Dissidia.League.App.Nancy.EndpointsConfiguration;
-using Dissidia.League.Domain.DataTransferObject.Matches;
+﻿using Dissidia.League.App.Nancy.DTO.Matches;
+using Dissidia.League.App.Nancy.EndpointsConfiguration;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Dissidia.League.Domain.Services.Interfaces;
 using Nancy;
@@ -24,6 +24,29 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 var dtos = _matcheService.GetAll()
                 .Select(m => new MatchDTO(m));
                 return Response.AsJson(dtos);                
+            };
+
+
+            Get[EndpointConfigurationEnum.GET_IMAGE_MATCH] = p =>
+            {
+                try
+                {
+                    Stream imagem = _matcheService.GetImage(p.id);
+                    if(imagem == null)
+                    {
+                        throw new ArgumentException("Não existe");
+                    }
+                    return Response.FromStream(imagem, "image/jpg");
+                }
+                catch (ArgumentException)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+                catch (Exception)
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
+                
             };
 
             Post[EndpointConfigurationEnum.UPLOAD_MATCH] = p =>

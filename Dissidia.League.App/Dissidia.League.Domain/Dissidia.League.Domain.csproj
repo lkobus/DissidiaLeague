@@ -58,7 +58,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTransferObject\Matches\MatchDTO.cs" />
     <Compile Include="Entities\Gamification\PlayerResults.cs" />
     <Compile Include="Entities\Gamification\User.cs" />
     <Compile Include="Entities\Interfaces\IEntity.cs" />

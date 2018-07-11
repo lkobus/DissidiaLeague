@@ -6,7 +6,12 @@
         <span class="txt-title">Ranking</span>
       </a>
     </li>
-
+    <li class="nav-link" [routerLinkActive]="['active']">
+      <a [routerLink]="['/matches']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">
+        <i class="icon-bar-chart"></i>
+        <span class="txt-title">Matches</span>
+      </a>
+    </li>
     <!-- 
     <li class="nav-link with-status" *ngIf="(moduloDisponivel(2))" [routerLinkActive]="['active']">
       <a [routerLink]="['/venda-balcao']" [routerLinkActive]="['router-link-active']" [routerLinkActiveOptions]="{exact:true}">

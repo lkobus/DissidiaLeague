@@ -143,5 +143,11 @@ namespace Dissidia.League.Domain.Services.Matches
         {
             return _matchRepository.GetAll();            
         }
+
+        public Stream GetImage(string matchId)
+        {
+            var match = _matchRepository.GetById(matchId);
+            return new MemoryStream(System.IO.File.ReadAllBytes(match.ImageFilePath));            
+        }
     }
 }

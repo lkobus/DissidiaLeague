@@ -14,6 +14,7 @@ namespace Dissidia.League.Domain.Services.Interfaces
         Task RegisterMatchAsync(Stream stream);
         void RegisterMatches(List<Stream> stream);
         void MarkMatchAsResolved(string matchId, List<PlayerInfo> winners, List<PlayerInfo> loosers);
+        Stream GetImage(string matchId);
 
         List<Match> GetAll();
 

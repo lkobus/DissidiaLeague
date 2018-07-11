@@ -1,0 +1,13 @@
+#wrapper{
+    display:flex;
+    width:100%;
+  }
+  #w40{
+    background:yellow;
+    width:40%;
+  }
+  
+  #w70{
+    background:pink;
+    width:70%;
+  }

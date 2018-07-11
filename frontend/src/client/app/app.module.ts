@@ -57,6 +57,7 @@ import { Angulartics2Module, Angulartics2GoogleAnalytics } from 'angulartics2';
 import { AngularEchartsModule } from 'ngx-echarts';
 import { ModalConfirmacaoModule } from './_directives/modal-confirmacao/modal-confirmacao.module';
 import { RankingModule } from './ranking/ranking.module';
+import { MatchesModule } from './matches/matches.module';
 
 @NgModule({
   imports: [
@@ -102,6 +103,7 @@ import { RankingModule } from './ranking/ranking.module';
     VisaoGeralModule,
     UsuariosModule,
     RankingModule,
+    MatchesModule,
     ComodatosModule,
     FrequenciaVisitaModule,
     LoginModule,

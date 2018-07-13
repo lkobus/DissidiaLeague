@@ -64,6 +64,18 @@ namespace Dissidia.League.Domain.Entities
                 return this;
             }
 
+            public MatchFactory WithWinners(List<PlayerInfo> winners)
+            {
+                Instance.PlayersTeamWinner = winners;
+                return this;
+            }
+
+            public MatchFactory WithLoosers(List<PlayerInfo> loosers)
+            {
+                Instance.PlayersTeamLooser = loosers;
+                return this;
+            }
+
         }
 
         

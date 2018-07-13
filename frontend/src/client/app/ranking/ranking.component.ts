@@ -34,14 +34,10 @@ export class RankingComponent extends BaseTableComponent implements OnInit {
     super();
   }
 
-  getUsuarios(): void {
-    IntervalObservable.create(5000)
-    .subscribe(p => {
-      this.usuarioService
-      .getPlayersPontuation()
-      .then(usuarios => this.listUsuarios = usuarios);
-    });
-    
+  getUsuarios(): void {    
+    this.usuarioService
+    .getPlayersPontuation()
+    .then(usuarios => this.listUsuarios = usuarios);
   }
 
   ngOnInit(): void {

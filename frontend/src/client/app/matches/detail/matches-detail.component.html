@@ -4,13 +4,131 @@
         <h3 class="card-title">
           <span >Atualizar Partida</span>          
         </h3>
-        <div id="wrapper">
-            <div id="w30">  
-              width 30%
+        <div class="col-md-offset-3 col-md-4">
+                <h3 style="color:darkmagenta">Who wins?</h3>                
+        </div>        
+        <div class="col-md-2">
+            <select [(ngModel)]="whoWins">
+                <option value="A">Team A</option>
+                <option value="B">Team B</option>
+            </select>
+        </div>
+        <div class="col-md-offset-2 col-md-2">
+            <h3 style="color:black">Team A</h3>
+        </div>
+        <div class="col-md-1">
+            <h3 style="color:black">Points</h3>
+        </div>        
+        <div class="col-md-1">
+            <h3 style="color:black">Char</h3>
+        </div>        
+        <div class="col-md-2 col-md-offset-1">
+            <h3 style="color:black">Team B</h3>
+        </div>
+        <div class="col-md-1">
+            <h3 style="color:black">Points</h3>
             </div>
-            <div id="w70">  
-              width 70%
+            <div class="col-md-1">
+                    <h3 style="color:black">Char</h3>
+                </div>        
+        <div class="col-md-offset-1 col-md-1">
+            <h4 style="color:black">Player 1</h4>
+        </div>
+        <div class="col-md-2">
+            <input type="text" [(ngModel)]="playerTeamA1">
+        </div>
+        <div class="col-md-1">
+            <input type="text"  [(ngModel)]="scorePlayerTeamA1">
+        </div>
+        <div class="col-md-1">                        
+            <select *ngIf="charEnums" [(ngModel)]="charPlayerTeamA1">
+                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}} - {{c.valor}}</option>                
+            </select>                        
+        </div>
+        <div class="col-md-1">
+            <h4 style="color:black">Player 1</h4>
+        </div>
+        <div class="col-md-2">
+            <input type="text"  [(ngModel)]="playerTeamB1">
+        </div>
+        <div class="col-md-1">
+            <input type="text"  [(ngModel)]="scorePlayerTeamB1">
+        </div>
+        <div class="col-md-1">                        
+                <select *ngIf="charEnums" [(ngModel)]="charPlayerTeamB1">
+                    <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}} - {{c.valor}}</option>                
+                </select>                        
             </div>
-          </div>
+        <div class="col-md-offset-1 col-md-1">
+            <h4 style="color:black">Player 2</h4>
+        </div>
+        <div class="col-md-2">
+                <input type="text" [(ngModel)]="playerTeamA2">
+        </div>
+        <div class="col-md-1">
+            <input type="text"  [(ngModel)]="scorePlayerTeamA2">
+        </div>
+        <div class="col-md-1">                        
+            <select *ngIf="charEnums" [(ngModel)]="charPlayerTeamA2">
+                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}} - {{c.valor}}</option>                
+            </select>                        
+        </div>
+        <div class="col-md-1">
+            <h4 style="color:black">Player 2</h4>
+        </div>
+        <div class="col-md-2">
+            <input type="text"  [(ngModel)]="playerTeamB2">
+        </div>
+        <div class="col-md-1">
+            <input type="text"  [(ngModel)]="scorePlayerTeamB2">
+        </div>
+        <div class="col-md-1">                        
+            <select *ngIf="charEnums" [(ngModel)]="charPlayerTeamB2">
+                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}} - {{c.valor}}</option>                
+            </select>                        
+        </div>
+        <div class="col-md-offset-1 col-md-1">
+            <h4 style="color:black">Player 3</h4>
+        </div>
+        <div class="col-md-2">
+                <input type="text"  [(ngModel)]="playerTeamA3">
+        </div>
+        <div class="col-md-1">
+            <input type="text"  [(ngModel)]="scorePlayerTeamA3">
+        </div>
+        <div class="col-md-1">                        
+            <select *ngIf="charEnums" [(ngModel)]="charPlayerTeamA3">
+                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}} - {{c.valor}}</option>                
+            </select>                        
+        </div>
+        <div class="col-md-1">
+            <h4 style="color:black">Player 3</h4>
+        </div>
+        <div class="col-md-2">
+            <input type="text"  [(ngModel)]="playerTeamB3">
+        </div>
+        <div class="col-md-1">
+            <input type="text"  [(ngModel)]="scorePlayerTeamB3">
+        </div>
+        <div class="col-md-1">                        
+            <select *ngIf="charEnums" [(ngModel)]="charPlayerTeamB3">
+                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}} - {{c.valor}}</option>                
+            </select>                        
+        </div>      
+        <img id="center-match" *ngIf="imageUrl" src="{{imageUrl}}">
       </div>
+
+      <div class="container-floating">            
+        <div class="floating-button">
+            <span class="letter">
+            <div class="t-left t-sm" data-tooltip="Salvar">
+                <button (click)="salvar();" class="btn-clean">
+                <span class="letter">
+                    <span class="fa fa-floppy-o"></span>
+                </span>
+                </button>
+            </div>
+            </span>
+        </div>
+        </div>
 </div>

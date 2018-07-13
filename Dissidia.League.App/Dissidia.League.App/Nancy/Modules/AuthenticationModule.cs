@@ -23,15 +23,17 @@ namespace Dissidia.League.App.Nancy.Modules
             {
                 var body = Request.Body.AsString();
                 var auth = JsonConvert.DeserializeObject<AuthDTO>(body);
+                string id;
                 if(_authService.AuthUser(auth.Username, auth.Password))
                 {
+                    id = _authService.GetUserIdByUsername(auth.Username);
                     Request.Cookies["logged"] = "true";
                 }
                 else
                 {
                     return HttpStatusCode.Unauthorized;
                 }
-                return Response.AsJson(new { Status = "OK" }, HttpStatusCode.Accepted);
+                return Response.AsJson(id, HttpStatusCode.Accepted);
             };
 
             Post[EndpointConfigurationEnum.REGISTER_USER] = p =>

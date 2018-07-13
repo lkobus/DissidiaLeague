@@ -15,10 +15,11 @@ namespace Dissidia.League.Domain.Services.Interfaces
         void RegisterMatches(List<Stream> stream);
         void MarkMatchAsResolved(string matchId, List<PlayerInfo> winners, List<PlayerInfo> loosers);
         Stream GetImage(string matchId);
-
+        Match GetMatch(string id);
+        void UpdateMatch(List<PlayerInfo> playersTeamWinner, List<PlayerInfo> playersTeamLooser, string userId, string matchId);
         List<Match> GetAll();
 
-        event OnMatchDoneEventHandler OnMatchDone;
+        event OnMatchDoneEventHandler OnMatchUploaded;
         event OnMatchDoneEventHandler OnMatchResolved;
     }
 }

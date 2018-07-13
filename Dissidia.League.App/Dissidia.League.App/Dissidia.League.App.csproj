@@ -62,6 +62,7 @@
     <Compile Include="Nancy\DTO\UserRegisterDTO.cs" />
     <Compile Include="Nancy\EndpointsConfiguration\EndpointConfigurationEnum.cs" />
     <Compile Include="Nancy\Modules\AuthenticationModule.cs" />
+    <Compile Include="Nancy\Modules\Dissidia\DissidiaModule.cs" />
     <Compile Include="Nancy\Modules\League\Gamificatio\PontuationModule.cs" />
     <Compile Include="Nancy\Modules\League\MatchModule.cs" />
     <Compile Include="Nancy\NancyBootstrap.cs" />

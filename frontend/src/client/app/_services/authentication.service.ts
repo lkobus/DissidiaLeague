@@ -91,9 +91,9 @@ export class AuthenticationService extends BaseService {
     headers.append('Accept', 'application/json');    
 
     return this.http.post(localStorage.getItem("CONFIG_API") + 'dissidia/login', JSON.stringify(user), { headers: headers })
-      .map(response => {
-        debugger;
-        if (response.status == 202) {                    
+      .map(response => {        
+        if (response.status == 202) {                              
+          window.localStorage.setItem("id", response.json());
           window.localStorage.setItem("login", username);          
           this.showUserLogged();        
           window.localStorage.setItem('userModulos', "true");            

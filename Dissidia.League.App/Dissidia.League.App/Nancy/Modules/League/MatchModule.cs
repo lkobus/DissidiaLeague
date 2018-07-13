@@ -3,6 +3,8 @@ using Dissidia.League.App.Nancy.EndpointsConfiguration;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Dissidia.League.Domain.Services.Interfaces;
 using Nancy;
+using Nancy.Extensions;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -48,6 +50,23 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 }
                 
             };
+
+            Get[EndpointConfigurationEnum.GET_MATCH] = p =>
+            {
+                var match = _matcheService.GetMatch(p.id);
+                return Response.AsJson(new MatchDTO(match));
+            };
+
+            Put[EndpointConfigurationEnum.CHANGE_MATCH] = p =>
+            {
+                var matchId = p.id;
+                var userId = p.userId;
+                var match = JsonConvert.DeserializeObject<MatchDTO>(Request.Body.AsString());
+                _matcheService.UpdateMatch(match.PlayersTeamWinner, match.PlayersTeamLooser, userId, matchId);
+                return HttpStatusCode.Accepted;
+            };
+
+               
 
             Post[EndpointConfigurationEnum.UPLOAD_MATCH] = p =>
             {

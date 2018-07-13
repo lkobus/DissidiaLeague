@@ -36,6 +36,12 @@ namespace Dissidia.League.App.Nancy.Services
             throw new NotImplementedException();
         }
 
+        public string GetUserIdByUsername(string username)
+        {
+            var user = _userRepository.GetUserByLogin(username);
+            return user.Id;            
+        }
+
         public void RegisterUser(string username, string password, string email)
         {
             var user = _userRepository.GetUserByLogin(username);

@@ -10,7 +10,7 @@ namespace Dissidia.League.Domain.Enums
     public class CharEnum : BaseEnum<CharEnum, string>
     {
         public static CharEnum NOCTIS = new CharEnum(1, "Noctis");
-        public static CharEnum YSHTOLA = new CharEnum(2, "Y'shtola");
+        public static CharEnum YSHTOLA = new CharEnum(2, "Yshtola");
         public static CharEnum LIGHTING = new CharEnum(3, "Lighting");
         public static CharEnum VAYNE = new CharEnum(4, "Vayne");
         public static CharEnum VAAN = new CharEnum(5, "Vaan");
@@ -38,7 +38,7 @@ namespace Dissidia.League.Domain.Enums
         public static CharEnum GARLAND = new CharEnum(27, "Garland");
         public static CharEnum WARRIOR_OF_LIGHT = new CharEnum(28, "Warrior of Light");
         public static CharEnum ACE = new CharEnum(29, "Ace");
-        public static CharEnum RAMZA = new CharEnum(30, "Ramza");
+        public static CharEnum RAMZA = new CharEnum(30, "Ramza");        
         public static CharEnum UNDEFINED = new CharEnum(0, "UNDEFINED");
 
         protected CharEnum(int codigo, string valor) : base(codigo, valor)

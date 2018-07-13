@@ -19,6 +19,11 @@ namespace Dissidia.League.Domain.Services.Gamification
             _playerResultsRepository = playerResultsRepository;
         }
 
+        public void DeleteByMatchId(string matchId)
+        {
+            _playerResultsRepository.DeleteByMatchId(matchId);            
+        }
+
         public List<PlayerPontuation> GetPlayersPontuations()
         {
             var result = new List<PlayerPontuation>();
@@ -34,10 +39,17 @@ namespace Dissidia.League.Domain.Services.Gamification
             return result;
         }
 
+        
+
         public void OnMatchResolved(object sender, OnMatchDoneArgs args)
         {
-            args.Match.PlayersTeamLooser.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreatLost(p).Instance));
-            args.Match.PlayersTeamWinner.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreateWin(p).Instance));
+            if (!args.IsOCRUpdate)
+            {
+                _playerResultsRepository.DeleteByMatchId(args.Match.Id);                
+            }            
+            args.Match.PlayersTeamLooser.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreatLost(p, args.Match.Id).Instance));
+            args.Match.PlayersTeamWinner.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreateWin(p, args.Match.Id).Instance));
+
         }
     }
 }

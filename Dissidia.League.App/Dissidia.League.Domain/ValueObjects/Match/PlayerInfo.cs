@@ -1,4 +1,5 @@
 ﻿using Dissidia.League.Domain.Enums;
+using Newtonsoft.Json;
 
 namespace Dissidia.League.Domain.ValueObjects.Match
 {
@@ -15,6 +16,14 @@ namespace Dissidia.League.Domain.ValueObjects.Match
             Character = character;
             Points = points;
         }
-        
+
+        [JsonConstructor]
+        public PlayerInfo(int character, string name, int points)
+        {
+            Name = name;
+            Character = character;
+            Points = points;
+        }
+
     }
 }

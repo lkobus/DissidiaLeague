@@ -11,6 +11,11 @@ namespace Dissidia.League.Domain.MongoDB.Repositories.Gamification
         {
 
         }
+
+        public void DeleteByMatchId(string matchId)
+        {
+            _collection.DeleteMany(p => p.MatchId == matchId);            
+        }
     }
 
 }

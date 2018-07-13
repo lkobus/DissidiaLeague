@@ -4,10 +4,19 @@
   }
   #w40{
     background:yellow;
-    width:40%;
+    width:50%;
+    height:35%;
   }
   
   #w70{
     background:pink;
-    width:70%;
+    width:50%;
   }
+
+  #center-match {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+select#gender option[value="1"]   { background-image:url(/assets1/characters/1.png);   }

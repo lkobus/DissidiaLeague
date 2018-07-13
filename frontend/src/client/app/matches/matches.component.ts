@@ -34,14 +34,10 @@ export class MatchesComponent extends BaseTableComponent implements OnInit {
     super();
   }
 
-  getUsuarios(): void {
-    IntervalObservable.create(5000)
-    .subscribe(p => {
-      this.matchService
-      .getMatches()
-      .then(usuarios => this.listUsuarios = usuarios);
-    });
-    
+  getUsuarios(): void {    
+    this.matchService
+    .getMatches()
+    .then(usuarios => this.listUsuarios = usuarios);
   }
 
   ngOnInit(): void {

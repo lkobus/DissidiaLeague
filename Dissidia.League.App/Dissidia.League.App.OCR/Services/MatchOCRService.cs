@@ -19,7 +19,7 @@ namespace Dissidia.League.App.OCR.Services
             _ocrDir = configuration.OCRDir;
         }
 
-        public void OnMatchDone(object sender, OnMatchDoneArgs args)
+        public void OnMatchUploaded(object sender, OnMatchDoneArgs args)
         {
             var r = new List<string>();
             lock (_lock)

@@ -19,8 +19,10 @@ namespace Dissidia.League.Domain.Services.Matches
     {
         private string _imageStorage;
         private IMatchRepository _matchRepository;
-        public event OnMatchDoneArgs.OnMatchDoneEventHandler OnMatchDone;
+        public event OnMatchDoneArgs.OnMatchDoneEventHandler OnMatchUploaded;
         public event OnMatchDoneArgs.OnMatchDoneEventHandler OnMatchResolved;
+        private object _lockMatchUpdate = new object();
+
 
         public MatchService(string imageStorage, IMatchRepository matchRepository)
         {
@@ -36,7 +38,7 @@ namespace Dissidia.League.Domain.Services.Matches
                 var match = Match.Factory.NewMatch(imageFile);
                 _matchRepository.Upsert(match.Instance);
                 var matchArgs = new OnMatchDoneArgs(match.Instance);
-                OnMatchDone?.Invoke(this, matchArgs);                
+                OnMatchUploaded?.Invoke(this, matchArgs);                
             });            
         }
 
@@ -136,7 +138,11 @@ namespace Dissidia.League.Domain.Services.Matches
 
             match = Match.Factory.From(match).MarkAsConcluded().Instance;
             _matchRepository.Upsert(match);
-            OnMatchResolved?.Invoke(this, new OnMatchDoneArgs(match));
+            lock (_lockMatchUpdate)
+            {
+                OnMatchResolved?.Invoke(this, new OnMatchDoneArgs(match));
+            }
+            
         }
 
         public List<Match> GetAll()
@@ -149,5 +155,26 @@ namespace Dissidia.League.Domain.Services.Matches
             var match = _matchRepository.GetById(matchId);
             return new MemoryStream(System.IO.File.ReadAllBytes(match.ImageFilePath));            
         }
+
+        public Match GetMatch(string id)
+        {
+            return _matchRepository.GetById(id);
+        }
+
+        public void UpdateMatch(List<PlayerInfo> playersTeamWinner, List<PlayerInfo> playersTeamLooser, string userId, string matchId)
+        {
+            lock (_lockMatchUpdate)
+            {
+                var match = _matchRepository.GetById(matchId);
+                match = Match.Factory.From(match)
+                    .WithWinners(playersTeamWinner)
+                    .WithLoosers(playersTeamLooser).Instance;
+                _matchRepository.Upsert(match);
+                OnMatchResolved?.Invoke(this, new OnMatchDoneArgs(match, userId));
+            }
+            
+        }
+
+
     }
 }

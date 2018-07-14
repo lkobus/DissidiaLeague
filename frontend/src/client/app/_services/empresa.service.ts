@@ -25,7 +25,7 @@ export class EmpresaService extends BaseService {
   uploadImagem(fileholder: any): Promise<any> {
     var url = this.BasePath() + "dissidia/match/upload";
     var formData = new FormData();
-    formData.append('image', fileholder.file);
+    formData.append('image', fileholder.file);    
     return this.http.post(url, formData)
       .toPromise()      
       .catch(this.handleErrorPromise);

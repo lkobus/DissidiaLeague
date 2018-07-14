@@ -15,7 +15,7 @@ namespace Dissidia.League.Bootstrap.Injections
         public BoostrapInjection(IGlobalConfiguration globalConfiguration)
         {
             var mongoClient = new MongoClient(globalConfiguration.Database.Host);
-            Repositories = new InjectionRepository(mongoClient.GetDatabase(globalConfiguration.Database.Name));
+            Repositories = new InjectionRepository(mongoClient.GetDatabase(globalConfiguration.Database.Name), globalConfiguration.Database);
             Services = new ServicesInjection(globalConfiguration, Repositories);
         }        
 

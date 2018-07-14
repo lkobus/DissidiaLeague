@@ -8,7 +8,7 @@ namespace Dissidia.League.Domain.Entities.Gamification
     public class PlayerResults : IEntity
     {
         [BsonId]
-        public string Id { get; private set; }
+        public string Id { get; private set; }                
         public PlayerInfo Info { get; private set; }
         public bool Winner { get; private set; }
         public string MatchId { get; private set; }
@@ -16,7 +16,7 @@ namespace Dissidia.League.Domain.Entities.Gamification
 
         private PlayerResults()
         {
-            Id = ObjectId.GenerateNewId().ToString();
+            Id = ObjectId.GenerateNewId().ToString(); 
         }
 
         public class PlayerResultsFactory

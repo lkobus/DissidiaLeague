@@ -4,5 +4,6 @@
     {
         string Name { get; }
         string Host { get; }
+        string TeamImageFolder { get; }
     }
 }

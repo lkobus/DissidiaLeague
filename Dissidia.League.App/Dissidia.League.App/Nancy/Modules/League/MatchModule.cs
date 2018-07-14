@@ -1,5 +1,6 @@
 ﻿using Dissidia.League.App.Nancy.DTO.Matches;
 using Dissidia.League.App.Nancy.EndpointsConfiguration;
+using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Dissidia.League.Domain.Services.Interfaces;
 using Nancy;
@@ -74,7 +75,8 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
                 var multipart = new HttpMultipart(this.Request.Body, boundary);
                 var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
-                _matcheService.RegisterMatches(new List<Stream>() { bodyStream });
+                var type = Convert.ToInt32(multipart.GetBoundaries().First(b => b.Name == "type").Value);
+                _matcheService.RegisterMatches(new List<Stream>() { bodyStream }, (MatchTypeEnum)type);
                 return HttpStatusCode.OK;
             };
 

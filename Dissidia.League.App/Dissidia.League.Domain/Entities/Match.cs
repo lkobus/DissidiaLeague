@@ -1,4 +1,5 @@
 ﻿using Dissidia.League.Domain.Entities.Interfaces;
+using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Enums.Matches;
 using Dissidia.League.Domain.ValueObjects.Match;
 using MongoDB.Bson;
@@ -15,13 +16,15 @@ namespace Dissidia.League.Domain.Entities
         public string Id { get; private set; }        
         public string ImageFilePath { get; private set; }
         public DateTime Date { get; private set; }
+        public int Type { get; private set; }
         public List<PlayerInfo> PlayersTeamWinner { get; private set; }
         public List<PlayerInfo> PlayersTeamLooser { get; private set; }
         public int Status { get; private set; }        
         public static MatchFactory Factory => new MatchFactory();
 
-        private Match(string filePath)
+        private Match(string filePath, int type)
         {
+            Type = type;
             ImageFilePath = filePath;
             PlayersTeamWinner = new List<PlayerInfo>();
             PlayersTeamLooser = new List<PlayerInfo>();            
@@ -34,9 +37,10 @@ namespace Dissidia.League.Domain.Entities
         {
             public Match Instance { get; private set; }
 
-            public MatchFactory NewMatch(string filePath)
+            public MatchFactory NewMatch(string filePath, MatchTypeEnum type)
             {
-                Instance = new Match(filePath);
+                Instance = new Match(filePath, type);
+                
                 return this;
             }
 

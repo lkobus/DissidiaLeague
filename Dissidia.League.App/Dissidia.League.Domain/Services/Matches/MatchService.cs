@@ -1,5 +1,6 @@
 ﻿using Dissidia.League.Domain.Entities;
 using Dissidia.League.Domain.Enums;
+using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Events.Matches;
 using Dissidia.League.Domain.Repositories.Interfaces;
 using Dissidia.League.Domain.Services.Interfaces;
@@ -30,14 +31,14 @@ namespace Dissidia.League.Domain.Services.Matches
             _matchRepository = matchRepository;
         }
 
-        public async Task RegisterMatchAsync(Stream stream)
+        public async Task RegisterMatchAsync(Stream stream, MatchTypeEnum type)
         {
             await Task.Factory.StartNew(() =>
             {
                 var imageFile = SaveImageInStorage(stream);
-                var match = Match.Factory.NewMatch(imageFile);
+                var match = Match.Factory.NewMatch(imageFile, type);
                 _matchRepository.Upsert(match.Instance);
-                var matchArgs = new OnMatchDoneArgs(match.Instance);
+                var matchArgs = new OnMatchDoneArgs(match.Instance, type);
                 OnMatchUploaded?.Invoke(this, matchArgs);                
             });            
         }
@@ -122,9 +123,9 @@ namespace Dissidia.League.Domain.Services.Matches
             return matches;
         }
 
-        public void RegisterMatches(List<Stream> streams)
+        public void RegisterMatches(List<Stream> streams, MatchTypeEnum type)
         {
-            streams.ForEach(s => RegisterMatchAsync(s).Wait());            
+            streams.ForEach(s => RegisterMatchAsync(s, type).Wait());            
         }
 
         public void MarkMatchAsResolved(string matchId, List<PlayerInfo> winners, 

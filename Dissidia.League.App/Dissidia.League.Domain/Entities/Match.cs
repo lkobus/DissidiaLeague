@@ -19,7 +19,9 @@ namespace Dissidia.League.Domain.Entities
         public int Type { get; private set; }
         public List<PlayerInfo> PlayersTeamWinner { get; private set; }
         public List<PlayerInfo> PlayersTeamLooser { get; private set; }
-        public int Status { get; private set; }        
+        public int Status { get; private set; }
+        public string TeamA { get; private set; }
+        public string TeamB { get; private set; }
         public static MatchFactory Factory => new MatchFactory();
 
         private Match(string filePath, int type)
@@ -39,10 +41,24 @@ namespace Dissidia.League.Domain.Entities
 
             public MatchFactory NewMatch(string filePath, MatchTypeEnum type)
             {
-                Instance = new Match(filePath, type);
-                
+                if(type == MatchTypeEnum.SOLO)
+                {
+                    Instance = new Match(filePath, type)
+                    {
+                        TeamA = "SOLO Team A",
+                        TeamB = "SOLO Team B"
+                    };
+                }
+                else
+                {
+                    Instance = new Match(filePath, type)
+                    {
+                        TeamA = string.Empty,
+                        TeamB = string.Empty
+                    };
+                }                
                 return this;
-            }
+            }            
 
             public MatchFactory From(Match match)
             {

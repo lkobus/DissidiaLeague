@@ -10,6 +10,7 @@ namespace Dissidia.League.Domain.Enums.Entities
         public static EntityEnum USER = new EntityEnum(3, "USER");
         public static EntityEnum USER_CHANGE = new EntityEnum(4, "USER_CHANGE");
         public static EntityEnum TEAM = new EntityEnum(5, "TEAM");
+        public static EntityEnum TEAM_PONTUATION = new EntityEnum(6, "TEAM_PONTUATION");
 
         protected EntityEnum(int codigo, string valor) : base(codigo, valor)
         {

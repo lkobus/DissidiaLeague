@@ -20,7 +20,7 @@ namespace Dissidia.League.App.Nancy.Modules.League
 
         public MatchModule(IBootstrapInjection injection)
         {
-            _matcheService = injection.Services.MatchService;
+            _matcheService = injection.Services.Match;
 
             Get[EndpointConfigurationEnum.GET_ALL_MATCHES] = p =>
             {
@@ -65,9 +65,7 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 var match = JsonConvert.DeserializeObject<MatchDTO>(Request.Body.AsString());
                 _matcheService.UpdateMatch(match.PlayersTeamWinner, match.PlayersTeamLooser, userId, matchId);
                 return HttpStatusCode.Accepted;
-            };
-
-               
+            };               
 
             Post[EndpointConfigurationEnum.UPLOAD_MATCH] = p =>
             {
@@ -75,9 +73,9 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
                 var multipart = new HttpMultipart(this.Request.Body, boundary);
                 var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
-                var type = Convert.ToInt32(multipart.GetBoundaries().First(b => b.Name == "type").Value);
+                var type = Convert.ToInt32(p.matchType.Value);
                 _matcheService.RegisterMatches(new List<Stream>() { bodyStream }, (MatchTypeEnum)type);
-                return HttpStatusCode.OK;
+                return HttpStatusCode.OK;                
             };
 
         }

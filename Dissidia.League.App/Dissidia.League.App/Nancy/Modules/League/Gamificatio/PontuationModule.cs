@@ -18,11 +18,18 @@ namespace Dissidia.League.App.Nancy.Modules.League.Gamificatio
 
         public PontuationModule(IBootstrapInjection injection)
         {
-            _playerPontuation = injection.Services.PlayerPontuationService;
+            _playerPontuation = injection.Services.PlayerPontuation;
             Get[EndpointConfigurationEnum.GET_PLAYER_PONTUATION] = p =>
             {
                 var result = _playerPontuation.GetPlayersPontuations().Select(c => new PlayerPontuationDTO(c))
                 .ToList();
+                return Response.AsJson(result);
+            };
+
+            Get[EndpointConfigurationEnum.GET_PLAYER_PONTUATION_BY_ID] = p =>
+            {
+                var id = p.userId;
+                var result = new PlayerPontuationDTO(_playerPontuation.GetPlayerPontuation(id));                
                 return Response.AsJson(result);
             };
 

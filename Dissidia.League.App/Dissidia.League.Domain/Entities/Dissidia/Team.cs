@@ -10,8 +10,8 @@ namespace Dissidia.League.Domain.Entities.Dissidia
         [BsonId]
         public string Id { get; private set; }
         public static TeamFactory Factory => new TeamFactory();        
-        public List<string> Members { get; private set; }
-        public string Name { get; private set; }
+        public List<string> Members { get; private set; }        
+        public string Alias { get; private set; }
         public string Founder { get; private set; }
 
         public int Status
@@ -45,17 +45,18 @@ namespace Dissidia.League.Domain.Entities.Dissidia
 
             }
 
-            public TeamFactory NewTeam(string founderId, List<string> members, string name)
+            public TeamFactory NewTeam(string founderId, string name, string alias)
             {
                 Instance = new Team()
                 {
                     Founder = founderId,
-                    Members = members,
-                    Name = name
+                    Members = new List<string>(),
+                    Alias = alias,
+                    Id = name
                 };
                 return this;
-            }
-            
+            }                       
+
         }
     }
 }

@@ -5,13 +5,16 @@ namespace Dissidia.League.Bootstrap.Configuration
     {
         public IDatabaseConfiguration Database { get; private set; }
         public IOCRConfiguration OCR { get; private set; }
-
+        public string APIUrl { get; private set; }
+        public string TokenDir { get; private set; }
 
         public GlobalConfiguration(IDatabaseConfiguration database,
-            IOCRConfiguration ocr)
+            IOCRConfiguration ocr, string apiUrl, string tokenDir)
         {
+            APIUrl = apiUrl;
             Database = database;
             OCR = ocr;
+            TokenDir = tokenDir;
         }
     }
 }

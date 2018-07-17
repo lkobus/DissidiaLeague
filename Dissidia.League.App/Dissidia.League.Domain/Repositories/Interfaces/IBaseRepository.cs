@@ -8,6 +8,7 @@ namespace Dissidia.League.Domain.Repositories.Interfaces
         void Upsert(T entity);
         List<T> GetAll();
         void Delete(T entity);
+        void Delete(string id);
         T GetById(string id);
     }
 }

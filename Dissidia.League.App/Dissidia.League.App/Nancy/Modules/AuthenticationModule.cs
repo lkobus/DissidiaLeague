@@ -7,6 +7,9 @@ using Nancy;
 using Nancy.Extensions;
 using Newtonsoft.Json;
 using System;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Dissidia.League.App.Nancy.Modules
@@ -18,7 +21,7 @@ namespace Dissidia.League.App.Nancy.Modules
 
         public AuthenticationModule(IBootstrapInjection injection)
         {
-            _authService = injection.Services.AuthenticationService;
+            _authService = injection.Services.Authentication;
             Post[EndpointConfigurationEnum.LOGIN] = p =>
             {
                 var body = Request.Body.AsString();
@@ -52,9 +55,60 @@ namespace Dissidia.League.App.Nancy.Modules
                 {
                     return "whoooops.";
                 }
-                
-                
+            };
 
+
+            Put[EndpointConfigurationEnum.GET_IMAGE_USER] = p =>
+            {
+                var contentTypeRegex = new Regex("^multipart/form-data;\\s*boundary=(.*)$", RegexOptions.IgnoreCase);
+                var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
+                var multipart = new HttpMultipart(this.Request.Body, boundary);
+                var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
+                var teamId = p.userId;
+                _authService.SubmitUserImage(teamId, bodyStream);
+                return HttpStatusCode.OK;
+            };
+
+            Get[EndpointConfigurationEnum.GET_IMAGE_USER_BY_NICK] = p =>
+            {
+                try
+                {
+                    Stream imagem = _authService.GetImageFromNick(p.nickname);
+                    if (imagem == null)
+                    {
+                        throw new ArgumentException("Não existe");
+                    }
+                    return Response.FromStream(imagem, "image/jpg");
+                }
+                catch (ArgumentException)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+                catch (Exception)
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
+            };
+
+            Get[EndpointConfigurationEnum.GET_IMAGE_USER] = p =>
+            {
+                try
+                {
+                    Stream imagem = _authService.GetImage(p.userId);
+                    if (imagem == null)
+                    {
+                        throw new ArgumentException("Não existe");
+                    }
+                    return Response.FromStream(imagem, "image/jpg");
+                }
+                catch (ArgumentException)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+                catch (Exception)
+                {
+                    return HttpStatusCode.InternalServerError;
+                }
             };
 
             Get["oi"] = p =>

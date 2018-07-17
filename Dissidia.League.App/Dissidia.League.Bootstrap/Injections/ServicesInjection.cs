@@ -15,34 +15,40 @@ namespace Dissidia.League.Bootstrap.Injections
 {
     public class ServicesInjection : IInjectionService
     {
-        public IMatchesService MatchService { get; private set; }
-        public IOCRService OCRService { get; private set; }
-        public IPlayerPontuationService PlayerPontuationService { get; private set; }
-        public IAuthenticationService AuthenticationService { get; private set; }
+        public IMatchesService Match { get; private set; }
+        public IOCRService OCR { get; private set; }
+        public IPlayerPontuationService PlayerPontuation { get; private set; }
+        public IAuthenticationService Authentication { get; private set; }
         public IUserChangesService UserChangesService { get; private set; }
-        public ITeamService TeamService { get; private set; }
+        public ITeamService Team { get; private set; }
+        public ITeamPontuationService TeamPontuation { get; private set; }
+        private IInviteService _invite;
 
         public ServicesInjection(IGlobalConfiguration globalConfig, IInjectionRepository repositories)
         {
-            MatchService = new MatchService(globalConfig.OCR.ImageFileDirectory, repositories.MatchRepository);
-            OCRService = new MatchOCRService(globalConfig.OCR);
-            PlayerPontuationService = new PlayerPontuationService(repositories.PlayersResultsRepository);
-            UserChangesService = new UserChangesService(repositories.UserChangeRepository);
-            TeamService = new TeamService(repositories.TeamRepository);
+            _invite = new InviteService(globalConfig);
+            Match = new MatchService(globalConfig.OCR.ImageFileDirectory, repositories.Match);
+            OCR = new MatchOCRService(globalConfig.OCR);
+            PlayerPontuation = new PlayerPontuationService(repositories.PlayersResults, repositories.User);
+            UserChangesService = new UserChangesService(repositories.UserChange);
+            
+            Team = new TeamService(repositories.Team, _invite, repositories.User);
+            TeamPontuation = new TeamPontuationService(repositories.TeamPontuation, repositories.Team, PlayerPontuation);
             SetupEvents();          
         }                
 
         private void SetupEvents()
         {
-            MatchService.OnMatchUploaded += OCRService.OnMatchUploaded;
-            OCRService.OnMatchProcessed += MatchService.OnMatchProcessed;
-            MatchService.OnMatchResolved += PlayerPontuationService.OnMatchResolved;
-            MatchService.OnMatchResolved += UserChangesService.OnMatchResolved;
+            Match.OnMatchUploaded += OCR.OnMatchUploaded;
+            OCR.OnMatchProcessed += Match.OnMatchProcessed;
+            Match.OnMatchResolved += PlayerPontuation.OnMatchResolved;
+            Match.OnMatchResolved += UserChangesService.OnMatchResolved;
+            Match.OnMatchResolved += TeamPontuation.OnMatchResolved;
         }
 
         public void RegisterAuthentication(IAuthenticationService authenticationService)
         {
-            AuthenticationService = authenticationService;            
+            Authentication = authenticationService;            
         }
     }
 }

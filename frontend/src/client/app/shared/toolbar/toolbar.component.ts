@@ -15,6 +15,8 @@ import { Subject } from 'rxjs/Subject';
 import { Subscription } from 'rxjs/Subscription';
 import { EmpresaService } from '../../_services/empresa.service';
 import { Modal } from 'ngx-modal';
+import { MatchesService } from '../../matches/shared/matches.service';
+import { Router } from '@angular/router';
 
 @Component({
   moduleId: module.id,
@@ -57,8 +59,9 @@ export class ToolbarComponent implements OnInit {
 
   constructor(
     private authenticationService: AuthenticationService,
-    private app: AppComponent,
-    private empresaService: EmpresaService,
+    private app: AppComponent,    
+    private matchService: MatchesService,
+    private router:Router,
     notificacaoService: NotificacaoService,
     statusService: StatusService) {
     this.franquia = app.getFranquia();
@@ -80,22 +83,15 @@ export class ToolbarComponent implements OnInit {
     this.fileHolder = event;
   }
 
-  ngOnInit() {
-    this.getEmpresaNomeFantasia();
+  ngOnInit() {    
     this.loadNotificacoes();    
   }
 
-  getEmpresaNomeFantasia() {
-    this.empresaService.getNomeFantasia()
-        .subscribe(response => {
-          this.nomeFranquia = response.NomeFantasia;
-        });
-  }
   uploadMatch() {
     debugger;
     if (this.fileHolder !== undefined) {
       debugger;
-      this.empresaService.uploadImagem(this.fileHolder);
+      this.matchService.uploadSoloMatch(this.fileHolder);
       this.modalSobra.close();
       alert("Imagem subida com sucesso");
     }
@@ -112,6 +108,10 @@ export class ToolbarComponent implements OnInit {
   marcarComoLida(event: any, notificacao: Notificacao): void {
     if (event) event.stopPropagation();
     this.notificacaoService.marcarNotificacaoComoLida(notificacao);
+  }
+
+  goToProfile(){
+    this.router.navigateByUrl("profile");
   }
 
   getUrlImagemNotificacao(imagemUri: string): string {

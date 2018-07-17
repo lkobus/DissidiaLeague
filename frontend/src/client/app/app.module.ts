@@ -58,6 +58,7 @@ import { AngularEchartsModule } from 'ngx-echarts';
 import { ModalConfirmacaoModule } from './_directives/modal-confirmacao/modal-confirmacao.module';
 import { RankingModule } from './ranking/ranking.module';
 import { MatchesModule } from './matches/matches.module';
+import { ProfileModule } from './profiles/profile.module';
 
 @NgModule({
   imports: [
@@ -103,6 +104,7 @@ import { MatchesModule } from './matches/matches.module';
     VisaoGeralModule,
     UsuariosModule,
     RankingModule,
+    ProfileModule,
     MatchesModule,
     ComodatosModule,
     FrequenciaVisitaModule,

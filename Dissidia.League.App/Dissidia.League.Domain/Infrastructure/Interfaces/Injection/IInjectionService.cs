@@ -7,11 +7,12 @@ namespace Dissidia.League.Domain.Infrastructure.Interfaces.Injection
 {
     public interface IInjectionService
     {
-        IMatchesService MatchService { get; }
-        IOCRService OCRService { get; }
-        IPlayerPontuationService PlayerPontuationService { get; }
-        IAuthenticationService AuthenticationService { get; }
-        ITeamService TeamService { get; }
-        void RegisterAuthentication(IAuthenticationService authenticationService);
+        IMatchesService Match { get; }
+        IOCRService OCR { get; }
+        IPlayerPontuationService PlayerPontuation { get; }
+        IAuthenticationService Authentication { get; }
+        ITeamService Team { get; }
+        ITeamPontuationService TeamPontuation { get; }
+        void RegisterAuthentication(IAuthenticationService authentication);
     }
 }

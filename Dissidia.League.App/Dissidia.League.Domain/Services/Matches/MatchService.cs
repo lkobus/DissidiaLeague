@@ -35,7 +35,7 @@ namespace Dissidia.League.Domain.Services.Matches
         {
             await Task.Factory.StartNew(() =>
             {
-                var imageFile = SaveImageInStorage(stream);
+                var imageFile = SaveImageInStorage(stream);                
                 var match = Match.Factory.NewMatch(imageFile, type);
                 _matchRepository.Upsert(match.Instance);
                 var matchArgs = new OnMatchDoneArgs(match.Instance, type);
@@ -169,7 +169,9 @@ namespace Dissidia.League.Domain.Services.Matches
                 var match = _matchRepository.GetById(matchId);
                 match = Match.Factory.From(match)
                     .WithWinners(playersTeamWinner)
-                    .WithLoosers(playersTeamLooser).Instance;
+                    .WithLoosers(playersTeamLooser)
+                    .Instance;
+
                 _matchRepository.Upsert(match);
                 OnMatchResolved?.Invoke(this, new OnMatchDoneArgs(match, userId));
             }

@@ -4,14 +4,13 @@ using Dissidia.League.Domain.Repositories.Interfaces.Authentication;
 using Dissidia.League.Domain.Services.Interfaces.Authentication;
 using Dissidia.League.Domain.ValueObjects.Authentication;
 using System;
+using System.IO;
 using static Dissidia.League.Domain.Entities.Gamification.User;
 
 namespace Dissidia.League.App.Nancy.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-
-
         private IUserRepository _userRepository;
 
         public AuthenticationService(IUserRepository userRepository)
@@ -30,9 +29,18 @@ namespace Dissidia.League.App.Nancy.Services
             return result;
         }
 
-        public UserSession GetLoggedUser()
+        public Stream GetImage(string userId)
         {
-            
+            return _userRepository.GetImage(userId);   
+        }
+
+        public Stream GetImageFromNick(string nickName)
+        {
+            return _userRepository.GetImage(_userRepository.GetUserByLogin(nickName).Id);            
+        }
+
+        public UserSession GetLoggedUser()
+        {            
             throw new NotImplementedException();
         }
 
@@ -53,6 +61,11 @@ namespace Dissidia.League.App.Nancy.Services
             {
                 throw new UserAlreadyExistException(username);
             }            
+        }
+
+        public void SubmitUserImage(string userId, Stream image)
+        {
+            _userRepository.SaveImage(image, userId);
         }
     }
 }

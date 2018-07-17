@@ -2,12 +2,6 @@
 using Dissidia.League.Domain.Enums;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Nancy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Dissidia.League.App.Nancy.Modules.Dissidia
 {
     public class DissidiaModule : NancyModule
@@ -18,6 +12,12 @@ namespace Dissidia.League.App.Nancy.Modules.Dissidia
             Get[EndpointConfigurationEnum.GET_CHARACTERS] = p =>
             {
                 return Response.AsJson(CharEnum.ToList());
+            };
+
+            Get["email"] = p =>
+            {
+                injection.Services.Team.InvitePlayer("leonardo.kobus@gmail.com", "teste");
+                return "";
             };
         }
     }

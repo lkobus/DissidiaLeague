@@ -18,6 +18,23 @@ export class MatchesService extends BaseService {
     super(http);
   }
 
+  uploadSoloMatch(fileholder: any) : Promise<any> {
+    return this.uploadImagem(fileholder, 1);
+  }
+
+  uploadTeamMatch(fileholder: any) : Promise<any> {
+    return this.uploadImagem(fileholder, 2);
+  }
+
+  uploadImagem(fileholder: any, type:number): Promise<any> {
+    var url = this.BasePath() + "dissidia/match/upload/"+type;
+    var formData = new FormData();
+    formData.append('image', fileholder.file);            
+    return this.http.post(url, formData)
+      .toPromise()      
+      .catch(this.handleErrorPromise);
+  }
+
   getUsers(): Promise<Usuario[]> {
     var headers = new Headers();
     this.contentTypeApplicationJson(headers);

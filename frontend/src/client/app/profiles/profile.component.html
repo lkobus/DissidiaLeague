@@ -1,0 +1,276 @@
+<div class="container-fluid main-container">  
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <div class="col-md-9">
+        <h3 class="toolbar-title">
+          Profile
+        </h3>
+      </div>
+    </div>
+    <tabs>        
+        <tab tabTitle="User">
+          <div>
+              <div class="col-md-12">
+                  <div class="col-md-3">
+                    <img class="imgLogo" src="{{userLogoImage}}" (click)="modalProfileLogo.open();">
+                  </div>
+                  <div class="col-md-9" *ngIf="playerPontuation">
+                      <div class="card-subtitle" class="col-md-12">
+                          <h1 style="color:black">{{playerPontuation.name}}</h1>
+                      </div>                  
+                      <div class="col-md-12">
+                        <div class="card-subtitle col-md-2">
+                            <label>Wins</label>
+                        </div>         
+                        <div class="card-subtitle col-md-2">
+                            <label>Wins%</label>
+                        </div>         
+                        <div class="card-subtitle col-md-2">
+                            <label>Lost</label>
+                        </div>         
+                        <div class="card-subtitle col-md-2">
+                            <label>Lost%</label>
+                        </div>         
+                        <div class="col-md-4">
+                            <label>Total Matches</label>
+                        </div>       
+                        <div class="col-md-2">
+                            <label class="text-center">{{playerPontuation.wins}}</label>
+                        </div>                                                             
+                        <div class="col-md-2">
+                            <label class="text-center">{{playerPontuation.percentualWins}} %</label>
+                        </div>                                 
+                        <div class="  col-md-2">
+                            <label class="text-center">{{playerPontuation.losts}}</label>
+                        </div>                                 
+                            
+                        <div class="col-md-2">
+                            <label class="text-center">{{playerPontuation.percentualLosts}} %</label>
+                        </div>                                                         
+                        
+                        <div class="col-md-4">
+                            <label class="text-center">{{playerPontuation.totalMatches}}</label>
+                        </div>       
+                      </div>
+                  </div>
+                </div>                
+          </div>
+        </tab>
+  
+        <!-- TAB VENDA EXTERNA  -->
+        <tab tabTitle="Team">
+          <div *ngIf="currentTeam == null">            
+            <div class="col-md-3">
+              <div class="col-md-12"></div>
+              <div class="col-md-12"></div>
+              <div class="col-md-12"></div>
+              <div class="col-md-12"></div>
+              <div class="col-md-12"></div>
+              <div class="col-md-12"></div>
+              <img id="center-match" src="assets/characters/kupo.gif">
+            </div>  
+            <div class="col-md-9">
+                <div class="col-md-12">
+                    <h3 style="color:black  " class="">You don't have a team Yet</h3>                
+                </div>                          
+                <div  class="col-md-12">
+                    <h3 style="color:purple">Team Rules</h3>                                
+                </div>                          
+                <div class="col-md-12">
+                  <h4 style="color:purple" class="col-md-12">User can only have one team </h4>                
+                  <h4 style="color:purple" class="col-md-12">Every team match will counting for your current team </h4>                
+                  <h4 style="color:purple" class="col-md-12">Once you join a team you'll be able to invite or quit the team </h4>                
+                  <h4 style="color:purple" class="col-md-12">The team needs to have a minimum of 3 members for registers and scrim schedule</h4>                
+                  <h4 style="color:purple" class="col-md-12">If the last active player quit from the team, the team becames inactive and no one can interact with him anymore</h4>                
+                  <h4 style="color:purple" class="col-md-12">To create a team click on + floating button</h4>                              
+                </div>
+            </div>
+            <div class="container-floating">                
+              <div class="floating-button">
+                <span class="letter">
+                  <div class="t-left t-sm" data-tooltip="Novo usuário">
+                    <button (click)="modalTeam.open();" class="btn-clean">
+                      <span class="letter">
+                        <span class="fa fa-plus"></span>
+                      </span>
+                    </button>
+                  </div>
+                </span>
+              </div>
+            </div>
+          </div>  
+          <div *ngIf="currentTeam">
+            <div class="col-md-12">
+              <div class="col-md-3">
+                <img class="imgLogo" src="{{teamLogoImage}}" (click)="modalUploadLogo.open();">
+              </div>
+              <div class="col-md-9">
+                  <div class="card-subtitle" class="col-md-12">
+                      <h1 style="color:black">{{currentTeam.id}} - {{currentTeam.alias}}</h1>
+                  </div>                  
+                  <div class="col-md-12">
+                    <div class="card-subtitle col-md-2">
+                        <label>#</label>
+                    </div>                    
+                    <div class="card-subtitle col-md-3">
+                        <label>Name</label>
+                    </div>             
+                    <div class="card-subtitle col-md-1">
+                        <label>Wins</label>
+                    </div>             
+                    <div class="card-subtitle col-md-1">
+                        <label>Lose</label>
+                    </div>       
+                    <div class="card-subtitle col-md-1">
+                        <label>Wins%</label>
+                    </div>             
+                    <div class="card-subtitle col-md-1">
+                        <label>Lose%</label>
+                    </div>       
+                    <div class="card-subtitle col-md-2">
+                        <label>Total Matches</label>
+                    </div>       
+                    <div *ngFor="let t of teamPontuations">
+                        <div class="card-subtitle col-md-2">
+                            <img *ngIf="isTeam(t) == false" class="imgChibi" [src]="getImageUrl(t)">
+                        </div>                    
+                        <div class="card-subtitle col-md-3">
+                            <label>{{t.name}}</label>
+                        </div>             
+                        <div class="card-subtitle col-md-1">
+                            <label>{{t.wins}}</label>
+                        </div>             
+                        <div class="card-subtitle col-md-1">
+                            <label>{{t.losts}}</label>
+                        </div>        
+                        <div class="card-subtitle col-md-1">
+                            <label>{{t.percentualWins}}</label>
+                        </div>             
+                        <div class="card-subtitle col-md-1">
+                            <label>{{t.percentualLosts}}</label>
+                        </div>        
+                        <div class="card-subtitle col-md-2">
+                            <label>{{t.totalMatches}}</label>
+                        </div>       
+                    </div>
+                  </div>
+              </div>
+            </div>
+            
+          </div>                          
+        </tab>
+        
+
+      </tabs>    
+      
+  </div>
+
+  
+
+
+  <modal #modalUploadLogo title="Upload imagem" [closeOnOutsideClick]="false">
+      <modal-content class="content">
+        <div class="card-subtitle">
+          <label>Change team image</label>
+        </div>
+        <image-upload [max]="1" [buttonCaption]="'Team Image'" [dropBoxMessage]="'.'"
+          (onFileUploadFinish)="imageUploaded($event)">
+        </image-upload>
+        <div class="button-wrapper">
+            <button (click)="uploadTeamLogo()" class="btn-action">Upload</button>          
+            <button (click)="modalUploadLogo.close()" class="btn-action">Cancelar</button>          
+        </div>
+      </modal-content>
+
+  </modal>
+
+  <modal #modalProfileLogo title="Profile Image" [closeOnOutsideClick]="false">
+      <modal-content class="content">
+        <div class="card-subtitle">
+          <label>Change profile image</label>
+        </div>
+        <image-upload [max]="1" [buttonCaption]="'Profile Image'" [dropBoxMessage]="'.'"
+          (onFileUploadFinish)="imageUploaded($event)">
+        </image-upload>
+        <div class="button-wrapper">
+            <button (click)="uploadProfileLogo()" class="btn-action">Upload</button>          
+            <button (click)="modalProfileLogo.close()" class="btn-action">Cancelar</button>          
+        </div>
+      </modal-content>
+
+  </modal>
+
+  <modal #modalTeam title="Team creation" [closeOnOutsideClick]="false">
+      <modal-content class="content">        
+        <div class="col-md-3">
+            <div class="card-subtitle">
+                <label>Team Logo</label>
+            </div>
+              <image-upload [max]="1" [buttonCaption]="'Team Image'" [dropBoxMessage]="'.'"
+                (onFileUploadFinish)="imageUploaded($event)">
+              </image-upload>
+        </div>        
+        <div class="col-md-9">
+          <div class="card-subtitle col-md-1">
+              <label>Name*</label>
+          </div>
+          <div class="card-subtitle col-md-4">
+            <input type="text" [(ngModel)]="name">
+          </div>
+
+          <div class="card-subtitle col-md-2">
+              <label>Alias*</label>
+          </div>
+          <div class="card-subtitle col-md-2">
+            <input type="text" [(ngModel)]="alias">
+          </div>
+          <div class="col-md-9">
+              <div class="card-subtitle col-md-3">
+                  <label>Player 1</label>
+              </div>
+              <div class="card-subtitle col-md-9">
+                <input type="text" [(ngModel)]="player1">
+              </div>
+          </div>
+          <div class="col-md-9">
+              <div class="card-subtitle col-md-3">
+                  <label>Player 2</label>
+              </div>
+              <div class="card-subtitle col-md-9">
+                <input type="text" [(ngModel)]="player2">
+              </div>
+          </div>
+          <div class="col-md-9">
+              <div class="card-subtitle col-md-3">
+                  <label>Player 3</label>
+              </div>
+              <div class="card-subtitle col-md-9">
+                <input type="text" [(ngModel)]="player3">
+              </div>
+          </div>
+          <div class="col-md-9">
+              <div class="card-subtitle col-md-3">
+                  <label>Player 4</label>
+              </div>
+              <div class="card-subtitle col-md-9">
+                <input type="text" [(ngModel)]="player4">
+              </div>
+          </div>
+        </div>        
+        
+
+
+        <div class="button-wrapper">
+            <div class="card-subtitle">
+              <label>*Required Fields</label>
+            </div>
+            <button (click)="saveTeam();" class="btn-action">Create</button>          
+            <button (click)="modalTeam.close();" class="btn-action">Cancel</button>          
+        </div>
+      </modal-content>
+  
+  </modal>
+</div>

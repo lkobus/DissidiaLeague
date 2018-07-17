@@ -9,5 +9,6 @@ namespace Dissidia.League.Domain.Services.Interfaces.Gamification
         void DeleteByMatchId(string matchId);
         void OnMatchResolved(object sender, OnMatchDoneArgs args);
         List<PlayerPontuation> GetPlayersPontuations();
+        PlayerPontuation GetPlayerPontuation(string userId);
     }
 }

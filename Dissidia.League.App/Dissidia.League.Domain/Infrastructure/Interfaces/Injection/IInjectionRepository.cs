@@ -8,10 +8,11 @@ namespace Dissidia.League.Domain.Infrastructure.Interfaces.Injection
 {
     public interface IInjectionRepository
     {
-        IMatchRepository MatchRepository { get; }
-        IPlayerResultsRepository PlayersResultsRepository { get; }
-        IUserRepository UserRepository { get; }
-        IUserChangeRepository UserChangeRepository { get; }
-        ITeamRepository TeamRepository { get; }
+        IMatchRepository Match { get; }
+        IPlayerResultsRepository PlayersResults { get; }
+        IUserRepository User { get; }
+        IUserChangeRepository UserChange { get; }
+        ITeamRepository Team { get; }
+        ITeamPontuationRepository TeamPontuation { get; }
     }
 }

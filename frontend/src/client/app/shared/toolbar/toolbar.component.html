@@ -87,15 +87,18 @@
 
     <div class="dropdown">
       <ul class="dropdown-list">
+        <li class="dropdown-item">
+            <span (click)="goToProfile()">Profile</span>
+        </li>
         <li class="dropdown-item hidden">
           <label>Linguagem</label>
           <a (click)="selectLanguage('pt-br')" *ngIf="lang !== 'pt-br'">Português</a>
           <a (click)="selectLanguage('en')" *ngIf="lang !== 'en'">English</a>
         </li>
         <li class="dropdown-item" *ngIf="ultimaVersao">
-            <span (click)="updating();">Atualizar para {{ultimaVersao}}</span>
-          </li>
-        <li class="dropdown-item">
+          <span (click)="updating();">Atualizar para {{ultimaVersao}}</span>
+        </li>
+        <li class="dropdown-item">          
           <span (click)="logout()">Sair</span>
         </li>
       </ul>

@@ -4,5 +4,8 @@
     {
         IDatabaseConfiguration Database { get; }
         IOCRConfiguration OCR { get; }
+        string APIUrl { get; }
+        string TokenDir { get; }
+
     }
 }

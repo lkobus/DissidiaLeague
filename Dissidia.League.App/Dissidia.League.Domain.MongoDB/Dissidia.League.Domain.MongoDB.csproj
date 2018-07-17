@@ -64,6 +64,7 @@
     <Compile Include="Repositories\BaseRepository.cs" />
     <Compile Include="Repositories\Dissidia\TeamRepository.cs" />
     <Compile Include="Repositories\Gamification\PlayerResultsRepository.cs" />
+    <Compile Include="Repositories\Gamification\TeamPontuationRepository.cs" />
     <Compile Include="Repositories\Matches\MatchRepository.cs" />
     <Compile Include="Services\MongoDBService.cs" />
   </ItemGroup>

@@ -6,6 +6,7 @@ using Dissidia.League.Domain.ValueObjects.Gamification.Pontuation;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Dissidia.League.Domain.Repositories.Interfaces.Authentication;
 
 namespace Dissidia.League.Domain.Services.Gamification
 {
@@ -13,10 +14,12 @@ namespace Dissidia.League.Domain.Services.Gamification
     {
 
         private IPlayerResultsRepository _playerResultsRepository;
+        private IUserRepository _userRepository;
 
-        public PlayerPontuationService(IPlayerResultsRepository playerResultsRepository)
+        public PlayerPontuationService(IPlayerResultsRepository playerResultsRepository, IUserRepository userRepository)
         {
             _playerResultsRepository = playerResultsRepository;
+            _userRepository = userRepository;
         }
 
         public void DeleteByMatchId(string matchId)
@@ -24,11 +27,21 @@ namespace Dissidia.League.Domain.Services.Gamification
             _playerResultsRepository.DeleteByMatchId(matchId);            
         }
 
+        public PlayerPontuation GetPlayerPontuation(string userId)
+        {
+            var nickName = _userRepository.GetById(userId).Credentials.Username;
+            return CalculateUserScores(_playerResultsRepository.GetByUser(nickName)).FirstOrDefault();                        
+        }
+
         public List<PlayerPontuation> GetPlayersPontuations()
         {
+            return CalculateUserScores(_playerResultsRepository.GetAll());
+        }        
+
+        private List<PlayerPontuation> CalculateUserScores(List<PlayerResults> playersResults)
+        {
             var result = new List<PlayerPontuation>();
-            _playerResultsRepository.GetAll()
-                .GroupBy(p => p.Info.Name)
+            playersResults.GroupBy(p => p.Info.Name)
                 .ToList()
                 .ForEach(player =>
                 {
@@ -38,8 +51,6 @@ namespace Dissidia.League.Domain.Services.Gamification
                 });
             return result;
         }
-
-        
 
         public void OnMatchResolved(object sender, OnMatchDoneArgs args)
         {

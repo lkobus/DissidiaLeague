@@ -35,6 +35,31 @@ export class RankingService extends BaseService {
       .catch(this.handleErrorPromise);
   }
 
+  getLoggedPlayerPontuation(): Promise<PlayerPontuation>{
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/player/pontuations/" + window.localStorage.getItem("id");
+    return this.http.get(url, { headers: headers })
+      .toPromise()
+      .then(response => response.json() as PlayerPontuation)
+      .catch(this.handleErrorPromise);
+  }
+
+  
+  getTeamPontuation(teamId:string): Promise<PlayerPontuation[]>{
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/team/pontuations/" + teamId;
+    return this.http.get(url, { headers: headers })
+      .toPromise()
+      .then(response => response.json() as PlayerPontuation)
+      .catch(this.handleErrorPromise);
+  }
+
+  getUrlImagePlayer(name:string){
+    return this.BasePath() + "dissidia/user/image/nickname/" + name;
+  }
+  
   private getUserUrl(id: string) {
     return this.BasePath() + 'empresa/usuarios/' + id;
   }

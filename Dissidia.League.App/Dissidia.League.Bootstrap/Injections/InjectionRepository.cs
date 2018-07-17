@@ -17,19 +17,21 @@ namespace Dissidia.League.Bootstrap.Injections
 {
     public class InjectionRepository : IInjectionRepository
     {
-        public IMatchRepository MatchRepository { get; private set; }
-        public IPlayerResultsRepository PlayersResultsRepository { get; private set; }
-        public IUserRepository UserRepository { get; private set; }
-        public IUserChangeRepository UserChangeRepository { get; private set; }
-        public ITeamRepository TeamRepository { get; private set; }
+        public IMatchRepository Match { get; private set; }
+        public IPlayerResultsRepository PlayersResults { get; private set; }
+        public IUserRepository User { get; private set; }
+        public IUserChangeRepository UserChange { get; private set; }
+        public ITeamRepository Team { get; private set; }
+        public ITeamPontuationRepository TeamPontuation { get; private set; }
 
         public InjectionRepository(IMongoDatabase database, IDatabaseConfiguration configuration)
         {
-            MatchRepository = new MatchRepository(database);
-            PlayersResultsRepository = new PlayerResultsRepository(database);
-            UserRepository = new UserRepository(database);
-            UserChangeRepository = new UserChangeRepository(database);
-            TeamRepository = new TeamRepository(database, new DirectoryInfo(configuration.TeamImageFolder));
+            Match = new MatchRepository(database);
+            PlayersResults = new PlayerResultsRepository(database);
+            User = new UserRepository(database, new DirectoryInfo(configuration.UserImageFolder));
+            UserChange = new UserChangeRepository(database);
+            Team = new TeamRepository(database, new DirectoryInfo(configuration.TeamImageFolder));
+            TeamPontuation = new TeamPontuationRepository(database);
         }
 
         

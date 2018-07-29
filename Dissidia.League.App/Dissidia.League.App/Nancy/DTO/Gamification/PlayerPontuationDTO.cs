@@ -10,8 +10,9 @@ namespace Dissidia.League.App.Nancy.DTO
         public double PercentualWins { get; private set; }
         public double PercentualLosts { get; private set; }
         public int TotalMatches { get; private set; }
+        public int Type { get; private set; }
 
-        public PlayerPontuationDTO(PlayerPontuation player)
+        public PlayerPontuationDTO(ScorePontuation player)
         {
             Name = player.Name;
             Wins = player.Wins;
@@ -19,6 +20,7 @@ namespace Dissidia.League.App.Nancy.DTO
             PercentualLosts = player.PercentualLosts;
             PercentualWins = player.PercentualWins;
             TotalMatches = player.TotalMatches;
+            Type = player.ScoreType;
         }
     }
 }

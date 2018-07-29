@@ -1,6 +1,7 @@
 ﻿using Dissidia.League.Domain.Entities.Dissidia;
 using Dissidia.League.Domain.Entities.Gamification;
 using Dissidia.League.Domain.Enums.Dissidia;
+using Dissidia.League.Domain.Enums.Gamification;
 using Dissidia.League.Domain.Events.Matches;
 using Dissidia.League.Domain.Repositories.Interfaces.Dissidia;
 using Dissidia.League.Domain.Repositories.Interfaces.Gamification;
@@ -26,14 +27,14 @@ namespace Dissidia.League.Domain.Services.Gamification
             _playerPontuation = playerPontuation;
         }
 
-        public List<PlayerPontuation> GetTeamPontuations(string teamId)
+        public List<ScorePontuation> GetTeamPontuations(string teamId)
         {
             var team = _teamRepository.GetById(teamId);            
             var players = team.Members.Select(m => _playerPontuation.GetPlayerPontuation(m)).ToList();
             var totalWins = players.Sum(p => p.Wins);
             var totalLosts = players.Sum(p => p.Losts);
             players = players.OrderBy(p => p.Losts).ToList();            
-            players.Add(new PlayerPontuation(team.Id, totalWins, totalLosts));
+            players.Add(new ScorePontuation(team.Id, totalWins, totalLosts, ScoreTypeEnum.TEAM));
             players.Reverse();
             return players;
         }

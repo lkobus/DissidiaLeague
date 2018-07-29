@@ -29,7 +29,7 @@ namespace Dissidia.League.Bootstrap.Injections
             _invite = new InviteService(globalConfig);
             Match = new MatchService(globalConfig.OCR.ImageFileDirectory, repositories.Match);
             OCR = new MatchOCRService(globalConfig.OCR);
-            PlayerPontuation = new PlayerPontuationService(repositories.PlayersResults, repositories.User);
+            PlayerPontuation = new PlayerPontuationService(repositories.PlayersResults, repositories.User, repositories.Match);
             UserChangesService = new UserChangesService(repositories.UserChange);
             
             Team = new TeamService(repositories.Team, _invite, repositories.User);

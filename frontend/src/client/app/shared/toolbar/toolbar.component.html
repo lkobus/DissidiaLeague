@@ -12,8 +12,8 @@
       <div class="card-subtitle">
         <label>colocar o butão de upload aqui gato</label>
       </div>
-      <image-upload [max]="1" [buttonCaption]="'Coloque ai magem da partida aqui'" [dropBoxMessage]="'Coloque ai magem da partida aqui'"
-        (onFileUploadFinish)="imageUploaded($event)">
+      <image-upload [max]="10" [buttonCaption]="'Coloque ai magem da partida aqui'" [dropBoxMessage]="'Coloque ai magem da partida aqui'"
+        (onFileUploadFinish)="imageUploaded($event)" (onRemove)="removeImageFromUpload($event)">
       </image-upload>
       <div class="button-wrapper">
           <button (click)="uploadMatch()" class="btn-action">Upload</button>          

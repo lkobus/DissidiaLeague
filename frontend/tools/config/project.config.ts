@@ -178,6 +178,10 @@ export class ProjectConfig extends SeedConfig {
       {
         name: 'linqts',
         path: 'node_modules/linqts/dist'
+      },
+      {
+        name: 'ng2-charts',
+        path: 'node_modules/ng2-charts/bundles/ng2-charts.umd.min.js'
       }
   ];
 

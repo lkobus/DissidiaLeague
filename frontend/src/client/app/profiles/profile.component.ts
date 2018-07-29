@@ -8,9 +8,14 @@ import { ModalConfirmacaoComponent } from '../_directives/modal-confirmacao/moda
 import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { Modal } from 'ngx-modal';
 import { TeamDTO } from './model/team.dto';
+import * as moment from 'moment';
 import { ProfileService } from './shared/profile.service';
 import { RankingService } from '../ranking/shared/ranking.service';
 import { PlayerPontuation } from '../ranking/model/player.pontuation';
+import { List } from 'linqts';
+import { IMyDpOptions, IMyDateModel } from 'mydatepicker';
+import { CharEnum } from '../matches/model/charEnum';
+import { MatchesService } from '../matches/shared/matches.service';
 
 @Component({
   moduleId: module.id,
@@ -31,6 +36,8 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   @ViewChild("modalProfileLogo")
   modalProfileLogo: Modal;
 
+  filtroPlayer: number;
+  selectedUser: PlayerPontuation;
   fileHolder: any;
   inputSearch: any;
   currentTeam:TeamDTO;
@@ -42,37 +49,153 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   player3:string;
   player4:string;
   userLogoImage: string;
-  playerPontuation: PlayerPontuation;
+  playerPontuation: PlayerPontuation[];
+  selectedPlayerPontuation: List<PlayerPontuation>  ;
+
   teamPontuations: PlayerPontuation[];
-
-
+  headerPontuation: PlayerPontuation;
+  firstTime: boolean = true;
   constructor(
     private page: ElementRef,    
     private router: Router,
     private profileService: ProfileService,
-    private rankingService: RankingService
+    private rankingService: RankingService,
+    private matchService: MatchesService
   ) {
     super();
+    this.filtroPlayer = 3;
+    this.lastRun = 3;
   }
+
+  public selectedDateDe = moment().format('DD/MM/YYYY');
+  public selectedDateAte = moment().format('DD/MM/YYYY');  
+
+  public myDatePickerOptions: IMyDpOptions = {
+    dateFormat: 'dd/mm/yyyy',
+    dayLabels: {
+      su: 'Dom', mo: 'Seg', tu: 'Ter', we: 'Qua', th: 'Qui',
+      fr: 'Sex', sa: 'Sab'
+    },
+    monthLabels: {
+      1: 'Jan', 2: 'Fev', 3: 'Mar', 4: 'Abr', 5: 'Mar', 6: 'Jun', 7: 'Jul',
+      8: 'Ago', 9: 'Set', 10: 'Out', 11: 'Nov', 12: 'Dez'
+    },
+    yearSelector: true,
+    monthSelector: true,
+    showClearDateBtn: false,
+    markCurrentDay: true,
+    showTodayBtn: false,
+    markCurrentMonth: true,
+    markCurrentYear: true,
+    alignSelectorRight: true,
+    disableHeaderButtons: false,
+    showDecreaseDateBtn: true,
+    showIncreaseDateBtn: true
+  };
 
   getUsuarios(): void {    
     
   }
+  busy: any;
+  templateLoading: string =
+  '<div class="loading-overlay">' +
+    '<img src="assets/loader.gif" alt="logo Promax" height="194" class="img-loader" />'+
+    '<div class="spinner">'+
+      '<div class="bounce1"></div>'+
+      '<div class="bounce2"></div>'+
+      '<div class="bounce3"></div>'+
+    '</div>'+
+    '<h1 class="loading-venda">' +
+    '{{message}}' +
+    '</h1>' +
+  '</div>';
 
-  ngOnInit(): void {
-    
+
+  type:number = -1;
+  period:number = 1;
+
+  // lineChart
+  public lineChartData:Array<any> = [
+    {data: [65, 59, 80, 81, 56, 55, 40], label: 'Wins'},
+    {data: [28, 48, 40, 19, 86, 27, 90], label: 'Loss'},    
+  ];
+  public lineChartLabels:Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+
+  // Radar
+  public radarChartLabels:string[] = ['Vanguard', 'Assassin', "Marksmen", "Specialist"];
+  
+   public radarChartData:any = [
+     {data: [65, 59, 90, 81], label: 'Wins'},
+     {data: [28, 48, 40, 19], label: 'Loss'}
+   ];
+
+  ngOnInit(): void {    
+
+    this.rankingService.getLineGraph(this.period, this.type)
+    .then(p =>{
+      this.lineChartData = [
+        {data: p.losts, label: "Losts"},
+        {data: p.wins, label: "Wins"}
+      ];
+       this.lineChartLabels = p.labels;       
+    });
+    this.matchService.getChars()
+    .then(p => this.charEnums = p);
+
     this.profileService.getTeam()
     .then(p => { 
         this.teamLogoImage = this.profileService.getTeamImageUrl(p.id);
         this.currentTeam = p;
         this.rankingService.getTeamPontuation(p.id)
-        .then(p => this.teamPontuations = p);      
-        ;
-    });    
-    this.rankingService.getLoggedPlayerPontuation()
-    .then(p => this.playerPontuation = p);
+        .then(p => this.teamPontuations = p);              
+    });      
 
+    this.busy = this.rankingService.getLoggedPlayerPontuation()
+    .then(p => {
+      debugger;
+      var tmp = new List<PlayerPontuation>(p);
+      this.headerPontuation = tmp.FirstOrDefault(p => p.name == window.localStorage.getItem("login"));
+      this.selectedPlayerPontuation = tmp;
+      this.playerPontuation = tmp.RemoveAll(p => p.name == window.localStorage.getItem("login")).ToArray();
+      
+      var vanguard = tmp.FirstOrDefault(p => p.name == "VANGUARD");
+      var ass = tmp.FirstOrDefault(p => p.name == "ASSASSIN");
+      var marks = tmp.FirstOrDefault(p => p.name == "MARKSMEN");
+      var specialist = tmp.FirstOrDefault(p => p.name == "SPECIALIST");
+
+      if(vanguard == null){
+        vanguard = new PlayerPontuation("VANGUARD", -2);        
+      }
+      if(ass == null){
+        ass = new PlayerPontuation("ASSASSIN", -3);        
+      }
+      if(marks == null){
+        marks = new PlayerPontuation("MARKS", -4);        
+      }
+      if(specialist == null){
+        specialist = new PlayerPontuation("SPECIALIST", -5);        
+      }
+      
+       var wins = [ vanguard.percentualWins, 
+            ass.percentualWins, 
+            marks.percentualWins, 
+            specialist.percentualWins]; 
+      var losts = [ vanguard.percentualLosts, 
+        ass.percentualLosts, 
+        marks.percentualLosts, 
+        specialist.percentualLosts];
+        this.radarChartData = [
+          {data: wins, label: 'Wins'},
+          {data: losts, label: 'Loss'}
+        ];
+
+    });
     this.userLogoImage = this.profileService.getProfileUrl(window.localStorage.getItem("id"));
+  }
+
+  onSelect(user: PlayerPontuation): void {
+    this.selectedUser = user;
   }
 
   imageUploaded(event: any): void {
@@ -136,9 +259,161 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
     return this.rankingService.getUrlImagePlayer(player.name);
   }
 
-  isTeam(player:PlayerPontuation) : boolean{
-    debugger;
+  isTeam(player:PlayerPontuation) : boolean{    
     return this.teamPontuations[0].name == player.name;
   }
   
+  
+   public radarChartType:string = 'radar';
+  
+   // events
+   public chartClicked(e:any):void {
+     console.log(e);
+   }
+  
+   public chartHovered(e:any):void {
+     console.log(e);
+   }
+
+   onChangeCharFilter(value) {    
+     debugger;
+    this.type = value;
+    this.rankingService.getLineGraph(this.period, this.type)
+    .then(p =>{
+      this.lineChartData = [
+        {data: p.losts, label: "Losts"},
+        {data: p.wins, label: "Wins"}
+      ];
+       this.lineChartLabels = p.labels;       
+    });
+   }
+
+   onChangeFilter(value) {
+     debugger;
+    this.period = value;
+    this.rankingService.getLineGraph(this.period, this.type)
+    .then(p =>{
+      this.lineChartData = [
+        {data: p.losts, label: "Losts"},
+        {data: p.wins, label: "Wins"}
+      ];
+       this.lineChartLabels = p.labels;       
+    });
+  }
+  charEnums:CharEnum[];
+
+    
+  public lineChartOptions:any = {
+    responsive: true
+  };
+  
+  
+  public lineChartLegend:boolean = true;
+  public lineChartType:string = 'line';
+ 
+  public randomize():void {
+    let _lineChartData:Array<any> = new Array(this.lineChartData.length);
+    for (let i = 0; i < this.lineChartData.length; i++) {
+      _lineChartData[i] = {data: new Array(this.lineChartData[i].data.length), label: this.lineChartData[i].label};
+      for (let j = 0; j < this.lineChartData[i].data.length; j++) {
+        _lineChartData[i].data[j] = Math.floor((Math.random() * 100) + 1);
+      }
+    }
+    this.lineChartData = _lineChartData;
+  } 
+
+  selectedChar :number = -1;
+  onDateInicialChanged(event: IMyDateModel) {
+    var fromDate = moment(event.formatted, "DD/MM/YYYY");
+    var untilDate = moment(this.selectedDateAte, "DD/MM/YYYY");
+    this.selectedDateDe = event.formatted;      
+    if(fromDate > untilDate){
+      alert("Until date is lower than from.");     
+    } else {
+      this.filtroPlayer = 3;
+      this.checked(3);      
+      this.busy = this.rankingService.getLoggedPlayerPontuationBetween(fromDate.format("DD-MM-YYYY"), untilDate.format("DD-MM-YYYY"))
+      .then(p => {
+        debugger;
+        var tmp = new List<PlayerPontuation>(p);
+        //this.headerPontuation = tmp.FirstOrDefault(p => p.name == window.localStorage.getItem("login"));        
+        this.selectedPlayerPontuation = tmp;
+        this.playerPontuation = tmp.RemoveAll(p => p.name == window.localStorage.getItem("login")).ToArray();        
+
+        var vanguard = tmp.FirstOrDefault(p => p.name == "Vanguard");
+        var ass = tmp.FirstOrDefault(p => p.name == "Assassin");
+        var marks = tmp.FirstOrDefault(p => p.name == "Marksmen");
+        var specialist = tmp.FirstOrDefault(p => p.name == "Specialist");
+  
+        if(vanguard == null){
+          vanguard = new PlayerPontuation("VANGUARD", -2);        
+        }
+        if(ass == null){
+          ass = new PlayerPontuation("ASSASSIN", -3);        
+        }
+        if(marks == null){
+          marks = new PlayerPontuation("MARKS", -4);        
+        }
+        if(specialist == null){
+          specialist = new PlayerPontuation("SPECIALIST", -5);        
+        }
+        
+         var wins = [ vanguard.percentualWins, 
+              ass.percentualWins, 
+              marks.percentualWins, 
+              specialist.percentualWins]; 
+        var losts = [ vanguard.percentualLosts, 
+          ass.percentualLosts, 
+          marks.percentualLosts, 
+          specialist.percentualLosts];
+          this.radarChartData = [
+            {data: wins, label: 'Wins'},
+            {data: losts, label: 'Loss'}
+          ];
+  
+      });
+    }
+    
+  }
+
+  lastRun:number;
+  checked(n:number){
+    if(n == this.filtroPlayer){
+      if(this.lastRun != n){        
+        this.lastRun = n;
+        if(n == 1) {
+          this.playerPontuation = this.selectedPlayerPontuation
+          .Where(p => p.type == 1).ToArray();
+        } else if(n == 2){
+          this.playerPontuation = this.selectedPlayerPontuation
+          .Where(p => p.type == 2).ToArray();
+        } else {
+          this.playerPontuation = this.selectedPlayerPontuation.ToArray();          
+        }        
+      }
+    }    
+    return n == this.filtroPlayer;
+  }
+
+  onDateFinalChanged(event: IMyDateModel) {        
+    var untilDate = moment(event.formatted, "DD/MM/YYYY");
+    var fromDate = moment(this.selectedDateDe, "DD/MM/YYYY");
+    this.selectedDateAte = event.formatted;      
+    if(fromDate > untilDate){
+      alert("Until date is lower than from.");         
+    } else {      
+      this.filtroPlayer = 3;
+      this.checked(3);            
+      this.busy = this.rankingService.getLoggedPlayerPontuationBetween(fromDate.format("DD-MM-YYYY"), untilDate.format("DD-MM-YYYY"))
+      .then(p => {
+        debugger;
+        var tmp = new List<PlayerPontuation>(p);
+        //this.headerPontuation = tmp.FirstOrDefault(p => p.name == window.localStorage.getItem("login"));        
+        this.selectedPlayerPontuation = tmp;
+        this.playerPontuation = tmp.RemoveAll(p => p.name == window.localStorage.getItem("login")).ToArray();        
+      });
+    }
+  }
+
+
 }

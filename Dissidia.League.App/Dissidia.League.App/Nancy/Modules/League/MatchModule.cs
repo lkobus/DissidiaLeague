@@ -67,15 +67,15 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 return HttpStatusCode.Accepted;
             };               
 
-            Post[EndpointConfigurationEnum.UPLOAD_MATCH] = p =>
+            Post[EndpointConfigurationEnum.UPLOAD_MATCH, true] = async (x,p) =>
             {
                 var contentTypeRegex = new Regex("^multipart/form-data;\\s*boundary=(.*)$", RegexOptions.IgnoreCase);
                 var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
                 var multipart = new HttpMultipart(this.Request.Body, boundary);
                 var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
-                var type = Convert.ToInt32(p.matchType.Value);
-                _matcheService.RegisterMatches(new List<Stream>() { bodyStream }, (MatchTypeEnum)type);
-                return HttpStatusCode.OK;                
+                var type = Convert.ToInt32(x.matchType.Value);
+                await _matcheService.RegisterMatchAsync(bodyStream, (MatchTypeEnum)type);
+                return HttpStatusCode.OK;
             };
 
         }

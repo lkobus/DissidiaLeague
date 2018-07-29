@@ -1,5 +1,5 @@
 <div class="container-fluid main-container">  
-
+    <div [ngBusy]="{busy: busy, template: templateLoading, message: 'Fetching data...'}"></div>
   <div class="card">
 
     <div class="toolbar">
@@ -15,47 +15,216 @@
           <div>
               <div class="col-md-12">
                   <div class="col-md-3">
-                    <img class="imgLogo" src="{{userLogoImage}}" (click)="modalProfileLogo.open();">
+                    <img class="imgLogo col-md-12" src="{{userLogoImage}}" (click)="modalProfileLogo.open();">
+                    <div style="display: block" class="col-md-12">
+                            <canvas *ngIf="playerPontuation?.length > 0" baseChart
+                                    [datasets]="radarChartData"
+                                    [labels]="radarChartLabels"
+                                    [chartType]="radarChartType"
+                                    (chartHover)="chartHovered($event)"
+                                    (chartClick)="chartClicked($event)"></canvas>
+                          </div>
                   </div>
                   <div class="col-md-9" *ngIf="playerPontuation">
-                      <div class="card-subtitle" class="col-md-12">
-                          <h1 style="color:black">{{playerPontuation.name}}</h1>
-                      </div>                  
-                      <div class="col-md-12">
-                        <div class="card-subtitle col-md-2">
-                            <label>Wins</label>
-                        </div>         
-                        <div class="card-subtitle col-md-2">
-                            <label>Wins%</label>
-                        </div>         
-                        <div class="card-subtitle col-md-2">
-                            <label>Lost</label>
-                        </div>         
-                        <div class="card-subtitle col-md-2">
-                            <label>Lost%</label>
-                        </div>         
-                        <div class="col-md-4">
-                            <label>Total Matches</label>
-                        </div>       
-                        <div class="col-md-2">
-                            <label class="text-center">{{playerPontuation.wins}}</label>
-                        </div>                                                             
-                        <div class="col-md-2">
-                            <label class="text-center">{{playerPontuation.percentualWins}} %</label>
-                        </div>                                 
-                        <div class="  col-md-2">
-                            <label class="text-center">{{playerPontuation.losts}}</label>
-                        </div>                                 
+                        <div class="col-md-12" *ngIf="headerPontuation">                                    
+                            <div class="card-subtitle col-md-3">
+                                <label>Name</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label>Wins</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label>Lose</label>
+                            </div>       
+                            <div class="card-subtitle col-md-1">
+                                <label>Wins%</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label>Lose%</label>
+                            </div>       
+                            <div class="card-subtitle col-md-3">
+                                <label>Total Matches</label>
+                            </div>                               
                             
-                        <div class="col-md-2">
-                            <label class="text-center">{{playerPontuation.percentualLosts}} %</label>
-                        </div>                                                         
-                        
-                        <div class="col-md-4">
-                            <label class="text-center">{{playerPontuation.totalMatches}}</label>
-                        </div>       
-                      </div>
+                            <div class="card-subtitle col-md-3">
+                                <label style="color: black">{{headerPontuation.name}}</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{headerPontuation.wins}}</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{headerPontuation.losts}}</label>
+                            </div>        
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{headerPontuation.percentualWins}}</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{headerPontuation.percentualLosts}}</label>
+                            </div>        
+                            <div class="card-subtitle col-md-2">
+                                <label style="color: black">{{headerPontuation.totalMatches}}</label>
+                            </div>                               
+                        </div>
+                        <hr>
+                        <div class="align-radios" *ngIf="filtroPlayer">
+                            <mat-radio-group class="example-radio-group" [(ngModel)]="filtroPlayer" >
+                                <mat-radio-button class="example-radio-button" [value]="3"  [checked]="checked(3)">
+                                    All
+                                </mat-radio-button>
+                                <mat-radio-button class="example-radio-button" [value]="1"  [checked]="checked(1)">
+                                    Characters
+                                </mat-radio-button>
+                                <mat-radio-button class="example-radio-button" [value]="2" [checked]="checked(2)">
+                                    Roles
+                                </mat-radio-button>
+                            </mat-radio-group>
+                        </div>
+                        <hr />
+                        <div class="col-md-4 mdp-with-lb">
+                            <label>
+                                From
+                            </label>
+                            <my-date-picker name="dataInicio" [locale]="pt-br" (dateChanged)="onDateInicialChanged($event)" [selDate]="selectedDateDe"
+                                [options]="myDatePickerOptions">
+                            </my-date-picker>
+                            </div>
+                    
+                            <div class="col-md-4 mdp-with-lb">
+                            <label>
+                                Until
+                            </label>
+                            <my-date-picker name="dataFim" [locale]="pt-br" (dateChanged)="onDateFinalChanged($event)" [selDate]="selectedDateAte" [options]="myDatePickerOptions">
+                            </my-date-picker>
+                        </div>                        
+                        <table *ngIf="playerPontuation" class="table order-table">
+                                <tr>
+                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'name')" [ngClass]="{ 'asc': sortingDesc['name'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
+                                    <div>
+                                      <label>Name</label>
+                                    </div>
+                          
+                                    <span class="order-icons-wrapper">
+                                      <i class="fa fa-chevron-up order-icons"></i>
+                                      <i class="fa fa-chevron-down order-icons"></i>
+                                    </span>
+                                  </th>
+                          
+                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'wins')" [ngClass]="{ 'asc': sortingDesc['wins'], 'desc': !sortingDesc['wins'], 'active': selectTableRow == 'wins' }">
+                                    <div>
+                                      <label>Wins</label>
+                                    </div>
+                          
+                                    <span class="order-icons-wrapper">
+                                      <i class="fa fa-chevron-up order-icons"></i>
+                                      <i class="fa fa-chevron-down order-icons"></i>
+                                    </span>
+                                  </th>
+                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'losts')" [ngClass]="{ 'asc': sortingDesc['losts'], 'desc': !sortingDesc['losts'], 'active': selectTableRow == 'losts' }">
+                                    <div>
+                                      <label>Losts</label>
+                                    </div>
+                          
+                                    <span class="order-icons-wrapper">
+                                      <i class="fa fa-chevron-up order-icons"></i>
+                                      <i class="fa fa-chevron-down order-icons"></i>
+                                    </span>
+                                  </th>
+                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['percentualWins'], 'desc': !sortingDesc['percentualWins'], 'active': selectTableRow == 'percentualWins' }">
+                                    <div>
+                                      <label>%Wins</label>
+                                    </div>
+                          
+                                    <span class="order-icons-wrapper">
+                                      <i class="fa fa-chevron-up order-icons"></i>
+                                      <i class="fa fa-chevron-down order-icons"></i>
+                                    </span>
+                                  </th>
+                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['percentualLosts'], 'desc': !sortingDesc['percentualLosts'], 'active': selectTableRow == 'percentualLosts' }">
+                                      <div>
+                                        <label>%Losts</label>
+                                      </div>
+                            
+                                      <span class="order-icons-wrapper">
+                                        <i class="fa fa-chevron-up order-icons"></i>
+                                        <i class="fa fa-chevron-down order-icons"></i>
+                                      </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(playerPontuation, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['totalMatches'], 'desc': !sortingDesc['totalMatches'], 'active': selectTableRow == 'totalMatches' }">
+                                        <div>
+                                          <label>Total</label>
+                                        </div>
+                              
+                                        <span class="order-icons-wrapper">
+                                          <i class="fa fa-chevron-up order-icons"></i>
+                                          <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                      </th>
+                                  <th>
+                                  </th>
+                                </tr>
+                          
+                                <div *ngIf="playerPontuation.length == 0">
+                                        <img src="assets/chocobo-full.gif">
+                                        <h1 class="loading-venda">No matches found.</h1>                                        
+                                    </div>
+                                <tr *ngFor='let usuario of playerPontuation' (click)="onSelect(usuario)" [class.selected]="usuario === selectedUser">
+                                  <td>{{usuario.name}}</td>
+                                  <td>{{usuario.wins}}</td>
+                                  <td>{{usuario.losts}}</td>
+                                  <td>{{usuario.percentualWins}}</td>
+                                  <td>{{usuario.percentualLosts}}</td>
+                                  <td>{{usuario.totalMatches}}</td>                                  
+                                </tr>
+                              </table>
+                                                                           
                   </div>
+                  
+                  <div class="col-md-12">
+                      <hr>
+                  </div>
+                  <div class="col-md-12">
+                        <div class="card-subtitle" class="col-md-1">
+                            <label>Type </label>
+                        </div>                  
+                        <div class="col-md-2">
+                            <select *ngIf="charEnums" (change)="onChangeCharFilter($event.target.value)" [(ngModel)]="selectedChar">                                    
+                                <option value="-1" selected>PLAYER</option>
+                                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}}C - {{c.valor}}</option>                                
+                                <option value="-2">1R - VANGUARD</option>
+                                <option value="-3">2R - ASSASSIN</option>
+                                <option value="-4">3R - MARKSMEN</option>
+                                <option value="-5">4R - SPECIALIST</option>                                
+                            </select>                                                    
+                        </div>
+                        <div class="card-subtitle" class="col-md-1">
+                                <label>Period</label>
+                            </div>                  
+                        <div class="col-md-2">
+                            <select (change)="onChangeFilter($event.target.value)">                                
+                                <option value="1" selected>Last 7 days</option>
+                                <option value="2">Last Two Weeks</option>
+                                <option value="3">Last Three Weeks</option>
+                                <option value="4">Last Three Months</option>
+                                <option value="5">All time</option>                        
+                            </select>
+                        </div>
+                        
+                  </div>
+                  <div class="col-md-9 col-md-offset-1">
+                    <div style="display: block;">
+                    <canvas baseChart width="800" height="300"
+                                [datasets]="lineChartData"
+                                    [labels]="lineChartLabels"
+                                [options]="lineChartOptions"
+                                [colors]="lineChartColors"
+                                [legend]="lineChartLegend"
+                                [chartType]="lineChartType"
+                                (chartHover)="chartHovered($event)"
+                                (chartClick)="chartClicked($event)"></canvas>
+                    </div>
+                  </div>
+
+
                 </div>                
           </div>
         </tab>

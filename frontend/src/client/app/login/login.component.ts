@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
     
     templateLoading: string =
         '<div class="loading-overlay">' +
-          '<img src="assets/logo-promax-blue.png" alt="logo Promax" width="123" height="15" class="img-loader" />'+
+          '<img src="assets/loader.gif" alt="logo Promax" height="130" class="img-loader" />'+
           '<div class="spinner">'+
             '<div class="bounce1"></div>'+
             '<div class="bounce2"></div>'+

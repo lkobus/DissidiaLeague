@@ -17,6 +17,8 @@ import { EmpresaService } from '../../_services/empresa.service';
 import { Modal } from 'ngx-modal';
 import { MatchesService } from '../../matches/shared/matches.service';
 import { Router } from '@angular/router';
+import { FileHolder } from '../../angular2-image-upload/src/image-upload/image-upload.component';
+import { List } from 'linqts';
 
 @Component({
   moduleId: module.id,
@@ -26,7 +28,7 @@ import { Router } from '@angular/router';
 })
 export class ToolbarComponent implements OnInit {
   @ViewChild('modalSobra') modalSobra: Modal;
-  fileHolder: any;
+  fileHolder: List<FileHolder>;  
   downloadNewVersion: string;
   numeroCaixa: number;
   franquia: Empresa;
@@ -64,6 +66,7 @@ export class ToolbarComponent implements OnInit {
     private router:Router,
     notificacaoService: NotificacaoService,
     statusService: StatusService) {
+    this.fileHolder = new List<FileHolder>();
     this.franquia = app.getFranquia();
     this.numeroCaixa = EnvConfiguration.CAIXA;
     this.subscription = this.authenticationService.loggedUserEmitter.subscribe(name => this.userLogged = name);
@@ -79,8 +82,16 @@ export class ToolbarComponent implements OnInit {
     }
   }
   
-  imageUploaded(event: any): void {
-    this.fileHolder = event;
+  removeImageFromUpload(fileHolder: FileHolder) {
+    this.fileHolder = this.fileHolder.RemoveAll(p => p.file.name == fileHolder.file.name)    
+  }
+
+  imageUploaded(fileHolder: FileHolder): void {        
+    if(this.fileHolder.FirstOrDefault(p => p.file.name == fileHolder.file.name) == null){
+      this.fileHolder.Add(fileHolder);
+    } else {
+      alert("already exist a file named " + fileHolder.file.name + " cannot have file with same names in the upload");
+    }
   }
 
   ngOnInit() {    
@@ -90,10 +101,10 @@ export class ToolbarComponent implements OnInit {
   uploadMatch() {
     debugger;
     if (this.fileHolder !== undefined) {
-      debugger;
-      this.matchService.uploadSoloMatch(this.fileHolder);
+      debugger;      
+      this.fileHolder.ForEach(f => this.matchService.uploadSoloMatch(f));
       this.modalSobra.close();
-      alert("Imagem subida com sucesso");
+      alert("Imagens subida com sucesso");
     }
   }
 

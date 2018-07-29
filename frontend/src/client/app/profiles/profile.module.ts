@@ -16,16 +16,46 @@ import { Tabs } from '../shared/tabs/tabs';
 import { SharedModule } from '../shared/shared.module';
 import { ModalModule } from 'ngx-modal';
 import { ImageUploadModule } from '../angular2-image-upload/index';
-
+import { ChartsModule } from 'ng2-charts';
+import { MatRadioModule, MatCheckboxModule } from '@angular/material';
+import { MyDatePickerModule, MyDatePicker } from 'mydatepicker';
+import { MatDatepickerModule } from '@angular/material';
+import { BusyConfig, BusyModule } from 'angular2-busy';
 @NgModule({
   imports: [CommonModule,
     ProfileRoutingModule,
     BrowserModule,
+    MatCheckboxModule,
+    MyDatePickerModule,
+    MatDatepickerModule,
+    MatRadioModule,
     ModalModule,      
     ImageUploadModule.forRoot(),
     SharedModule,
+    BusyModule.forRoot(
+      new BusyConfig({
+        message: 'Aguarde...',
+        backdrop: true,
+        template:
+          '<div class="loading-overlay">' +
+          '<img src="assets/loader.gif" alt="logo Promax" height="194" class="img-loader" />'+
+          '<div class="spinner">'+
+          '<div class="bounce1"></div>'+
+          '<div class="bounce2"></div>'+
+          '<div class="bounce3"></div>'+
+          '</div>'+
+          '<h1 class="loading-venda">' +
+          '{{message}}' +
+          '</h1>' +
+          '</div>',
+        delay: 0,
+        minDuration: 1000,
+        wrapperClass: 'ng-busy'
+      })
+),
     FormsModule,
     HttpModule,
+    ChartsModule,    
     SharedMaskModule,
     NguiAutoCompleteModule,
     NgxPaginationModule,

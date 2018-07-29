@@ -8,6 +8,7 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
+import { LineGraph } from '../../profiles/model/lineGraph.dto';
 
 @Injectable()
 export class RankingService extends BaseService {
@@ -35,13 +36,34 @@ export class RankingService extends BaseService {
       .catch(this.handleErrorPromise);
   }
 
-  getLoggedPlayerPontuation(): Promise<PlayerPontuation>{
+  getLoggedPlayerPontuation(): Promise<PlayerPontuation[]>{
     var headers = new Headers();
     this.contentTypeApplicationJson(headers);
     var url = this.BasePath() + "dissidia/player/pontuations/" + window.localStorage.getItem("id");
     return this.http.get(url, { headers: headers })
       .toPromise()
-      .then(response => response.json() as PlayerPontuation)
+      .then(response => response.json() as PlayerPontuation[])
+      .catch(this.handleErrorPromise);
+  }
+
+  getLineGraph(period:number, type:number): Promise<LineGraph>{
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    debugger;
+    var url = this.BasePath() + "dissidia/player/graph/line/" + window.localStorage.getItem("id") + "/" + period + "/" + type;
+    return this.http.get(url, { headers: headers })
+      .toPromise()
+      .then(response => response.json() as LineGraph)
+      .catch(this.handleErrorPromise);
+  }
+
+  getLoggedPlayerPontuationBetween(from:string, until:string): Promise<PlayerPontuation[]>{
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/player/pontuations/" + window.localStorage.getItem("id") + "/" + from + "/" + until;
+    return this.http.get(url, { headers: headers })
+      .toPromise()
+      .then(response => response.json() as PlayerPontuation[])
       .catch(this.handleErrorPromise);
   }
 

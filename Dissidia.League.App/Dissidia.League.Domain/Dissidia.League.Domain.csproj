@@ -72,8 +72,11 @@
     <Compile Include="Enums\Authentication\AuthenticationStatusEnum.cs" />
     <Compile Include="Enums\CharEnum.cs" />
     <Compile Include="Enums\Dissidia\MatchTypeEnum.cs" />
+    <Compile Include="Enums\Dissidia\RolesEnum.cs" />
     <Compile Include="Enums\Dissidia\TeamStatusEnum.cs" />
     <Compile Include="Enums\Entities\EntityEnum.cs" />
+    <Compile Include="Enums\Gamification\ScoreLineGraphEnum.cs" />
+    <Compile Include="Enums\Gamification\ScoreTypeEnum.cs" />
     <Compile Include="Enums\Matches\MatchStatusEnum.cs" />
     <Compile Include="Events\Matches\OnMatchDone.cs" />
     <Compile Include="Exceptions\Authentication\UserAlreadyExistException.cs" />
@@ -114,7 +117,8 @@
     <Compile Include="Tools\Enums\IBaseEnum.cs" />
     <Compile Include="ValueObjects\Authentication\Credentials.cs" />
     <Compile Include="ValueObjects\Authentication\UserSession.cs" />
-    <Compile Include="ValueObjects\Gamification\Pontuation\PlayerPontuation.cs" />
+    <Compile Include="ValueObjects\Gamification\Pontuation\LineGraph.cs" />
+    <Compile Include="ValueObjects\Gamification\Pontuation\ScorePontuation.cs" />
     <Compile Include="ValueObjects\Match\PlayerInfo.cs" />
   </ItemGroup>
   <ItemGroup>

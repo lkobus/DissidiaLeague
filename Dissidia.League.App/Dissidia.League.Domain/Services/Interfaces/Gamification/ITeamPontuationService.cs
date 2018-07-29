@@ -7,6 +7,6 @@ namespace Dissidia.League.Domain.Services.Interfaces.Gamification
     public interface ITeamPontuationService
     {
         void OnMatchResolved(object sender, OnMatchDoneArgs args);
-        List<PlayerPontuation> GetTeamPontuations(string teamId);
+        List<ScorePontuation> GetTeamPontuations(string teamId);
     }
 }

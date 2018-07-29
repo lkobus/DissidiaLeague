@@ -26,12 +26,13 @@ export class MatchesService extends BaseService {
     return this.uploadImagem(fileholder, 2);
   }
 
-  uploadImagem(fileholder: any, type:number): Promise<any> {
+  async uploadImagem(fileholder: any, type:number): Promise<any> {
     var url = this.BasePath() + "dissidia/match/upload/"+type;
     var formData = new FormData();
-    formData.append('image', fileholder.file);            
-    return this.http.post(url, formData)
-      .toPromise()      
+    formData.append('image', fileholder.file);              
+    return await this.http.post(url, formData)
+      .map(p => p)
+      .toPromise()     
       .catch(this.handleErrorPromise);
   }
 

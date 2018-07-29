@@ -59,6 +59,8 @@ import { ModalConfirmacaoModule } from './_directives/modal-confirmacao/modal-co
 import { RankingModule } from './ranking/ranking.module';
 import { MatchesModule } from './matches/matches.module';
 import { ProfileModule } from './profiles/profile.module';
+import { ChartsModule } from 'ng2-charts';
+
 
 @NgModule({
   imports: [
@@ -103,6 +105,7 @@ import { ProfileModule } from './profiles/profile.module';
     CadastroModule,
     VisaoGeralModule,
     UsuariosModule,
+    ChartsModule,
     RankingModule,
     ProfileModule,
     MatchesModule,

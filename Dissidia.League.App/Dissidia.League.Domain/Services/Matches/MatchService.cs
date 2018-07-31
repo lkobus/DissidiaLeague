@@ -35,7 +35,7 @@ namespace Dissidia.League.Domain.Services.Matches
         {
             await Task.Factory.StartNew(() =>
             {
-                var imageFile = SaveImageInStorage(stream);                
+                var imageFile = SaveImageInStorage(stream);
                 var match = Match.Factory.NewMatch(imageFile, type);
                 _matchRepository.Upsert(match.Instance);
                 var matchArgs = new OnMatchDoneArgs(match.Instance, type);

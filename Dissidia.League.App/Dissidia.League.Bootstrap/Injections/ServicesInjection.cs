@@ -33,7 +33,7 @@ namespace Dissidia.League.Bootstrap.Injections
             UserChangesService = new UserChangesService(repositories.UserChange);
             
             Team = new TeamService(repositories.Team, _invite, repositories.User);
-            TeamPontuation = new TeamPontuationService(repositories.TeamPontuation, repositories.Team, PlayerPontuation);
+            TeamPontuation = new TeamPontuationService(repositories.TeamPontuation, repositories.Team, PlayerPontuation, null);
             SetupEvents();          
         }                
 

@@ -33,6 +33,9 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   @ViewChild("modalUploadLogo")
   modalUploadLogo: Modal;
 
+  @ViewChild("inviteModal")
+  inviteModal: Modal;
+
   @ViewChild("modalProfileLogo")
   modalProfileLogo: Modal;
 
@@ -46,15 +49,19 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   alias:string;
   player1:string;
   player2:string;
+  emailToInvite:string;
   player3:string;
   player4:string;
   userLogoImage: string;
   playerPontuation: PlayerPontuation[];
-  selectedPlayerPontuation: List<PlayerPontuation>  ;
-
+  selectedPlayerPontuation: List<PlayerPontuation>;
+  selectedTeamPontuation: List<PlayerPontuation>;
+  teamHeaderPontuation: PlayerPontuation;
   teamPontuations: PlayerPontuation[];
   headerPontuation: PlayerPontuation;
   firstTime: boolean = true;
+  activeMembers:string[] = [];
+
   constructor(
     private page: ElementRef,    
     private router: Router,
@@ -121,7 +128,6 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   ];
   public lineChartLabels:Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
-
   // Radar
   public radarChartLabels:string[] = ['Vanguard', 'Assassin', "Marksmen", "Specialist"];
   
@@ -131,7 +137,6 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
    ];
 
   ngOnInit(): void {    
-
     this.rankingService.getLineGraph(this.period, this.type)
     .then(p =>{
       this.lineChartData = [
@@ -145,10 +150,24 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
 
     this.profileService.getTeam()
     .then(p => { 
+        debugger;
+                
+        p.members.forEach(m => {
+          this.profileService.getNickName(m)
+          .then(p => {
+            debugger;
+            this.activeMembers.push(p);
+          });
+        });
         this.teamLogoImage = this.profileService.getTeamImageUrl(p.id);
         this.currentTeam = p;
         this.rankingService.getTeamPontuation(p.id)
-        .then(p => this.teamPontuations = p);              
+        .then(p =>{          
+          this.selectedTeamPontuation = new List<PlayerPontuation>(p);          
+          this.teamHeaderPontuation = this.selectedTeamPontuation.FirstOrDefault(p => p.type == 5);          
+          this.teamPontuations = this.selectedTeamPontuation.Where(p => p.type != 5).ToArray();
+        });      
+
     });      
 
     this.busy = this.rankingService.getLoggedPlayerPontuation()
@@ -346,16 +365,16 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
         var specialist = tmp.FirstOrDefault(p => p.name == "Specialist");
   
         if(vanguard == null){
-          vanguard = new PlayerPontuation("VANGUARD", -2);        
+          vanguard = new PlayerPontuation("Vanguard", -2);        
         }
         if(ass == null){
-          ass = new PlayerPontuation("ASSASSIN", -3);        
+          ass = new PlayerPontuation("Assassin", -3);        
         }
         if(marks == null){
-          marks = new PlayerPontuation("MARKS", -4);        
+          marks = new PlayerPontuation("Marksmen", -4);        
         }
         if(specialist == null){
-          specialist = new PlayerPontuation("SPECIALIST", -5);        
+          specialist = new PlayerPontuation("Specialist", -5);        
         }
         
          var wins = [ vanguard.percentualWins, 
@@ -415,5 +434,9 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
     }
   }
 
+  invitePlayer(){
+    this.profileService.inviteTeam(this.teamHeaderPontuation.name, this.emailToInvite)
+    .then(p => this.inviteModal.close());
+  }
 
 }

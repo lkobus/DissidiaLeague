@@ -16,6 +16,17 @@ export class ProfileService extends BaseService {
     super(http);
   }
 
+
+  getNickName(userId:string): Promise<string>{    
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/user/nickname/" + userId;    
+    return this.http.get(url, { headers: headers })
+    .toPromise()
+    .then(response => response.json() as string)
+    .catch(this.handleErrorPromise);
+  }
+
   createTeam(team:TeamDTO): Promise<void>{
     var founder = window.localStorage.getItem("id");
     var headers = new Headers();
@@ -35,6 +46,16 @@ export class ProfileService extends BaseService {
     return this.http.get(url, { headers: headers })
     .toPromise()
     .then(response => response.json() as TeamDTO)
+    .catch(this.handleErrorPromise);
+  }
+
+  inviteTeam(teamId:string, email:string){        
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/team/invite/" + teamId + "/" + email;    
+    return this.http.put(url, "", { headers: headers })
+    .toPromise()
+    .then(() => alert("Invite has been sent."))
     .catch(this.handleErrorPromise);
   }
 
@@ -58,9 +79,7 @@ export class ProfileService extends BaseService {
     return this.http.put(url, formData)
       .toPromise()      
       .catch(this.handleErrorPromise);
-  }
-
-  
+  }  
 
   getProfileUrl(teamId:string) {
     return this.BasePath() + "dissidia/user/image/" + teamId;

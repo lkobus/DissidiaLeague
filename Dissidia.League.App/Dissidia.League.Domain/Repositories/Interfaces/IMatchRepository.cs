@@ -8,5 +8,6 @@ namespace Dissidia.League.Domain.Repositories.Interfaces
     {
         List<Match> GetMatchBetween(DateTime from, DateTime until);
         List<Match> GetMatchesFrom(DateTime from);
+        List<Match> GetTeamMatches(string teamId);
     }
 }

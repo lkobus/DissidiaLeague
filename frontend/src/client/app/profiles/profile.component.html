@@ -228,8 +228,7 @@
                 </div>                
           </div>
         </tab>
-  
-        <!-- TAB VENDA EXTERNA  -->
+          
         <tab tabTitle="Team">
           <div *ngIf="currentTeam == null">            
             <div class="col-md-3">
@@ -274,61 +273,152 @@
           <div *ngIf="currentTeam">
             <div class="col-md-12">
               <div class="col-md-3">
-                <img class="imgLogo" src="{{teamLogoImage}}" (click)="modalUploadLogo.open();">
+                  <div class="col-md-12">
+                    <img class="imgLogo" src="{{teamLogoImage}}" (click)="modalUploadLogo.open();">
+                  </div>
+                  <div class="col-md-12">
+                        <div class="card-subtitle col-md-12">
+                            <label>Active Members</label>
+                        </div>       
+                        <div *ngFor="let p of activeMembers">
+                            {{p}}
+                            <hr>
+                        </div>
+                  </div>
+                
               </div>
               <div class="col-md-9">
-                  <div class="card-subtitle" class="col-md-12">
-                      <h1 style="color:black">{{currentTeam.id}} - {{currentTeam.alias}}</h1>
-                  </div>                  
-                  <div class="col-md-12">
-                    <div class="card-subtitle col-md-2">
-                        <label>#</label>
-                    </div>                    
-                    <div class="card-subtitle col-md-3">
-                        <label>Name</label>
-                    </div>             
-                    <div class="card-subtitle col-md-1">
-                        <label>Wins</label>
-                    </div>             
-                    <div class="card-subtitle col-md-1">
-                        <label>Lose</label>
-                    </div>       
-                    <div class="card-subtitle col-md-1">
-                        <label>Wins%</label>
-                    </div>             
-                    <div class="card-subtitle col-md-1">
-                        <label>Lose%</label>
-                    </div>       
-                    <div class="card-subtitle col-md-2">
-                        <label>Total Matches</label>
-                    </div>       
-                    <div *ngFor="let t of teamPontuations">
-                        <div class="card-subtitle col-md-2">
-                            <img *ngIf="isTeam(t) == false" class="imgChibi" [src]="getImageUrl(t)">
-                        </div>                    
-                        <div class="card-subtitle col-md-3">
-                            <label>{{t.name}}</label>
-                        </div>             
-                        <div class="card-subtitle col-md-1">
-                            <label>{{t.wins}}</label>
-                        </div>             
-                        <div class="card-subtitle col-md-1">
-                            <label>{{t.losts}}</label>
-                        </div>        
-                        <div class="card-subtitle col-md-1">
-                            <label>{{t.percentualWins}}</label>
-                        </div>             
-                        <div class="card-subtitle col-md-1">
-                            <label>{{t.percentualLosts}}</label>
-                        </div>        
-                        <div class="card-subtitle col-md-2">
-                            <label>{{t.totalMatches}}</label>
-                        </div>       
-                    </div>
-                  </div>
-              </div>
+                    <div class="col-md-12" *ngIf="teamHeaderPontuation">                                    
+                            <div class="card-subtitle col-md-3">
+                                <label>Name</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label>Wins</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label>Lose</label>
+                            </div>       
+                            <div class="card-subtitle col-md-1">
+                                <label>Wins%</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label>Lose%</label>
+                            </div>       
+                            <div class="card-subtitle col-md-3">
+                                <label>Total Matches</label>
+                            </div>                               
+                            
+                            <div class="card-subtitle col-md-3">
+                                <label style="color: black">{{teamHeaderPontuation.name}}</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{teamHeaderPontuation.wins}}</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{teamHeaderPontuation.losts}}</label>
+                            </div>        
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{teamHeaderPontuation.percentualWins}}</label>
+                            </div>             
+                            <div class="card-subtitle col-md-1">
+                                <label style="color: black">{{teamHeaderPontuation.percentualLosts}}</label>
+                            </div>        
+                            <div class="card-subtitle col-md-2">
+                                <label style="color: black">{{teamHeaderPontuation.totalMatches}}</label>
+                            </div>                               
+                        </div>
+                        <hr>   
+                  <table *ngIf="teamPontuations" class="table order-table">
+                        <tr>
+                          <th style='width:150px;' (click)="SortList(teamPontuations, 'name')" [ngClass]="{ 'asc': sortingDesc['name'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
+                            <div>
+                              <label>Name</label>
+                            </div>
+                  
+                            <span class="order-icons-wrapper">
+                              <i class="fa fa-chevron-up order-icons"></i>
+                              <i class="fa fa-chevron-down order-icons"></i>
+                            </span>
+                          </th>
+                  
+                          <th style='width:150px;' (click)="SortList(teamPontuations, 'wins')" [ngClass]="{ 'asc': sortingDesc['wins'], 'desc': !sortingDesc['wins'], 'active': selectTableRow == 'wins' }">
+                            <div>
+                              <label>Wins</label>
+                            </div>
+                  
+                            <span class="order-icons-wrapper">
+                              <i class="fa fa-chevron-up order-icons"></i>
+                              <i class="fa fa-chevron-down order-icons"></i>
+                            </span>
+                          </th>
+                          <th style='width:150px;' (click)="SortList(teamPontuations, 'losts')" [ngClass]="{ 'asc': sortingDesc['losts'], 'desc': !sortingDesc['losts'], 'active': selectTableRow == 'losts' }">
+                            <div>
+                              <label>Losts</label>
+                            </div>
+                  
+                            <span class="order-icons-wrapper">
+                              <i class="fa fa-chevron-up order-icons"></i>
+                              <i class="fa fa-chevron-down order-icons"></i>
+                            </span>
+                          </th>
+                          <th style='width:150px;' (click)="SortList(teamPontuations, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['percentualWins'], 'desc': !sortingDesc['percentualWins'], 'active': selectTableRow == 'percentualWins' }">
+                            <div>
+                              <label>%Wins</label>
+                            </div>
+                  
+                            <span class="order-icons-wrapper">
+                              <i class="fa fa-chevron-up order-icons"></i>
+                              <i class="fa fa-chevron-down order-icons"></i>
+                            </span>
+                          </th>
+                          <th style='width:150px;' (click)="SortList(teamPontuations, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['percentualLosts'], 'desc': !sortingDesc['percentualLosts'], 'active': selectTableRow == 'percentualLosts' }">
+                              <div>
+                                <label>%Losts</label>
+                              </div>
+                    
+                              <span class="order-icons-wrapper">
+                                <i class="fa fa-chevron-up order-icons"></i>
+                                <i class="fa fa-chevron-down order-icons"></i>
+                              </span>
+                            </th>
+                            <th style='width:150px;' (click)="SortList(teamPontuations, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['totalMatches'], 'desc': !sortingDesc['totalMatches'], 'active': selectTableRow == 'totalMatches' }">
+                                <div>
+                                  <label>Total</label>
+                                </div>
+                      
+                                <span class="order-icons-wrapper">
+                                  <i class="fa fa-chevron-up order-icons"></i>
+                                  <i class="fa fa-chevron-down order-icons"></i>
+                                </span>
+                              </th>
+                          <th>
+                          </th>
+                        </tr>                                        
+                        <tr *ngFor='let usuario of teamPontuations'>
+                          <td>{{usuario.name}}</td>
+                          <td>{{usuario.wins}}</td>
+                          <td>{{usuario.losts}}</td>
+                          <td>{{usuario.percentualWins}}</td>
+                          <td>{{usuario.percentualLosts}}</td>
+                          <td>{{usuario.totalMatches}}</td>                                  
+                        </tr>
+                      </table>
+                  
+             </div>
             </div>
-            
+            <div class="container-floating">            
+                <div class="floating-button">
+                    <span class="letter">
+                    <div class="t-left t-sm" data-tooltip="Invite">
+                        <button (click)="inviteModal.open();" class="btn-clean">
+                        <span class="letter">
+                            <span class="fa fa-plus"></span>
+                        </span>
+                        </button>
+                    </div>
+                    </span>
+                </div>
+            </div>
           </div>                          
         </tab>
         
@@ -353,8 +443,23 @@
             <button (click)="modalUploadLogo.close()" class="btn-action">Cancelar</button>          
         </div>
       </modal-content>
-
   </modal>
+
+  <modal #inviteModal title="Invite a user" [closeOnOutsideClick]="false">
+        <modal-content class="content">
+        <div class="col-md-9">
+                <div class="card-subtitle col-md-3">
+                    <label>EMAIL</label>
+                </div>
+                <div class="card-subtitle col-md-9">
+                    <input type="text" [(ngModel)]="emailToInvite">
+                </div>
+            </div>
+          <div class="button-wrapper">
+              <button (click)="invitePlayer()" class="btn-action">Invite</button>                        
+          </div>
+        </modal-content>  
+    </modal>
 
   <modal #modalProfileLogo title="Profile Image" [closeOnOutsideClick]="false">
       <modal-content class="content">

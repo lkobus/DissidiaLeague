@@ -63,6 +63,7 @@
     <Compile Include="Nancy\DTO\Matches\MatchDTO.cs" />
     <Compile Include="Nancy\DTO\UserRegisterDTO.cs" />
     <Compile Include="Nancy\EndpointsConfiguration\EndpointConfigurationEnum.cs" />
+    <Compile Include="Nancy\Integrations\Facebook\FacebookModule.cs" />
     <Compile Include="Nancy\Modules\AuthenticationModule.cs" />
     <Compile Include="Nancy\Modules\Dissidia\DissidiaModule.cs" />
     <Compile Include="Nancy\Modules\Dissidia\TeamModule.cs" />

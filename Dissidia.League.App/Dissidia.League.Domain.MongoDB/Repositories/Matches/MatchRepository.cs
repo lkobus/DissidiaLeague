@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dissidia.League.Domain.Entities;
+using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Enums.Entities;
 using Dissidia.League.Domain.Repositories.Interfaces;
 using MongoDB.Driver;
@@ -26,6 +27,13 @@ namespace Dissidia.League.Domain.MongoDB.Repositories.Matches
             var task = _collection.FindAsync(p => p.Date >= from);
             task.Wait();
             return task.Result.ToList();
+        }
+
+        public List<Match> GetTeamMatches(string teamId)
+        {
+            var task = _collection.FindAsync(p => (p.TeamA == teamId || p.TeamB == teamId) && p.Type == MatchTypeEnum.TEAM.Codigo);
+            task.Wait();
+            return task.Result.ToList();            
         }
     }
 }

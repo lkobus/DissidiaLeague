@@ -116,6 +116,12 @@ namespace Dissidia.League.App.Nancy.Modules
                 return Thread.CurrentThread.ManagedThreadId;
                 
             };
+
+            Get[EndpointConfigurationEnum.GET_NICKS_BY_ID] = p =>
+            {
+                string result = _authService.GetNicknameById(p.userId.ToString());
+                return Response.AsJson(result);                
+            };
         }
     }
 }

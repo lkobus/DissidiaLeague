@@ -21,7 +21,7 @@ namespace Dissidia.League.App.Nancy.Modules.Dissidia
     public class TeamModule : NancyModule
     {
 
-        private ITeamService _teamService;
+        private ITeamService _teamService;        
         private ITeamPontuationService _teamPontuationService;
 
         public TeamModule(IBootstrapInjection injection)
@@ -107,6 +107,19 @@ namespace Dissidia.League.App.Nancy.Modules.Dissidia
                     return Response.AsJson(new GenericErrorDTO(ex));
                 }
             };
+
+            Put[EndpointConfigurationEnum.INVITE_PLAYER_TEAM] = p =>
+            {
+                if (p.email.ToString().Contains("@"))
+                {                    
+                    _teamService.InvitePlayer(p.email.ToString(), p.teamId.ToString());
+                    return HttpStatusCode.Accepted;
+                }
+                else
+                {
+                    return HttpStatusCode.NotAcceptable;
+                }                                
+            };            
 
             Get[EndpointConfigurationEnum.GET_TEAM_PONTUATIONS] = p =>
             {

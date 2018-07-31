@@ -6,6 +6,6 @@ namespace Dissidia.League.Domain.Repositories.Interfaces.Gamification
 {
     public interface ITeamPontuationRepository : IBaseRepository<TeamPontuation>
     {
-        List<string> GetTeamsPontuationsIdsFromMatchId(string matchId);        
+        List<string> GetTeamsPontuationsIdsFromMatchId(string teamId);        
     }
 }

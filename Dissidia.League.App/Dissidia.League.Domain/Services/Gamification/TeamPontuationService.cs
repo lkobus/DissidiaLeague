@@ -3,6 +3,7 @@ using Dissidia.League.Domain.Entities.Gamification;
 using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Enums.Gamification;
 using Dissidia.League.Domain.Events.Matches;
+using Dissidia.League.Domain.Repositories.Interfaces;
 using Dissidia.League.Domain.Repositories.Interfaces.Dissidia;
 using Dissidia.League.Domain.Repositories.Interfaces.Gamification;
 using Dissidia.League.Domain.Services.Interfaces.Gamification;
@@ -17,19 +18,24 @@ namespace Dissidia.League.Domain.Services.Gamification
     {
         private ITeamPontuationRepository _teamPontuationRepository;
         private ITeamRepository _teamRepository;
+        private IMatchRepository _matchRepository;
         private IPlayerPontuationService _playerPontuation;
 
         public TeamPontuationService(ITeamPontuationRepository teamPontuationRepository, ITeamRepository teamRepository, 
-            IPlayerPontuationService playerPontuation)
+            IPlayerPontuationService playerPontuation, IMatchRepository matchRepository)
         {
             _teamPontuationRepository = teamPontuationRepository;
             _teamRepository = teamRepository;
             _playerPontuation = playerPontuation;
+            _matchRepository = matchRepository;
         }
 
         public List<ScorePontuation> GetTeamPontuations(string teamId)
         {
-            var team = _teamRepository.GetById(teamId);            
+            var team = _teamRepository.GetById(teamId);
+            var matches = _teamPontuationRepository.GetTeamsPontuationsIdsFromMatchId(teamId);
+
+
             var players = team.Members.Select(m => _playerPontuation.GetPlayerPontuation(m)).ToList();
             var totalWins = players.Sum(p => p.Wins);
             var totalLosts = players.Sum(p => p.Losts);

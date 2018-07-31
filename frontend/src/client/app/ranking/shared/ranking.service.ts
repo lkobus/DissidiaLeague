@@ -74,7 +74,7 @@ export class RankingService extends BaseService {
     var url = this.BasePath() + "dissidia/team/pontuations/" + teamId;
     return this.http.get(url, { headers: headers })
       .toPromise()
-      .then(response => response.json() as PlayerPontuation)
+      .then(response => response.json() as PlayerPontuation[])
       .catch(this.handleErrorPromise);
   }
 

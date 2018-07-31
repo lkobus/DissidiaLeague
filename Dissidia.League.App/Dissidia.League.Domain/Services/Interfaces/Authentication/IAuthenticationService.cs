@@ -12,5 +12,6 @@ namespace Dissidia.League.Domain.Services.Interfaces.Authentication
         Stream GetImage(string userId);
         Stream GetImageFromNick(string nickName);
         void SubmitUserImage(string userId, Stream image);
+        string GetNicknameById(string id);
     }
 }

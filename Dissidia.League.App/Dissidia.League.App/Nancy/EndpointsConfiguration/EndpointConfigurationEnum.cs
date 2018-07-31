@@ -25,6 +25,8 @@ namespace Dissidia.League.App.Nancy.EndpointsConfiguration
         public static EndpointConfigurationEnum GET_IMAGE_USER_BY_NICK = new EndpointConfigurationEnum(17, "dissidia/user/image/nickname/{nickname}");
         public static EndpointConfigurationEnum GET_PLAYER_PONTUATION_BY_ID_AND_DATE = new EndpointConfigurationEnum(18, "dissidia/player/pontuations/{userId}/{from}/{until}");
         public static EndpointConfigurationEnum GET_PLAYER_LINE_GRAPH = new EndpointConfigurationEnum(19, "dissidia/player/graph/line/{userId}/{period}/{typ}");
+        public static EndpointConfigurationEnum INVITE_PLAYER_TEAM = new EndpointConfigurationEnum(20, "dissidia/team/invite/{teamId}/{email}");
+        public static EndpointConfigurationEnum GET_NICKS_BY_ID = new EndpointConfigurationEnum(21, "dissidia/user/nickname/{userId}");
 
         protected EndpointConfigurationEnum(int codigo, string valor) : base(codigo, valor)
         {

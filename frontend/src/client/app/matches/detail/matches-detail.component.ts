@@ -135,5 +135,9 @@ export class MatchesDetailComponent implements OnInit {
 
     this.toastService.errorNotification('Erro', message);
   }
+
+  goBack(){    
+    this.router.navigateByUrl('matches' + "?CACHE=true");
+  }
 }
 

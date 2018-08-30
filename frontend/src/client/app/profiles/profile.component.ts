@@ -16,6 +16,7 @@ import { List } from 'linqts';
 import { IMyDpOptions, IMyDateModel } from 'mydatepicker';
 import { CharEnum } from '../matches/model/charEnum';
 import { MatchesService } from '../matches/shared/matches.service';
+import { LineGraph } from './model/lineGraph.dto';
 
 @Component({
   moduleId: module.id,
@@ -125,7 +126,8 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   public lineChartData:Array<any> = [
     {data: [65, 59, 80, 81, 56, 55, 40], label: 'Wins'},
     {data: [28, 48, 40, 19, 86, 27, 90], label: 'Loss'},    
-  ];
+  ];  
+  
   public lineChartLabels:Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
   // Radar
@@ -136,15 +138,28 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
      {data: [28, 48, 40, 19], label: 'Loss'}
    ];
 
-  ngOnInit(): void {    
+
+   drawLineGraph(p:LineGraph){
+    this.lineChartLabels = p.labels;            
+    this.lineChartData = [
+      {data: p.losts, label: "Losts"},
+      {data: p.wins, label: "Wins"}
+    ];      
+    var max = new List(p.wins).Max();
+    var maxLost = new List(p.losts).Max();
+
+    if(max > maxLost){
+      this.lineChartOptions = this.getLineChartOption(0, max);
+    } else {
+      this.lineChartOptions = this.getLineChartOption(0, maxLost);
+    }
+   }
+  ngOnInit(): void {        
     this.rankingService.getLineGraph(this.period, this.type)
     .then(p =>{
-      this.lineChartData = [
-        {data: p.losts, label: "Losts"},
-        {data: p.wins, label: "Wins"}
-      ];
-       this.lineChartLabels = p.labels;       
+      this.drawLineGraph(p);
     });
+
     this.matchService.getChars()
     .then(p => this.charEnums = p);
 
@@ -312,19 +327,27 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
     this.period = value;
     this.rankingService.getLineGraph(this.period, this.type)
     .then(p =>{
-      this.lineChartData = [
-        {data: p.losts, label: "Losts"},
-        {data: p.wins, label: "Wins"}
-      ];
-       this.lineChartLabels = p.labels;       
+      this.drawLineGraph(p);
     });
   }
   charEnums:CharEnum[];
 
     
   public lineChartOptions:any = {
-    responsive: true
+    responsive: true,
+    scales: {
+      yAxes: [{id: 'y-axis-1', type: 'linear', position: 'left', ticks: {min: 0, max:100}}]
+    }
   };
+
+  getLineChartOption(min:number,max:number){
+    return {
+      responsive: true,
+      scales: {
+        yAxes: [{id: 'y-axis-1', type: 'linear', position: 'left', ticks: {min: min, max:max}}]
+      }
+    }
+  }
   
   
   public lineChartLegend:boolean = true;

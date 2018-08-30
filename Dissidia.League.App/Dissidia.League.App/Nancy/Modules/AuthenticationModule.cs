@@ -39,6 +39,8 @@ namespace Dissidia.League.App.Nancy.Modules
                 return Response.AsJson(id, HttpStatusCode.Accepted);
             };
 
+            
+
             Post[EndpointConfigurationEnum.REGISTER_USER] = p =>
             {
                 try
@@ -64,7 +66,7 @@ namespace Dissidia.League.App.Nancy.Modules
                 var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
                 var multipart = new HttpMultipart(this.Request.Body, boundary);
                 var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
-                var teamId = p.userId;
+                    var teamId = p.userId;
                 _authService.SubmitUserImage(teamId, bodyStream);
                 return HttpStatusCode.OK;
             };
@@ -113,8 +115,7 @@ namespace Dissidia.League.App.Nancy.Modules
 
             Get["oi"] = p =>
             {
-                return Thread.CurrentThread.ManagedThreadId;
-                
+                return Thread.CurrentThread.ManagedThreadId;                
             };
 
             Get[EndpointConfigurationEnum.GET_NICKS_BY_ID] = p =>

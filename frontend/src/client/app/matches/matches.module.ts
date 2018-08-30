@@ -11,11 +11,14 @@ import { MatchesService } from './shared/matches.service';
 import { MatchesComponent } from './matches.component';
 import { MatchesDetailComponent } from './detail/matches-detail.component';
 import { MatchesRoutingModule } from './matches-routing.module';
+import { MatDatepickerModule, MatRadioModule } from '@angular/material';
 
 @NgModule({
   imports: [CommonModule,
     MatchesRoutingModule,
     BrowserModule,
+    MatDatepickerModule,
+    MatRadioModule,
     FormsModule,
     HttpModule,
     SharedMaskModule,

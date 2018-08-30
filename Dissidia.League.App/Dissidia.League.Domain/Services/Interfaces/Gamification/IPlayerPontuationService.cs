@@ -10,6 +10,8 @@ namespace Dissidia.League.Domain.Services.Interfaces.Gamification
         void DeleteByMatchId(string matchId);
         void OnMatchResolved(object sender, OnMatchDoneArgs args);
         List<ScorePontuation> GetPlayersPontuations();
+        List<ScorePontuation> GetSoloTeamsPontuations();
+        List<ScorePontuation> GetSoloBestDuosPontuation();
         List<ScorePontuation> GetPlayerInfo(string userId);
         List<ScorePontuation> GetPlayerInfo(string userId, DateTime from, DateTime until);
         LineGraph GetLineGraph(string id, int period, int type);

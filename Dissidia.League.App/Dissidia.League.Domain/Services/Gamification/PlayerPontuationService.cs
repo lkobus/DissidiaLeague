@@ -11,13 +11,17 @@ using Dissidia.League.Domain.Enums;
 using Dissidia.League.Domain.Enums.Gamification;
 using Dissidia.League.Domain.Repositories.Interfaces;
 using Dissidia.League.Domain.Enums.Dissidia;
+using System.Globalization;
+using Dissidia.League.Domain.ValueObjects.Matche;
+using Dissidia.League.Domain.ValueObjects.Match;
+using Dissidia.League.Domain.Tools.Helpers.Graph;
+using MoreLinq;
+using Dissidia.League.Domain.Enums.Matches;
 
 namespace Dissidia.League.Domain.Services.Gamification
 {
     public class PlayerPontuationService : IPlayerPontuationService
-    {
-
-        private DateTime _start = new DateTime(2018, 02, 1);
+    {        
         private IMatchRepository _matchRepository;
         private IPlayerResultsRepository _playerResultsRepository;
         private IUserRepository _userRepository;
@@ -46,9 +50,29 @@ namespace Dissidia.League.Domain.Services.Gamification
             return CalculateScores(_playerResultsRepository.GetAll().GroupBy(p=> p.Info.Name), ScoreTypeEnum.PLAYER);
         }        
 
+        
+
+
         private List<ScorePontuation> CalculateUserScores(List<PlayerResults> playersResults)
         {            
             return CalculateScores(playersResults.GroupBy(p => p.Info.Name), ScoreTypeEnum.PLAYER);
+        }
+
+        private ScorePontuation CalculateUserScoresBy(List<PlayerResults> playersResults, string value, ScoreTypeEnum type)
+        {
+            if (ScoreTypeEnum.CHAR == type)
+            {
+                return CalculateCharScores(playersResults).FirstOrDefault(p => p.Name == value);
+            }
+            else if (ScoreTypeEnum.PLAYER == type)
+            {
+                return CalculateScores(playersResults.GroupBy(p => p.Info.Name), type)
+                .FirstOrDefault(p => p.Name == value);
+            }
+            else
+            {
+                return CalculateRoleScores(playersResults).FirstOrDefault(p => p.Name == value);
+            }                    
         }
 
         private List<ScorePontuation> CalculateCharScores(List<PlayerResults> playersResults)
@@ -63,24 +87,27 @@ namespace Dissidia.League.Domain.Services.Gamification
 
         private List<ScorePontuation> CalculateScores(IEnumerable<IGrouping<string,PlayerResults>> results, ScoreTypeEnum scoreType)
         {            
-            return results.ToList().Select(player =>
-            {
-                 var totalWins = player.Count(p => p.Winner == true);
-                 var totalLosts = player.Count(p => p.Winner == false);
-                
-                 return new ScorePontuation(player.Key, totalWins, totalLosts, scoreType);
+            return results.ToList().Where(p => !string.IsNullOrEmpty(p.Key) ||
+                !string.IsNullOrWhiteSpace(p.Key)).Select(player =>
+            {                
+                var totalWins = player.Count(p => p.Winner == true);
+                var totalLosts = player.Count(p => p.Winner == false);
+                return new ScorePontuation(player.Key, totalWins, totalLosts, scoreType);               
+                 
             }).ToList();            
         }
 
         public void OnMatchResolved(object sender, OnMatchDoneArgs args)
         {
-            if (!args.IsOCRUpdate)
+            if(args.Match.Status == MatchStatusEnum.CONCLUDED)
             {
-                _playerResultsRepository.DeleteByMatchId(args.Match.Id);                
+                if (!args.IsOCRUpdate)
+                {
+                    _playerResultsRepository.DeleteByMatchId(args.Match.Id);
+                }
+                args.Match.PlayersTeamLooser.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreatLost(p, args.Match.Id).Instance));
+                args.Match.PlayersTeamWinner.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreateWin(p, args.Match.Id).Instance));
             }            
-            args.Match.PlayersTeamLooser.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreatLost(p, args.Match.Id).Instance));
-            args.Match.PlayersTeamWinner.ForEach(p => _playerResultsRepository.Upsert(PlayerResults.Factory.CreateWin(p, args.Match.Id).Instance));
-
         }
 
         public List<ScorePontuation> GetPlayerInfo(string id)
@@ -113,91 +140,35 @@ namespace Dissidia.League.Domain.Services.Gamification
             var results = _playerResultsRepository.GetByUser(user);                        
 
             var matches = results.Select(r => r.MatchId);
-            var matchesPeriod = _matchRepository.GetMatchesFrom(GetDateFromPeriod(period));
+            var matchesPeriod = _matchRepository.GetMatchesFrom(CalculateLineGraphHelper.GetDateFromPeriod(period));
             var avaliableMatches = matchesPeriod.Where(m => matches.Contains(m.Id))
                 .ToList();;
 
             var matchResult = avaliableMatches.Join(results,
                 m => m.Id,
-                s => s.MatchId,
-                (match, score) => new { Match = match, Score = score }
-                );
+                s => s.MatchId, 
+                (match, score) => new MatchScoreGroup(match, score))
+                .ToList();
 
-            var matchGroup = matchResult.GroupBy(p => p.Match.Date.ToString("dd/MM/yyyy")).ToList();
+            var resultGroup = CalculateLineGraphHelper.GroupByPeriod(period, matchResult);
+            var data = new List<LineGraphData>();
 
-            var wins = new List<int>();
-            var losts = new List<int>();
-            var label = new List<string>();
             if (IsChar(type))
             {
-                results.RemoveAll(p => p.Info.Character != type);                
-                matchGroup.ForEach(group =>
-                {
-                    List<PlayerResults> scores = group.Select(p => p.Score).ToList();                    
-                    var score = CalculateCharScores(scores).FirstOrDefault(p => p.Name == ((CharEnum)type).Valor);
-                    if(score != null)
-                    {
-                        wins.Add(score.Wins);
-                        losts.Add(score.Losts);
-                        label.Add(group.Key);
-                    }
-                    
-                });                
+                data = CalculateLineGraphHelper.CalculateLineGraphData(resultGroup, ((CharEnum)type).Valor, ScoreTypeEnum.CHAR, CalculateUserScoresBy);                
             }
             else if (IsRole(type))
             {
-                results.RemoveAll(p => ((CharEnum)p.Info.Character).Role != GetValueByType(type));
-                matchGroup.ForEach(group =>
-                {
-                    List<PlayerResults> scores = group.Select(p => p.Score).ToList();
-                    var score = CalculateRoleScores(scores).FirstOrDefault(p => p.Name == GetValueByType(type));
-                    wins.Add(score.Wins);
-                    losts.Add(score.Losts);
-                    label.Add(group.Key);
-                });
+                data = CalculateLineGraphHelper.CalculateLineGraphData(resultGroup, ((RolesEnum)type).Valor, ScoreTypeEnum.ROLE, CalculateUserScoresBy);                
             }
             else
             {
-                matchGroup.ForEach(group =>
-                {
-                    List<PlayerResults> scores = group.Select(p => p.Score).ToList();
-                    var score = CalculateUserScores(scores).FirstOrDefault(p => p.Name == user.Credentials.Username);
-                    wins.Add(score.Wins);
-                    losts.Add(score.Losts);
-                    label.Add(group.Key);
-                });
+                data = CalculateLineGraphHelper.CalculateLineGraphData(resultGroup, user.Credentials.Username, ScoreTypeEnum.PLAYER, CalculateUserScoresBy);                
             }
-            return new LineGraph(label, wins, losts);
-        }
+            return new LineGraph(data);
+        }                
 
-        private DateTime GetDateFromPeriod(int period)
-        {
-            if(period == ScoreLineGraphEnum.CURRENT_WEEK)
-            {
-                return DateTime.Now.AddDays(-7);
-            }
-            else if(period == ScoreLineGraphEnum.LAST_TWO_WEEK)
-            {
-                return DateTime.Now.AddDays(-14);
-            }
-            else if (period == ScoreLineGraphEnum.LAST_THREE_WEEK)
-            {
-                return DateTime.Now.AddDays(-21);
-            }            
-            else if (period == ScoreLineGraphEnum.LAST_THREE_MONTH)
-            {
-                return DateTime.Now.AddMonths(-3);
-            }
-            else if(period == ScoreLineGraphEnum.ALL_TIME)
-            {
-                return _start;
-            }
-            else
-            {
-                throw new ArgumentException($"period not supported : {period}");
-            }
-
-        }
+        
 
         private string GetValueByType(int type)
         {
@@ -223,7 +194,7 @@ namespace Dissidia.League.Domain.Services.Gamification
                 }
                 else
                 {
-                    return "PLAYER";
+                    return "PLAYER"; ;
                 }
                 return CharEnum.ToList().FirstOrDefault(p => p.Codigo == type).Valor;
             }
@@ -244,5 +215,98 @@ namespace Dissidia.League.Domain.Services.Gamification
         {
             return type >= 0;
         }
+
+        public List<ScorePontuation> GetSoloBestDuosPontuation()
+        {
+            var result = new List<ScorePontuation>();
+            var matches = _matchRepository.GetAllConcluded();
+
+         
+            var last = 1;
+            var winners = new List<IGrouping<string, Entities.Match>>();
+            var loosers = new List<IGrouping<string, Entities.Match>>();
+            for (var i = 0; i < 2; i++)
+            {
+                
+                winners = matches.GroupBy(p =>
+                    string.Join(",", p.PlayersTeamWinner.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[i] + ","+
+                    string.Join(",", p.PlayersTeamWinner.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[last]
+                ).Concat(winners).ToList();
+
+                loosers = matches.GroupBy(p =>
+                    string.Join(",", p.PlayersTeamLooser.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[i] + "," +
+                    string.Join(",", p.PlayersTeamLooser.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[last]
+                ).Concat(loosers).ToList();
+
+
+                if (last == 1)
+                {                    
+                    last += 1;
+                    i--;
+                }
+            }
+
+            return CalculateSoloScorePontuation(winners, loosers);
+        }
+
+        public List<ScorePontuation> GetSoloTeamsPontuations()
+        {
+            var result = new List<ScorePontuation>();
+            var matches = _matchRepository.GetAllConcluded();
+            
+            var winners = matches.GroupBy(p =>
+                string.Join(",", p.PlayersTeamWinner.Select(c => c.Name).OrderBy(c => c).ToArray()                
+                )
+            );
+            var loosers = matches.GroupBy(p =>
+                string.Join(",", p.PlayersTeamLooser.Select(c => c.Name).OrderBy(c => c).ToArray())
+            );            
+            return CalculateSoloScorePontuation(winners, loosers);
+        }
+
+        private List<ScorePontuation> CalculateSoloScorePontuation(IEnumerable<IGrouping<string, Entities.Match>> winners,
+            IEnumerable<IGrouping<string, Entities.Match>> loosers)
+        {
+            var result = new List<ScorePontuation>();
+            var allTeams = winners.Select(p => p.Key)
+                .Concat(loosers.Select(p => p.Key))
+                .DistinctBy(p => p);
+
+            allTeams.ForEach(team =>
+            {
+                if(!IsEmptyTeam(team))
+                {
+                    var w = GetCountByTeam(team, winners);
+                    var l = GetCountByTeam(team, loosers);
+                    result.Add(new ScorePontuation(team, w, l, ScoreTypeEnum.TEAM));
+                }                
+            });
+            return result;
+        }
+
+        private bool IsEmptyTeam(string team)
+        {
+            var p = team.Split(',');
+            foreach(var c in p)
+            {
+                if(string.IsNullOrEmpty(c) || string.IsNullOrWhiteSpace(c))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        private int GetCountByTeam(string team, IEnumerable<IGrouping<string, Entities.Match>> matches)
+        {
+            var result = 0;
+            matches.Where(p => p.Key == team)
+                .ForEach(m =>
+                {
+                    result += m.Count();
+                });            
+            return result;
+        }
+
     }
 }

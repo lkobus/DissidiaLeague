@@ -16,7 +16,7 @@ import { Tabs } from '../shared/tabs/tabs';
 import { SharedModule } from '../shared/shared.module';
 import { ModalModule } from 'ngx-modal';
 import { ImageUploadModule } from '../angular2-image-upload/index';
-import { ChartsModule } from 'ng2-charts';
+import { ChartsModule } from 'ng4-charts';
 import { MatRadioModule, MatCheckboxModule } from '@angular/material';
 import { MyDatePickerModule, MyDatePicker } from 'mydatepicker';
 import { MatDatepickerModule } from '@angular/material';

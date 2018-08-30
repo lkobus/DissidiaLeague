@@ -19,7 +19,7 @@ namespace Dissidia.League.Domain.Services.Interfaces
         Match GetMatch(string id);
         void UpdateMatch(List<PlayerInfo> playersTeamWinner, List<PlayerInfo> playersTeamLooser, string userId, string matchId);
         List<Match> GetAll();
-
+        List<Match> GetAllPending();
         event OnMatchDoneEventHandler OnMatchUploaded;
         event OnMatchDoneEventHandler OnMatchResolved;
     }

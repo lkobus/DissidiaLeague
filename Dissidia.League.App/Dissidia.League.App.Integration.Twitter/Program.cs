@@ -85,7 +85,15 @@ namespace Dissidia.League.App.Integration.Twitter
 
                                         var ms = new MemoryStream(imageBytes);
                                         Console.WriteLine("Sending new image!");
-                                        SendDescarga("http://localhost:8999/dissidia/match/upload/1", ms, "image");
+                                        try
+                                        {
+                                            SendDescarga("http://localhost:9001/dissidia/match/upload/1", ms, "image");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            //System.IO.File.Delete(fileFullPath);
+                                        }                                                        
+                                        
                                     }
                                 } else
                                 {

@@ -131,6 +131,8 @@ export class ToolbarComponent implements OnInit {
 
   logout() {
     this.authenticationService.logout();
+    this.router.navigateByUrl("/login");
+    
   }  
 
   public selectLanguage = (lang: string) => {

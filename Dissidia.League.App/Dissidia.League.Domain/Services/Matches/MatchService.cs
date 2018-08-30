@@ -35,17 +35,17 @@ namespace Dissidia.League.Domain.Services.Matches
         {
             await Task.Factory.StartNew(() =>
             {
-                var imageFile = SaveImageInStorage(stream);
-                var match = Match.Factory.NewMatch(imageFile, type);
+                var match = Match.Factory.NewMatch(type);
+                var imageFile = SaveImageInStorage(stream, match.Instance.Id);
+                match.WithImage(imageFile);
                 _matchRepository.Upsert(match.Instance);
                 var matchArgs = new OnMatchDoneArgs(match.Instance, type);
                 OnMatchUploaded?.Invoke(this, matchArgs);                
             });            
         }
 
-        private string SaveImageInStorage(Stream stream)
-        {
-            var imageId = Guid.NewGuid().ToString();
+        private string SaveImageInStorage(Stream stream, string imageId)
+        {            
             var filePathOfFile =
                 Path.Combine(_imageStorage, DateTime.Now.ToString("dd-MM-yyyy"));
             if (!Directory.Exists(filePathOfFile))
@@ -142,8 +142,7 @@ namespace Dissidia.League.Domain.Services.Matches
             lock (_lockMatchUpdate)
             {
                 OnMatchResolved?.Invoke(this, new OnMatchDoneArgs(match));
-            }
-            
+            }            
         }
 
         public List<Match> GetAll()
@@ -167,17 +166,44 @@ namespace Dissidia.League.Domain.Services.Matches
             lock (_lockMatchUpdate)
             {
                 var match = _matchRepository.GetById(matchId);
-                match = Match.Factory.From(match)
+
+                if (IsMatchConcluded(playersTeamWinner.Concat(playersTeamLooser).ToList()))
+                {
+                    match = Match.Factory.From(match)
+                    .WithWinners(playersTeamWinner)
+                    .WithLoosers(playersTeamLooser)
+                    .MarkAsConcluded()
+                    .Instance;
+                }
+                else
+                {
+                    match = Match.Factory.From(match)
                     .WithWinners(playersTeamWinner)
                     .WithLoosers(playersTeamLooser)
                     .Instance;
-
+                }
+                
                 _matchRepository.Upsert(match);
                 OnMatchResolved?.Invoke(this, new OnMatchDoneArgs(match, userId));
-            }
-            
+            }            
         }
 
+        private bool IsMatchConcluded(List<PlayerInfo> players)
+        {
+            var result = false;
+            if(players.FirstOrDefault(p => p.Character == CharEnum.UNDEFINED) == null &&
+                players.FirstOrDefault(p => string.IsNullOrWhiteSpace(p.Name) || 
+                string.IsNullOrEmpty(p.Name)) == null)
+            {
+                result = true;
+            }
+            return result;
+        }
 
+        public List<Match> GetAllPending()
+        {
+            return _matchRepository.GetAllPending();            
+        }
     }
 }
+

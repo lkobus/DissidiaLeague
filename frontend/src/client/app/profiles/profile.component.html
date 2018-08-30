@@ -17,7 +17,9 @@
                   <div class="col-md-3">
                     <img class="imgLogo col-md-12" src="{{userLogoImage}}" (click)="modalProfileLogo.open();">
                     <div style="display: block" class="col-md-12">
-                            <canvas *ngIf="playerPontuation?.length > 0" baseChart
+                            <canvas
+                            width="200" height="200"
+                            *ngIf="playerPontuation?.length > 0" baseChart
                                     [datasets]="radarChartData"
                                     [labels]="radarChartLabels"
                                     [chartType]="radarChartType"
@@ -214,7 +216,7 @@
                     <div style="display: block;">
                     <canvas baseChart width="800" height="300"
                                 [datasets]="lineChartData"
-                                    [labels]="lineChartLabels"
+                                [labels]="lineChartLabels"
                                 [options]="lineChartOptions"
                                 [colors]="lineChartColors"
                                 [legend]="lineChartLegend"

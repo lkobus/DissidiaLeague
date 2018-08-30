@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Dissidia.League.Domain.Entities;
 using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Enums.Entities;
+using Dissidia.League.Domain.Enums.Matches;
 using Dissidia.League.Domain.Repositories.Interfaces;
 using MongoDB.Driver;
 
@@ -15,16 +16,33 @@ namespace Dissidia.League.Domain.MongoDB.Repositories.Matches
 
         }
 
+        public List<Match> GetAllConcluded()
+        {
+            return GetByStatus(MatchStatusEnum.CONCLUDED);
+        }
+
+        public List<Match> GetAllPending()
+        {
+            return GetByStatus(MatchStatusEnum.PENDING);
+        }
+
+        private List<Match> GetByStatus(MatchStatusEnum status)
+        {
+            var task = _collection.FindAsync(p => p.Status == status);
+            task.Wait();
+            return task.Result.ToList();
+        }
+
         public List<Match> GetMatchBetween(DateTime from, DateTime until)
         {
-            var task = _collection.FindAsync(p => p.Date >= from && p.Date <= until);
+            var task = _collection.FindAsync(p => p.Date >= from.ToUniversalTime() && p.Date <= until.ToUniversalTime());
             task.Wait();
             return task.Result.ToList();            
         }
 
         public List<Match> GetMatchesFrom(DateTime from)
         {
-            var task = _collection.FindAsync(p => p.Date >= from);
+            var task = _collection.FindAsync(p => p.Date >= from.ToUniversalTime());
             task.Wait();
             return task.Result.ToList();
         }

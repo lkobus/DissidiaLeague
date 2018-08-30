@@ -30,6 +30,7 @@ namespace Dissidia.League.App.Nancy
 #if DEBUG
 
 #else
+                /*
                 try
                 {
                     if (!(ctx.Request.Url.ToString().Contains("/login.html") ||
@@ -48,7 +49,7 @@ namespace Dissidia.League.App.Nancy
                 catch (Exception)
                 {
                     return new RedirectResponse("http://localhost:8999/forbidden", RedirectResponse.RedirectType.Temporary);
-                }
+                }*/
 #endif
 
                 return null;
@@ -59,7 +60,7 @@ namespace Dissidia.League.App.Nancy
             var configurationGlobal = new GlobalConfiguration(
                 new DatabaseConfiguration("Dissidia", "mongodb://localhost"),
                 new OCRConfiguration(@"C:\temp\OCR\Dissidia", @"C:\Users\leonardo.kobus\Desktop\lobby\input"),
-                "http://localhost:8999", @"C:\temp\dissidia\tokenDir");
+                "http://localhost:9001", @"C:\temp\dissidia\tokenDir");
             var i  = new BoostrapInjection(configurationGlobal);
             i.Services.RegisterAuthentication(new AuthenticationService(i.Repositories.User));
             Injection = i;              
@@ -85,5 +86,6 @@ namespace Dissidia.League.App.Nancy
                                 .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
             });
         }
+
     }
 }

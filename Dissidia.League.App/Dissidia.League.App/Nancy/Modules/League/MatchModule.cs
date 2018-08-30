@@ -2,6 +2,7 @@
 using Dissidia.League.App.Nancy.EndpointsConfiguration;
 using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
+using Dissidia.League.Domain.Repositories.Interfaces;
 using Dissidia.League.Domain.Services.Interfaces;
 using Nancy;
 using Nancy.Extensions;
@@ -17,16 +18,23 @@ namespace Dissidia.League.App.Nancy.Modules.League
     public class MatchModule : NancyModule
     {
         private IMatchesService _matcheService;
-
+        private IMatchRepository _matchRepository;
         public MatchModule(IBootstrapInjection injection)
         {
             _matcheService = injection.Services.Match;
-
+            _matchRepository = injection.Repositories.Match;
             Get[EndpointConfigurationEnum.GET_ALL_MATCHES] = p =>
             {
                 var dtos = _matcheService.GetAll()
                 .Select(m => new MatchDTO(m));
                 return Response.AsJson(dtos);                
+            };
+
+            Get[EndpointConfigurationEnum.GET_ALL_MATCHES] = p =>
+            {
+                var dtos = _matcheService.GetAll()
+                .Select(m => new MatchDTO(m));
+                return Response.AsJson(dtos);
             };
 
 
@@ -73,11 +81,50 @@ namespace Dissidia.League.App.Nancy.Modules.League
                 var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
                 var multipart = new HttpMultipart(this.Request.Body, boundary);
                 var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
-                var type = Convert.ToInt32(x.matchType.Value);
+                int type = Convert.ToInt32(x.matchType.Value);
                 await _matcheService.RegisterMatchAsync(bodyStream, (MatchTypeEnum)type);
                 return HttpStatusCode.OK;
             };
 
+            Get["Import"] = p =>
+            {
+                var toImport = JsonConvert.DeserializeObject<List<MatchDTO>>(
+                    System.IO.File.ReadAllText(
+                    @"C:\users\leonardo.kobus\desktop\matches.txt"));
+                toImport.ForEach(m =>
+                {
+                    try
+                    {
+                        var file = GetImageFile(m.Date.AddHours(-3));
+                        var result = Domain.Entities.Match.Factory.FromDTO(
+                            m.Id, m.Date, m.PlayersTeamWinner, m.PlayersTeamLooser,
+                            m.Status, m.Winners, m.Loosers, file, MatchTypeEnum.SOLO
+                            );
+                        _matchRepository.Upsert(result.Instance);
+                    }
+                    catch (Exception ex)
+                    {
+                        var ops = "";
+                    }
+                    
+                });
+                return "ok";
+            };
+
+        }
+
+        private static string GetImageFile(DateTime matchDate)
+        {
+            foreach(var file in Directory.GetFiles($"C:\\temp\\OCR\\Dissidia\\{matchDate.Date.ToString("dd-MM-yyyy")}"))
+            {
+                var info = new FileInfo(file);
+                if(info.CreationTime.Minute == matchDate.Minute &&
+                    info.CreationTime.Hour == matchDate.Hour)
+                {
+                    return file;
+                }
+            }
+            return "";
         }
 
     }

@@ -36,6 +36,16 @@ export class RankingService extends BaseService {
       .catch(this.handleErrorPromise);
   }
 
+  getTeamSoloPontuation(): Promise<PlayerPontuation[]>{
+    var headers = new Headers();
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/team/solo/pontuations";
+    return this.http.get(url, { headers: headers })
+      .toPromise()
+      .then(response => response.json() as PlayerPontuation[])
+      .catch(this.handleErrorPromise);
+  }
+
   getLoggedPlayerPontuation(): Promise<PlayerPontuation[]>{
     var headers = new Headers();
     this.contentTypeApplicationJson(headers);

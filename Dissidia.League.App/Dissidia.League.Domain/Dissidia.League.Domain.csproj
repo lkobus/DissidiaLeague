@@ -42,6 +42,9 @@
     <Reference Include="MongoDB.Driver.Core, Version=2.6.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MongoDB.Driver.Core.2.6.1\lib\net45\MongoDB.Driver.Core.dll</HintPath>
     </Reference>
+    <Reference Include="MoreLinq, Version=3.0.0.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.3.0.0\lib\net451\MoreLinq.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -52,6 +55,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.0.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -115,15 +121,20 @@
     <Compile Include="Services\Matches\MatchService.cs" />
     <Compile Include="Tools\Enums\BaseEnum.cs" />
     <Compile Include="Tools\Enums\IBaseEnum.cs" />
+    <Compile Include="Tools\Helpers\Graph\CalculateLineGraphHelper.cs" />
     <Compile Include="ValueObjects\Authentication\Credentials.cs" />
     <Compile Include="ValueObjects\Authentication\UserSession.cs" />
     <Compile Include="ValueObjects\Gamification\Pontuation\LineGraph.cs" />
     <Compile Include="ValueObjects\Gamification\Pontuation\ScorePontuation.cs" />
+    <Compile Include="ValueObjects\Match\LineGraphData.cs" />
+    <Compile Include="ValueObjects\Match\MatchScoreGroup.cs" />
     <Compile Include="ValueObjects\Match\PlayerInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="ValueObjects\TextFile1.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

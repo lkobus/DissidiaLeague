@@ -108,14 +108,13 @@ export class AuthenticationService extends BaseService {
         }
       })
       .catch(this.handleError);
-  }x
+  }
 
   logout() {
     if (localStorage.getItem('currentUser')) {
       localStorage.removeItem('currentUser');
       localStorage.removeItem('login');
-      localStorage.removeItem('userModulos');
-      window.location.href = window.localStorage.getItem("CURRENT_HOST") + "/index.html";
+      localStorage.removeItem('userModulos');      
     }
   }
 }

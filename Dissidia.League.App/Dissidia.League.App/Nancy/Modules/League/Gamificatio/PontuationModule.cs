@@ -25,6 +25,15 @@ namespace Dissidia.League.App.Nancy.Modules.League.Gamificatio
             Get[EndpointConfigurationEnum.GET_PLAYER_PONTUATION] = p =>
             {
                 var result = _playerPontuation.GetPlayersPontuations().Select(c => new PlayerPontuationDTO(c))
+                .OrderByDescending(c => c.TotalMatches)
+                .ToList();
+                return Response.AsJson(result);
+            };
+
+            Get[EndpointConfigurationEnum.GET_SOLO_TEAM_PONTUATION] = p =>
+            {
+                var result = _playerPontuation.GetSoloTeamsPontuations().Select(c => new PlayerPontuationDTO(c))
+                .OrderByDescending(c => c.TotalMatches)
                 .ToList();
                 return Response.AsJson(result);
             };
@@ -32,8 +41,7 @@ namespace Dissidia.League.App.Nancy.Modules.League.Gamificatio
             Get[EndpointConfigurationEnum.GET_PLAYER_PONTUATION_BY_ID] = p =>
             {
                 var id = p.userId;
-                List<PlayerPontuationDTO> result = new List<PlayerPontuationDTO>();
-                Thread.Sleep(5000);
+                List<PlayerPontuationDTO> result = new List<PlayerPontuationDTO>();                
                 List<ScorePontuation> oi = _playerPontuation.GetPlayerInfo(id);                               
                 return Response.AsJson(oi.Select(c => new PlayerPontuationDTO(c)).ToList());
             };

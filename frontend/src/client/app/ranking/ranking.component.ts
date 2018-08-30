@@ -36,7 +36,7 @@ export class RankingComponent extends BaseTableComponent implements OnInit {
 
   getUsuarios(): void {    
     this.usuarioService
-    .getPlayersPontuation()
+    .getTeamSoloPontuation()
     .then(usuarios => this.listUsuarios = usuarios);
   }
 

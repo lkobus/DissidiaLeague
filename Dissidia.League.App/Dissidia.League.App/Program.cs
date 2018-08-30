@@ -9,7 +9,7 @@ namespace Dissidia.League.App
         {
             try
             {
-                using (var host = new NancyHost(new Uri("http://localhost:8999")))
+                using (var host = new NancyHost(new Uri("http://localhost:9001")))
                 {
                     host.Start();
                     Console.Write("Press to quit...");

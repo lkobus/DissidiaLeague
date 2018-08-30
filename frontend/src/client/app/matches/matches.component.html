@@ -4,23 +4,22 @@
 
     <div class="toolbar">
 
-      <div class="col-md-9">
+      <div class="col-md-8">
         <h3 class="toolbar-title">
-          Players Scores
+          Matches
         </h3>
-      </div>
-
-      <div class="col-md-3">
-        <div class="input-with-btn">
-          <input type="text" placeholder="Buscar" ngui-auto-complete [(ngModel)]="inputSearch" [source]="listUsuarios" min-chars=1
-            max-num-list=5 value-formatter="nome" list-formatter="codigo - nome" match-formatted=true display-property-name="nome"
-            (valueChanged)="selectAutoComplete($event)" no-match-found-text="Usuário não encontrado" />
-          <button>
-            <i class="icon-loupe"></i>
-          </button>
+        <div class="col-md-4" *ngIf="filtroMatch">
+            <mat-radio-group class="example-radio-group" [(ngModel)]="filtroMatch" >
+                <mat-radio-button class="example-radio-button" [value]="1"  [checked]="checked(1)">
+                    All
+                </mat-radio-button>
+                <mat-radio-button class="example-radio-button" [value]="2"  [checked]="checked(2)">
+                    PENDING
+                </mat-radio-button>                
+            </mat-radio-group>
         </div>
       </div>
-
+      
     </div>
 
 
@@ -70,13 +69,13 @@
         <th></th>              
       </tr>
 
-      <tr *ngFor='let usuario of listUsuarios | paginate: { itemsPerPage: 8, currentPage: p }' (click)="onSelect(usuario)" [class.selected]="usuario === selectedUser">
+      <tr *ngFor='let usuario of listUsuarios | paginate: { itemsPerPage: 8, currentPage: activePage }' (click)="onSelect(usuario)" [class.selected]="usuario.id === activeUser">
         <td>{{usuario.date}}</td>
         <td>{{usuario.winners}}</td>
         <td>{{usuario.loosers}}</td>
         <td>{{usuario.status}}</td>        
         <td>
-          <a href="" [routerLink]="['/matchDetail', usuario.id]">
+          <a href="javascript:void(0)" (click)="gotoDetail(usuario.id);">               
             <i class="icon-pen-2"></i>
           </a>          
         </td>
@@ -84,7 +83,7 @@
     </table>
 
     <div class="toolbar-bottom">
-      <pagination-controls (pageChange)="p = $event" nextLabel="Próximo" previousLabel="Anterior" maxSize=7 autoHide=true directionLinks=true></pagination-controls>
+      <pagination-controls (pageChange)="activePage = $event" nextLabel="Próximo" previousLabel="Anterior" maxSize=7 autoHide=true directionLinks=true></pagination-controls>
     </div>
   </div>
 

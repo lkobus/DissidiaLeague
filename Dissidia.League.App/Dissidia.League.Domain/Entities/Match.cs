@@ -39,6 +39,23 @@ namespace Dissidia.League.Domain.Entities
         {
             public Match Instance { get; private set; }
 
+
+            public MatchFactory FromDTO(string id, DateTime date, List<PlayerInfo> playersTeamWinner, List<PlayerInfo> playersTeamLooser,
+                int? status, string winners, string loosers,string file, MatchTypeEnum type)
+            {
+                Instance = new Match(file, type)
+                {
+                    Date = date,
+                    Id = id,
+                    PlayersTeamLooser = playersTeamLooser,
+                    PlayersTeamWinner = playersTeamWinner,
+                    Status = (int)status,
+                    TeamA = "SOLO Team A",
+                    TeamB = "SOLO Team B"
+                };
+                return this;
+            }
+
             public MatchFactory NewMatch(string filePath, MatchTypeEnum type)
             {
                 if(type == MatchTypeEnum.SOLO)
@@ -58,7 +75,19 @@ namespace Dissidia.League.Domain.Entities
                     };
                 }                
                 return this;
-            }            
+            }
+
+            public MatchFactory NewMatch(MatchTypeEnum type)
+            {
+                NewMatch(string.Empty, type);
+                return this;
+            }
+
+            public MatchFactory WithImage(string imageFile)
+            {
+                Instance.ImageFilePath = imageFile;
+                return this;
+            }
 
             public MatchFactory From(Match match)
             {

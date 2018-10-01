@@ -2,6 +2,7 @@
 using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Events.Matches;
 using Dissidia.League.Domain.ValueObjects.Match;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace Dissidia.League.Domain.Services.Interfaces
     {
         void OnMatchProcessed(object sender, OnMatchDoneArgs args);
         Task RegisterMatchAsync(Stream stream, MatchTypeEnum type);
+        Task RegisterMatchAsync(Stream stream, MatchTypeEnum type, DateTime matchDate);
         void RegisterMatches(List<Stream> stream, MatchTypeEnum type);
         void MarkMatchAsResolved(string matchId, List<PlayerInfo> winners, List<PlayerInfo> loosers);
         Stream GetImage(string matchId);

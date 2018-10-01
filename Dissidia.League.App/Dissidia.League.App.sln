@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.Bootstrap",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.App.Integration.Twitter", "Dissidia.League.App.Integration.Twitter\Dissidia.League.App.Integration.Twitter.csproj", "{A6CC2178-F2D9-4108-B71D-5F3FA70F06D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dissidia.League.App.Helper.FaceRecognition", "Dissidia.League.App.Helper.FaceRecognition\Dissidia.League.App.Helper.FaceRecognition.csproj", "{471B75B6-69FA-47F8-9EBD-E97CB8E41983}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{A6CC2178-F2D9-4108-B71D-5F3FA70F06D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6CC2178-F2D9-4108-B71D-5F3FA70F06D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6CC2178-F2D9-4108-B71D-5F3FA70F06D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{471B75B6-69FA-47F8-9EBD-E97CB8E41983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{471B75B6-69FA-47F8-9EBD-E97CB8E41983}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{471B75B6-69FA-47F8-9EBD-E97CB8E41983}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{471B75B6-69FA-47F8-9EBD-E97CB8E41983}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

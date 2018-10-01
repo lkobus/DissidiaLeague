@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -19,100 +20,132 @@ namespace Dissidia.League.App.Integration.Twitter
     {
         public static void Main(string[] args)
         {
-            using (var browser = new ChromeDriver(@"C:\Projetos\Dissidia\tools"))
+            if (args.Length > 0)
             {
-                browser.Navigate().GoToUrl("https://twitter.com/");
-                Thread.Sleep(2222);
-                var button = browser.FindElementsByTagName("a")
-                    .Where(p => p.Text.ToLower() == "entrar").FirstOrDefault();
-                button.Click();
-                Thread.Sleep(3000);                
-                var inputs = browser.FindElementsByTagName("input");
+                var options = new ParallelOptions();
+                options.MaxDegreeOfParallelism = 3;
+                Parallel.ForEach(System.IO.Directory.GetFiles("C:\\temp\\base"), options, f =>
+                 {
+                     using (var ms = new MemoryStream(System.IO.File.ReadAllBytes(f)))
+                     {
+                         var info = new FileInfo(f);
+                         var date = info.LastWriteTime;
+                         try
+                         {
+                             SendDescarga(ConfigurationManager.AppSettings["API"] + "/" + date.ToString("yyyy-MM-dd_HH-mm-ss"),
+                             ms, info.Name);
+                         }
+                         catch (Exception)
+                         {
+
+                         }
+                         System.IO.File.Delete(f);
+                     }
+                 });
                 
-                foreach(var p in inputs)
-                {
-                    if (p.GetAttribute("placeholder").ToLower().Contains("celular"))
-                    {
-                        if(p.Location.X > 100)
-                        {
-                            p.Click();
-                            p.SendKeys("leonardo.kobus@hbsis.com.br");
-                        }
-                        
-                    } else if(p.GetAttribute("placeholder").ToLower().Contains("senha"))
-                    {
-                        if(p.Location.X > 100)
-                        {
-                            p.Click();
-                            p.SendKeys("9056532a");
-                        }                        
-                    }
                     
-                }                               
-                var enter = browser.FindElementsByTagName("button")
-                    .FirstOrDefault(p => p.Text.ToLower() == "entrar");
-                enter.Click();
-
-                Thread.Sleep(2000);
-
-                while (true)
+                        
+                    
+                
+            }
+            else
+            {
+                using (var browser = new ChromeDriver(@"C:\Projetos\Dissidia\tools"))
                 {
-                    browser.Navigate().GoToUrl("https://twitter.com/mentions");
-                    foreach(var div in browser.FindElementsByTagName("div"))
+                    browser.Navigate().GoToUrl("https://twitter.com/");
+                    Thread.Sleep(2222);
+                    var button = browser.FindElementsByTagName("a")
+                        .Where(p => p.Text.ToLower() == "entrar").FirstOrDefault();
+                    button.Click();
+                    Thread.Sleep(3000);
+                    var inputs = browser.FindElementsByTagName("input");
+
+                    foreach (var p in inputs)
                     {
-                        try
+                        if (p.GetAttribute("placeholder").ToLower().Contains("celular"))
                         {
-                            if (div.GetAttribute("class").ToLower().Contains("adaptivemedia-photocontainer"))
+                            if (p.Location.X > 100)
                             {
-                                var element = div.FindElements(By.TagName("img"));
-                                var imageUrl = element[0].GetAttribute("src");
-                                var urlSplited = imageUrl.Split('/');
-                                var fileName = urlSplited[urlSplited.Length - 1];
+                                p.Click();
+                                p.SendKeys("leonardo.kobus@hbsis.com.br");
+                            }
 
-                                var directory = @"C:\temp\dissidia\twitter";
-                                if (!Directory.Exists(directory))
-                                {
-                                    Directory.CreateDirectory(directory);
-                                }
-                                
-                                var fileFullPath = Path.Combine(directory, fileName);
-                                if (!File.Exists(fileFullPath))
-                                {
-                                    using (var webClient = new WebClient())
-                                    {
-                                        byte[] imageBytes = webClient.DownloadData(imageUrl + ":large");
-                                        System.IO.File.WriteAllBytes(fileFullPath, imageBytes);
-
-                                        var ms = new MemoryStream(imageBytes);
-                                        Console.WriteLine("Sending new image!");
-                                        try
-                                        {
-                                            SendDescarga("http://localhost:9001/dissidia/match/upload/1", ms, "image");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            //System.IO.File.Delete(fileFullPath);
-                                        }                                                        
-                                        
-                                    }
-                                } else
-                                {
-                                    Console.WriteLine("{0} already exist skipping.", fileName);
-                                }                                
+                        }
+                        else if (p.GetAttribute("placeholder").ToLower().Contains("senha"))
+                        {
+                            if (p.Location.X > 100)
+                            {
+                                p.Click();
+                                p.SendKeys("9056532a");
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            var oi = "";
-                        }
-                        
-                    }                                             
-                    Thread.Sleep(5000);
-                }
 
-                Console.ReadKey();
+                    }
+                    var enter = browser.FindElementsByTagName("button")
+                        .FirstOrDefault(p => p.Text.ToLower() == "entrar");
+                    enter.Click();
+
+                    Thread.Sleep(2000);
+
+                    while (true)
+                    {
+                        browser.Navigate().GoToUrl("https://twitter.com/mentions");
+                        foreach (var div in browser.FindElementsByTagName("div"))
+                        {
+                            try
+                            {
+                                if (div.GetAttribute("class").ToLower().Contains("adaptivemedia-photocontainer"))
+                                {
+                                    var element = div.FindElements(By.TagName("img"));
+                                    var imageUrl = element[0].GetAttribute("src");
+                                    var urlSplited = imageUrl.Split('/');
+                                    var fileName = urlSplited[urlSplited.Length - 1];
+
+                                    var directory = @"C:\temp\dissidia\twitter";
+                                    if (!Directory.Exists(directory))
+                                    {
+                                        Directory.CreateDirectory(directory);
+                                    }
+
+                                    var fileFullPath = Path.Combine(directory, fileName);
+                                    if (!File.Exists(fileFullPath))
+                                    {
+                                        using (var webClient = new WebClient())
+                                        {
+                                            byte[] imageBytes = webClient.DownloadData(imageUrl + ":large");
+                                            System.IO.File.WriteAllBytes(fileFullPath, imageBytes);
+
+                                            var ms = new MemoryStream(imageBytes);
+                                            Console.WriteLine("Sending new image!");
+                                            try
+                                            {
+                                                SendDescarga(ConfigurationManager.AppSettings["API"], ms, "image");
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                //System.IO.File.Delete(fileFullPath);
+                                            }
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("{0} already exist skipping.", fileName);
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                var oi = "";
+                            }
+
+                        }
+                        Thread.Sleep(5000);
+                    }
+
+                    Console.ReadKey();
+                }
             }
-            
         }
 
 
@@ -184,9 +217,17 @@ namespace Dissidia.League.App.Integration.Twitter
 
             memStream.Position = 0;
             // Lê a resposta do Promax e retorna para o cliente.
-            response = (HttpWebResponse)request.GetResponse();
-            HttpWebResponse httpResponse = (HttpWebResponse)response;
-            HttpContext.Current.Response.StatusCode = (int)httpResponse.StatusCode;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            } catch(Exception ex)
+            {
+                var oi = "";
+            }
+            
+            
+            HttpWebResponse httpResponse = (HttpWebResponse)response;            
+            //HttpContext.Current.Response.StatusCode = (int)httpResponse.StatusCode;            
             promaxStream = httpResponse.GetResponseStream();
             totalLen = 0;
             string resp = "";

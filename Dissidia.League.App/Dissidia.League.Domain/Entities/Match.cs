@@ -23,6 +23,7 @@ namespace Dissidia.League.Domain.Entities
         public string TeamA { get; private set; }
         public string TeamB { get; private set; }
         public static MatchFactory Factory => new MatchFactory();
+        public bool IsMatchDateEmpty { get { return Date == DateTime.MinValue; } }
 
         private Match(string filePath, int type)
         {
@@ -82,6 +83,7 @@ namespace Dissidia.League.Domain.Entities
                 NewMatch(string.Empty, type);
                 return this;
             }
+
 
             public MatchFactory WithImage(string imageFile)
             {

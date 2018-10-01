@@ -6,9 +6,11 @@ using Dissidia.League.Domain.Repositories.Interfaces;
 using Dissidia.League.Domain.Services.Interfaces;
 using Nancy;
 using Nancy.Extensions;
+using Nancy.Json;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,8 +21,19 @@ namespace Dissidia.League.App.Nancy.Modules.League
     {
         private IMatchesService _matcheService;
         private IMatchRepository _matchRepository;
+
+        private Stream GetImageBodyStream()
+        {
+            var contentTypeRegex = new Regex("^multipart/form-data;\\s*boundary=(.*)$", RegexOptions.IgnoreCase);
+            var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
+            var multipart = new HttpMultipart(Request.Body, boundary);
+            var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
+            return bodyStream;
+        }
+
         public MatchModule(IBootstrapInjection injection)
         {
+            JsonSettings.MaxJsonLength = int.MaxValue;
             _matcheService = injection.Services.Match;
             _matchRepository = injection.Repositories.Match;
             Get[EndpointConfigurationEnum.GET_ALL_MATCHES] = p =>
@@ -77,14 +90,25 @@ namespace Dissidia.League.App.Nancy.Modules.League
 
             Post[EndpointConfigurationEnum.UPLOAD_MATCH, true] = async (x,p) =>
             {
-                var contentTypeRegex = new Regex("^multipart/form-data;\\s*boundary=(.*)$", RegexOptions.IgnoreCase);
-                var boundary = contentTypeRegex.Match(Request.Headers.ContentType).Groups[1].Value;
-                var multipart = new HttpMultipart(this.Request.Body, boundary);
-                var bodyStream = multipart.GetBoundaries().First(b => b.Name == "image").Value;
+                var bodyStream = GetImageBodyStream();
                 int type = Convert.ToInt32(x.matchType.Value);
                 await _matcheService.RegisterMatchAsync(bodyStream, (MatchTypeEnum)type);
                 return HttpStatusCode.OK;
             };
+
+            Post[EndpointConfigurationEnum.UPLOAD_MATCH_DETAILS] = x =>
+            {                
+                var bodyStream = GetImageBodyStream();
+                int type = Convert.ToInt32(x.matchType.Value);
+                string dateStr = x.dateTime.ToString();
+                DateTime date = DateTime.ParseExact(dateStr, "yyyy-MM-dd_HH-mm-ss", CultureInfo.InvariantCulture);
+                var t = _matcheService.RegisterMatchAsync(bodyStream, (MatchTypeEnum)type, date);
+                t.Wait();
+            
+
+                return HttpStatusCode.OK;
+            };
+                                       
 
             Get["Import"] = p =>
             {

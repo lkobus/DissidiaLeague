@@ -113,6 +113,7 @@
     <Compile Include="Services\Interfaces\AccessControl\IUserChangesService.cs" />
     <Compile Include="Services\Interfaces\Authentication\IAuthenticationService.cs" />
     <Compile Include="Services\Interfaces\Dissidia\ITeamService.cs" />
+    <Compile Include="Services\Interfaces\FaceRecognition\IFaceRecognition.cs" />
     <Compile Include="Services\Interfaces\Gamification\IPlayerPontuationService.cs" />
     <Compile Include="Services\Interfaces\Gamification\ITeamPontuationService.cs" />
     <Compile Include="Services\Interfaces\Infrastructure\ISerializationService.cs" />

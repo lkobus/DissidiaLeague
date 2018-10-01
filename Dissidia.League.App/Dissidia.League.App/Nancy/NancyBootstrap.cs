@@ -60,7 +60,7 @@ namespace Dissidia.League.App.Nancy
             var configurationGlobal = new GlobalConfiguration(
                 new DatabaseConfiguration("Dissidia", "mongodb://localhost"),
                 new OCRConfiguration(@"C:\temp\OCR\Dissidia", @"C:\Users\leonardo.kobus\Desktop\lobby\input"),
-                "http://localhost:9001", @"C:\temp\dissidia\tokenDir");
+                "http://localhost", @"C:\temp\dissidia\tokenDir");
             var i  = new BoostrapInjection(configurationGlobal);
             i.Services.RegisterAuthentication(new AuthenticationService(i.Repositories.User));
             Injection = i;              

@@ -33,15 +33,29 @@ namespace Dissidia.League.Domain.Services.Matches
 
         public async Task RegisterMatchAsync(Stream stream, MatchTypeEnum type)
         {
+            await RegisterMatchAsync(stream, type, DateTime.MinValue);
+        }
+
+        public async Task RegisterMatchAsync(Stream stream, MatchTypeEnum type, DateTime date)
+        {
             await Task.Factory.StartNew(() =>
             {
-                var match = Match.Factory.NewMatch(type);
-                var imageFile = SaveImageInStorage(stream, match.Instance.Id);
-                match.WithImage(imageFile);
-                _matchRepository.Upsert(match.Instance);
-                var matchArgs = new OnMatchDoneArgs(match.Instance, type);
-                OnMatchUploaded?.Invoke(this, matchArgs);                
-            });            
+                try
+                {
+                    var match = Match.Factory.NewMatch(type)
+                    .WithDate(date);
+                    var imageFile = SaveImageInStorage(stream, match.Instance.Id);
+                    _matchRepository.Upsert(match.WithImage(imageFile).Instance);
+                    var matchArgs = new OnMatchDoneArgs(match.Instance, type);
+                    OnMatchUploaded?.Invoke(this, matchArgs);
+                }
+                catch (Exception oi)
+                {
+                    var i = "";
+                }
+                
+                
+            });
         }
 
         private string SaveImageInStorage(Stream stream, string imageId)
@@ -74,10 +88,13 @@ namespace Dissidia.League.Domain.Services.Matches
                 .ForEach(match =>
                 {                    
                     var m = match.FirstOrDefault();
-                    result = Factory.From(result)
+                    if(args.Match.IsMatchDateEmpty)
+                    {
+                        result = Factory.From(result)
                         .WithDate(
                             DateTime.ParseExact(match.Key, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture))
                         .Instance;
+                    }                    
                     m.Value.ForEach(player =>
                     {
                         var values = player.Split(';');

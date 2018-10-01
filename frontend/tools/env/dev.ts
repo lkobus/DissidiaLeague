@@ -3,7 +3,7 @@ import Config from '../config';
 
 const DevConfig: EnvConfig = {
   ENV: 'DEV',
-  API: 'http://localhost:9001/',   
+  API: 'http://localhost/',   
   //  API: 'http://localhost/RTM/RTM/',
   // API: 'http://jenkins.app.hbsis.com.br:8089/rtm/',
   CURRENT_HOST: 'http://localhost:' + Config.PORT

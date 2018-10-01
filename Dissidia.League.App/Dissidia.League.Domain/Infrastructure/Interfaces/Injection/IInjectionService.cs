@@ -1,6 +1,7 @@
 ﻿using Dissidia.League.Domain.Services.Interfaces;
 using Dissidia.League.Domain.Services.Interfaces.Authentication;
 using Dissidia.League.Domain.Services.Interfaces.Dissidia;
+using Dissidia.League.Domain.Services.Interfaces.FaceRecognition;
 using Dissidia.League.Domain.Services.Interfaces.Gamification;
 
 namespace Dissidia.League.Domain.Infrastructure.Interfaces.Injection
@@ -9,6 +10,7 @@ namespace Dissidia.League.Domain.Infrastructure.Interfaces.Injection
     {
         IMatchesService Match { get; }
         IOCRService OCR { get; }
+        IFaceRecognitionService FaceRecognition { get; }
         IPlayerPontuationService PlayerPontuation { get; }
         IAuthenticationService Authentication { get; }
         ITeamService Team { get; }

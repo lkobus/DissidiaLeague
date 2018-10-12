@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Dissidia.League.Domain.Entities;
 using Dissidia.League.Domain.Enums.Dissidia;
 using Dissidia.League.Domain.Enums.Entities;
@@ -52,6 +54,22 @@ namespace Dissidia.League.Domain.MongoDB.Repositories.Matches
             var task = _collection.FindAsync(p => (p.TeamA == teamId || p.TeamB == teamId) && p.Type == MatchTypeEnum.TEAM.Codigo);
             task.Wait();
             return task.Result.ToList();            
+        }
+
+        public List<Match> GetAllMatchesFrom(string player)
+        {
+            var elemMatchFilter = Builders<Match>
+                .Filter
+                .ElemMatch(x => x.PlayersTeamLooser, x => x.Name == player);
+
+            var elemMatchFilter2 = Builders<Match>
+                .Filter
+                .ElemMatch(x => x.PlayersTeamWinner, x => x.Name == player);
+            var task1 = _collection.FindAsync(elemMatchFilter);
+            var task2 = _collection.FindAsync(elemMatchFilter2);
+            Task.WaitAll(task1, task2);
+            
+            return task1.Result.ToList().Concat(task2.Result.ToList()).ToList();            
         }
     }
 }

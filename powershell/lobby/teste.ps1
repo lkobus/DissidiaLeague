@@ -1,3 +1,5 @@
+
+
 Function ReadDissidiaFaces($imagePath) {		
     
 	$jobs = @()    
@@ -128,29 +130,15 @@ Function GetPlayerInfoByIndex($index){
 	    }
 }
 
+Function AnalyzeImage($image, $trainDir){
+    ReadDissidiaFaces $image        
+    $faces = $global:locuura
+          
+}
 
 $inputImages = "C:\temp\input"
 $trainDirectory = "C:\temp\trainFaces" 
 
-gci -Path 'C:\temp\base' | foreach {
-    ReadDissidiaFaces $_.FullName
+gci -Path 'C:\temp\analyzeFace' | foreach {
+    AnalyzeImage $_.FullName 'C:\temp\trainFaces'
 }
-
-#TrainDissidiaFaces $inputImages $trainDirectory
-
-
-
-<#
-$r = (ReadDissidiaFaces 'C:\temp\OCR\Dissidia\24-09-2018\5ba987ebcab1200c782945bc.png')
-
-$r.Keys | foreach {
-    Add-Content -Path (Join-Path "C:\temp\data" $_ ) -Value $r[$_]
-}
-
-#$mainBase = Get-Content "c:\temp\data\Player3TeamB"
-
-#gci -Path "C:\temp\OCR\Dissidia" -Recurse | Where { -Not $_.PSIsContainer } | foreach {
-    #$oi = ReadDissidiaFaces $_.FullName
-    #$result = ""
-#}
-#>

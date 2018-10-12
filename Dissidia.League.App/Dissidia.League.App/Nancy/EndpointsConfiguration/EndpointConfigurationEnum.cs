@@ -29,7 +29,9 @@ namespace Dissidia.League.App.Nancy.EndpointsConfiguration
         public static EndpointConfigurationEnum INVITE_PLAYER_TEAM = new EndpointConfigurationEnum(20, "dissidia/team/invite/{teamId}/{email}");
         public static EndpointConfigurationEnum GET_NICKS_BY_ID = new EndpointConfigurationEnum(21, "dissidia/user/nickname/{userId}");
         public static EndpointConfigurationEnum GET_ALL_MATCHES_PENDING = new EndpointConfigurationEnum(22, "dissidia/matches/all/pending");
-        public static EndpointConfigurationEnum GET_SOLO_TEAM_PONTUATION = new EndpointConfigurationEnum(23, "dissidia/team/solo/pontuations");
+        public static EndpointConfigurationEnum GET_SOLO_TEAM_PONTUATION = new EndpointConfigurationEnum(23, "dissidia/team/solo/pontuations/{minMatches}/{view}");
+        public static EndpointConfigurationEnum GET_DUO_TEAM_PONTUATION = new EndpointConfigurationEnum(24, "dissidia/team/duo/pontuations/{minMatches}/{view}");
+        public static EndpointConfigurationEnum GET_POSITION_PONTUATION = new EndpointConfigurationEnum(25, "dissidia/player/pontuations/position/{id}");
 
         protected EndpointConfigurationEnum(int codigo, string valor) : base(codigo, valor)
         {

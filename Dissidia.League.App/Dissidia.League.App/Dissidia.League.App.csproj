@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Nancy\DTO\AuthDTO.cs" />
+    <Compile Include="Nancy\DTO\Dissidia\PositionDTO.cs" />
     <Compile Include="Nancy\DTO\Dissidia\TeamDTO.cs" />
     <Compile Include="Nancy\DTO\Gamification\PlayerPontuationDTO.cs" />
     <Compile Include="Nancy\DTO\GenericErrorDTO.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Nancy\Modules\League\MatchModule.cs" />
     <Compile Include="Nancy\NancyBootstrap.cs" />
     <Compile Include="Nancy\Services\AuthenticationService.cs" />
+    <Compile Include="Nancy\Services\HelperService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

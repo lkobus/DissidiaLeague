@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/operator/catch';
 import { TeamDTO } from '../model/team.dto';
+import { PositionDTO } from '../model/positionDTO';
 
 @Injectable()
 export class ProfileService extends BaseService {
@@ -24,6 +25,17 @@ export class ProfileService extends BaseService {
     return this.http.get(url, { headers: headers })
     .toPromise()
     .then(response => response.json() as string)
+    .catch(this.handleErrorPromise);
+  }
+
+  getLoggedUserPositionPontuation(): Promise<PositionDTO>{    
+    var headers = new Headers();
+    var loggedId = window.localStorage.getItem("id");
+    this.contentTypeApplicationJson(headers);
+    var url = this.BasePath() + "dissidia/player/pontuations/position/" + loggedId;    
+    return this.http.get(url, { headers: headers })
+    .toPromise()
+    .then(response => response.json() as PositionDTO)
     .catch(this.handleErrorPromise);
   }
 

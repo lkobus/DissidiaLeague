@@ -17,6 +17,7 @@ import { IMyDpOptions, IMyDateModel } from 'mydatepicker';
 import { CharEnum } from '../matches/model/charEnum';
 import { MatchesService } from '../matches/shared/matches.service';
 import { LineGraph } from './model/lineGraph.dto';
+import { PositionDTO } from './model/positionDTO';
 
 @Component({
   moduleId: module.id,
@@ -31,6 +32,8 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   @ViewChild('modalTeam')
   modalTeam: Modal;  
 
+
+  positionScores: PositionDTO;
   @ViewChild("modalUploadLogo")
   modalUploadLogo: Modal;
 
@@ -104,6 +107,7 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
   getUsuarios(): void {    
     
   }
+
   busy: any;
   templateLoading: string =
   '<div class="loading-overlay">' +
@@ -155,6 +159,9 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
     }
    }
   ngOnInit(): void {        
+
+    
+
     this.rankingService.getLineGraph(this.period, this.type)
     .then(p =>{
       this.drawLineGraph(p);
@@ -184,6 +191,9 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
         });      
 
     });      
+
+    this.profileService.getLoggedUserPositionPontuation()
+    .then(resposta => this.positionScores = resposta);
 
     this.busy = this.rankingService.getLoggedPlayerPontuation()
     .then(p => {
@@ -334,6 +344,13 @@ export class ProfileComponent extends BaseTableComponent implements OnInit {
 
     
   public lineChartOptions:any = {
+    responsive: true,
+    scales: {
+      yAxes: [{id: 'y-axis-1', type: 'linear', position: 'left', ticks: {min: 0, max:100}}]
+    }
+  };
+
+  public radarChartOptions:any = {
     responsive: true,
     scales: {
       yAxes: [{id: 'y-axis-1', type: 'linear', position: 'left', ticks: {min: 0, max:100}}]

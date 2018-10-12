@@ -80,6 +80,7 @@
     <Compile Include="Enums\Dissidia\MatchTypeEnum.cs" />
     <Compile Include="Enums\Dissidia\RolesEnum.cs" />
     <Compile Include="Enums\Dissidia\TeamStatusEnum.cs" />
+    <Compile Include="Enums\Dissidia\ViewEnum.cs" />
     <Compile Include="Enums\Entities\EntityEnum.cs" />
     <Compile Include="Enums\Gamification\ScoreLineGraphEnum.cs" />
     <Compile Include="Enums\Gamification\ScoreTypeEnum.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="ValueObjects\Authentication\Credentials.cs" />
     <Compile Include="ValueObjects\Authentication\UserSession.cs" />
     <Compile Include="ValueObjects\Gamification\Pontuation\LineGraph.cs" />
+    <Compile Include="ValueObjects\Gamification\Pontuation\PositionPontuation.cs" />
     <Compile Include="ValueObjects\Gamification\Pontuation\ScorePontuation.cs" />
     <Compile Include="ValueObjects\Match\LineGraphData.cs" />
     <Compile Include="ValueObjects\Match\MatchScoreGroup.cs" />
@@ -133,9 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ValueObjects\TextFile1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

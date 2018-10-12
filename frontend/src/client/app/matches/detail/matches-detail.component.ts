@@ -12,6 +12,7 @@ import { MatchesService } from '../shared/matches.service';
 import { Match } from '../model/match';
 import { CharEnum } from '../model/charEnum';
 import { SalvarMatchDto, SalvarPlayerInfoDto } from '../model/salvarMatchDto';
+import { List } from 'linqts';
 
 @Component({
   moduleId: module.id,
@@ -28,7 +29,19 @@ export class MatchesDetailComponent implements OnInit {
   playerTeamA1: string;
   playerTeamA2: string;
   playerTeamA3: string;
-
+  busy:any;
+  templateLoading: string =
+  '<div class="loading-overlay">' +
+    '<img src="assets/loader.gif" alt="logo Promax" height="194" class="img-loader" />'+
+    '<div class="spinner">'+
+      '<div class="bounce1"></div>'+
+      '<div class="bounce2"></div>'+
+      '<div class="bounce3"></div>'+
+    '</div>'+
+    '<h1 class="loading-venda">' +
+    '{{message}}' +
+    '</h1>' +
+  '</div>';
   playerTeamB1: string;
   playerTeamB2: string;
   playerTeamB3: string;
@@ -51,7 +64,7 @@ export class MatchesDetailComponent implements OnInit {
   
   matchId: string;
   charEnums:CharEnum[];
-
+  
   constructor(
     private toastService: ToastService,        
     private route: ActivatedRoute,
@@ -71,8 +84,7 @@ export class MatchesDetailComponent implements OnInit {
       this.imageUrl = this.matchService.getMatchImageUrl(id);    
       return this.matchService.getMatch(id);
       
-    })
-    .subscribe(usuario => {
+    }).subscribe(usuario => {
       this.match = usuario;
       this.playerTeamA1 = this.match.playersTeamWinner[0].name;
       this.playerTeamA2 = this.match.playersTeamWinner[1].name;
@@ -107,7 +119,7 @@ export class MatchesDetailComponent implements OnInit {
 
     if(this.whoWins == "A"){
       winners.push(new SalvarPlayerInfoDto(this.playerTeamA1, this.charPlayerTeamA1, this.scorePlayerTeamA1));
-      winners.push(new SalvarPlayerInfoDto(this.playerTeamA2, this.charPlayerTeamA2, this.scorePlayerTeamA3));
+      winners.push(new SalvarPlayerInfoDto(this.playerTeamA2, this.charPlayerTeamA2, this.scorePlayerTeamA2));
       winners.push(new SalvarPlayerInfoDto(this.playerTeamA3, this.charPlayerTeamA3, this.scorePlayerTeamA3));
   
       loosers.push(new SalvarPlayerInfoDto(this.playerTeamB1, this.charPlayerTeamB1, this.scorePlayerTeamB1));
@@ -115,7 +127,7 @@ export class MatchesDetailComponent implements OnInit {
       loosers.push(new SalvarPlayerInfoDto(this.playerTeamB3, this.charPlayerTeamB3, this.scorePlayerTeamB3));
     } else {
       loosers.push(new SalvarPlayerInfoDto(this.playerTeamA1, this.charPlayerTeamA1, this.scorePlayerTeamA1));
-      loosers.push(new SalvarPlayerInfoDto(this.playerTeamA2, this.charPlayerTeamA2, this.scorePlayerTeamA3));
+      loosers.push(new SalvarPlayerInfoDto(this.playerTeamA2, this.charPlayerTeamA2, this.scorePlayerTeamA2));
       loosers.push(new SalvarPlayerInfoDto(this.playerTeamA3, this.charPlayerTeamA3, this.scorePlayerTeamA3));
   
       winners.push(new SalvarPlayerInfoDto(this.playerTeamB1, this.charPlayerTeamB1, this.scorePlayerTeamB1));
@@ -127,6 +139,22 @@ export class MatchesDetailComponent implements OnInit {
     this.matchService.updateMatch(dto, this.matchId, window.localStorage.getItem("id"));
 
   }
+
+  proximo(){
+    debugger;  
+    var currentList = new List<Match>(JSON.parse(window.localStorage.getItem("CACHE_MATCH_COLLECTION"))).ToArray();    
+    var id = "";
+    for(var i = 0; i < currentList.length; i++){
+      if(currentList[i].id === this.matchId){
+        try{
+          id = currentList[i + 1].id;
+        } catch{ }          
+        break;
+      }
+    }
+    this.router.navigateByUrl("/matchDetail/" + id);
+  }
+
   private handleError(error: any) {
     var message = 'Erro desconhecido ao salvar';
     if (error.Message || error.message) {

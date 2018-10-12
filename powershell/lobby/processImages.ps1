@@ -25,8 +25,7 @@ Function SplitScoreInformations ($fileName, $outputdir) {
 	$arguments += "-crop 280x28+1180+450 $fileName " + (Join-Path -Path $outputdir -ChildPath nickname-player-3-team-b.jpg)	
 	
 	
-	$arguments | Foreach {
-	#Write-Host ihsahudshudhus
+	$arguments | Foreach {	
 		Invoke-Expression ("cmd /C ""$imageMagickPath"" " + $_)
 	}
 }
@@ -37,15 +36,15 @@ Function SplitCharacterInformation($fileName, $outputDir) {
 	md $outputdir		
 	$arguments = @()
 	$arguments += "-crop 165x88+157+211 $fileName " + (Join-Path -Path $outputdir -ChildPath "$id.jpg")
-$id = [System.Guid]::NewGuid().ToString()
+    $id = [System.Guid]::NewGuid().ToString()
 	$arguments += "-crop 165x88+197+324 $fileName " + (Join-Path -Path $outputdir -ChildPath "$id.jpg")
-$id = [System.Guid]::NewGuid().ToString()
+    $id = [System.Guid]::NewGuid().ToString()
 	$arguments += "-crop 165x88+245+436 $fileName " + (Join-Path -Path $outputdir -ChildPath "$id.jpg")
-$id = [System.Guid]::NewGuid().ToString()
+    $id = [System.Guid]::NewGuid().ToString()
 	$arguments += "-crop 165x88+1595+211 $fileName " + (Join-Path -Path $outputdir -ChildPath "$id.jpg")
-$id = [System.Guid]::NewGuid().ToString()
+    $id = [System.Guid]::NewGuid().ToString()
 	$arguments += "-crop 165x88+1541+324 $fileName " + (Join-Path -Path $outputdir -ChildPath "$id.jpg")
-$id = [System.Guid]::NewGuid().ToString()
+    $id = [System.Guid]::NewGuid().ToString()
 	$arguments += "-crop 165x88+1509+436 $fileName " + (Join-Path -Path $outputdir -ChildPath "$id.jpg")
 	
 	$arguments | Foreach {
@@ -87,9 +86,15 @@ Function RunTesseract($outputdir, $resultadoTesseract) {
 	}
 }
 
+Function RunRecognition($image, $outputDir, $trainData, $inputDir){
+	ReadDissidiaFaces $image
+	& "C:\bin\face\Dissidia.League.App.Helper.FaceRecognition.exe" $inputDir $trainData $outputDir
+}
+
 Function AplicarTesseract($outputdir, $resultadoTesseract) {
 	$currentMatch = $global:currentMatch    
 	$pontuationsResults = @()
+    $characterResults = @()
 	$psnIdsResults = @()	
 	gci -Path $resultadoTesseract | Foreach {		
 		$fileInfo = GetFileInformation $_.Name
@@ -110,7 +115,9 @@ Function AplicarTesseract($outputdir, $resultadoTesseract) {
             }
             
 			$matchResult = FactoryDissidiaMatch $winner $fileInfo.Team $currentMatch
-		} else {
+		} elseif($_.Name -match 'face.player'){
+            $characterResults += FactoryCharacterInformation $fileInfo.Team $fileInfo.Position $content
+        } else {
 			$psnIdsResults += FactoryDissidiaPSNId $content $fileInfo.Team $fileInfo.Position
 		}			
 	}		
@@ -121,7 +128,9 @@ Function AplicarTesseract($outputdir, $resultadoTesseract) {
 	$pontuationsResults | Foreach {
 		$p = $_
 		$i = ($psnIdsResults | Where { ($_.Team -eq $p.Team) -and $_.Position -eq $p.Position }).PSNId
-		$pontuation = CreateUserPontuation $i $_.Pontuation
+        $c = ($characterResults | Where { ($_.Team -eq $p.Team) -and $_.Position -eq $p.Position }).Character
+        
+		$pontuation = CreateUserPontuation $i $_.Pontuation $c
 		if($p.Team -match 'a'){				
 			$teamAPontuation += $pontuation
 		} else {
@@ -155,9 +164,12 @@ Function PrintMatchEntity ($matchEntity) {
 Function GetFileInformation ($fileName) {
 	$splitted = $fileName.Split('-')
 	
-	if($splitted.Count -gt 3){
+	if($splitted.Count -gt 4){
 		return FactoryFileInformation $splitted[4] $splitted[2]
-	} else {
+	} elseif ($splitted.Count -gt 3) {
+        return FactoryFileInformation $splitted[3] $splitted[1]
+    }    
+     else {
 		return FactoryFileInformation $splitted[2] $splitted[2]
 	}
 }
@@ -172,10 +184,14 @@ Function CreateMatchEntity ($matchId, $winner, $teamAPontuations, $teamBPontuati
 	return New-Object PSObject -Property $dict
 }
 
-Function CreateUserPontuation ($psnId, $pontuation) {
+Function CreateUserPontuation ($psnId, $pontuation, $character) {
+    if($character -eq $null){
+        $character = "UNDEFINED"
+    }
 	$dict = @{		
 		PSNId = $psnId[0]
 		Pontuation = $pontuation[0]
+        Character = $character.ToUpper()
 	}
 	return New-Object PSObject -Property $dict
 }
@@ -184,6 +200,15 @@ Function FactoryFileInformation ($team, $position) {
 	$dict = @{		
 		Team = $team.Split('.')[0]
 		Position = $position
+	}
+	return New-Object PSObject -Property $dict
+}
+
+Function FactoryCharacterInformation ($team, $position, $character) {
+	$dict = @{		
+		Character = $character
+		Position = $position
+        Team = $team
 	}
 	return New-Object PSObject -Property $dict
 }
@@ -222,7 +247,8 @@ Function Main {
     $inputFolder = "C:\Users\leonardo.kobus\Desktop\lobby\input"
     $recognitionInputDir = "C:\tmp\recognition\input"
     $recognitionOutputDir = "C:\tmp\recognition\output"
-
+    
+    gci $outputdir | foreach { Remove-Item -Path $_ -Force -Recurse }
     gci $inputFolder -File | Rename-Item -NewName { $_.Name -replace ' ','' }
     $rr = @()
     gci -Path $inputFolder | Foreach {
@@ -250,8 +276,8 @@ Function ExportMatchesToCSV ($matchesResults) {
         md $exportDir
     }
     $fileToExport = Join-Path -Path $exportDir -ChildPath "matches.csv"
-    $header = "matchId;Winner;Player;Points"
-    $mask = "{0};{1};{2};{3}"
+    $header = "matchId;Winner;Player;Points;Character"
+    $mask = "{0};{1};{2};{3};{4}"
     $lines = @()
     $matchesResults | Foreach {     
         try{
@@ -261,17 +287,16 @@ Function ExportMatchesToCSV ($matchesResults) {
                 if($_.Winner -match 'a'){
                     $w = "Vitoria"
                 }
-                $lines += $mask -f $_.MatchId, $w, $_.TeamA[$contador].PSNId, $_.TeamA[$contador].Pontuation
+                $lines += $mask -f $_.MatchId, $w, $_.TeamA[$contador].PSNId, $_.TeamA[$contador].Pontuation, $_.TeamA[$contador].Character
                 $contador++
             }
             $contador = 0
             while($contador -lt 3){
-
                 $w = "Derrota"
                 if($_.Winner -match 'b'){
                     $w = "Vitoria"
                 }
-                $lines += $mask -f $_.MatchId, $w, $_.TeamB[$contador].PSNId, $_.TeamB[$contador].Pontuation
+                $lines += $mask -f $_.MatchId, $w, $_.TeamB[$contador].PSNId, $_.TeamB[$contador].Pontuation, $_.TeamB[$contador].Character
                 $contador++
             }                      
         } catch{
@@ -292,9 +317,140 @@ Function ProcessMatch($fileName, $outputdir) {
     Start-Sleep -s 1
     $resultadoTesseract = Join-Path -Path $outputdir -ChildPath "data"	
 	RunTesseract $outputdir $resultadoTesseract    
-    Start-Sleep -s 1
+    Start-Sleep -s 1	
+	RunRecognition $fileName ($outputdir + "\data") "C:\temp\trainFaces" "C:\temp\running"
+    #TODO: aplicar a rotina acima no AplicarTesseract
+    #apos isso fazer exportação dele no result.csv
     $r = AplicarTesseract $outputdir $resultadoTesseract        
     return $r
+}
+
+Function ReadDissidiaFaces($imagePath) {		    
+	$jobs = @()    
+    Write-host ("start time : " + (Get-date))
+	for($i = 0;$i -lt 6; $i++){		        
+        $j = Start-Job -Name (GetPlayerInfoByIndex $i) -ScriptBlock (GetScriptBlock)  -ArgumentList $imagePath, $i
+	}    
+
+    Get-Job | Wait-Job
+    Write-host ("end time : " + (Get-date))
+    $locuura = @{}
+    gci -Path 'C:\temp\running' | foreach {
+        $content = Get-Content $_.FullName
+        $locuura.Add($_.Name, $content)
+    }    
+    $global:locuura = $locuura
+	return $locuura
+}
+
+Function GetScriptBlock {
+    $sb = {
+    param($imagePath, $index)
+    [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+	[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms")		
+    
+    Function GetTemplate($imagePath, $index) {                    
+	    $BitMap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $imagePath).ProviderPath)
+        $executionId = GetPlayerInfoByIndex $index
+        
+        $path = "C:\temp\running\$executionId"
+        if(-Not (Test-Path -Path "C:\temp\running" )){
+            md "C:\temp\running"
+        }       
+        $imageWidth = 151
+	    $imageHeight = 70
+        $heights = GetFacesHeights
+	    $widths = GetFacesWidths	               	           	            
+        $passei = @()      
+        $rgbList = @()
+	    foreach($w in $widths[$index]..($widths[$index]+$imageWidth)){
+		    foreach($h in $heights[$index]..($heights[$index]+$imageHeight)) {		    
+		        Try {
+                    $passei += ("$w,$h")                                        
+			        $px = $BitMap.GetPixel($w - 1,$h - 1)                                
+                    $rgbList += ($px.R.ToString() + "-" + $px.G.ToString() + "-" + $px.B.ToString())		    			        
+		        } catch {                                    
+			        $oi = ""
+		        }
+		
+		    }
+	    }		        	       
+        [System.IO.File]::WriteAllLines($path, $rgbList)
+    }
+    Function GetPlayerInfoByIndex($index){
+	    if($index -eq 0){
+		    return "player-1-team-a"
+	    } elseif($index -eq 1){
+		    return "player-2-team-a"
+	    }elseif($index -eq 2){
+		    return "player-3-team-a"
+	    }elseif($index -eq 3){
+		    return "player-1-team-b"
+	    }elseif($index -eq 4){
+		    return "player-2-team-b"
+	    } else {
+		    return "player-3-team-b"
+	    }
+    }
+
+    Function GetFacesHeights {
+	    $result = @()	
+	    $result += 224
+	    $result += 337
+	    $result += 450
+	    $result += 224
+	    $result += 337
+	    $result += 450
+	    return $result	
+    }
+
+    Function GetFacesWidths {
+	    $result = @()	
+	    $result += 165
+	    $result += 206
+	    $result += 246
+	    $result += 1604
+	    $result += 1564
+	    $result += 1524	
+	    return $result	
+    }
+
+    GetTemplate $imagePath $index
+    }
+    return $sb
+}
+
+
+Function TrainDissidiaFaces($inputImages, $outputDir){
+    if(-Not (Test-Path $inputImages)) { md $inputImages }
+    if(-Not (Test-Path $outputDir)) { md $outputDir }
+    
+    gci -Path $inputImages | Where { $_.PSIsContainer }  | foreach {        
+        ReadDissidiaFaces (gci -Path $_.FullName).FullName
+        $destinationPath = (Join-Path -Path $outputDir -ChildPath $_.BaseName)
+        if(-Not (Test-Path $destinationPath)) { md $destinationPath }
+        gci -Path 'C:\temp\running\' | foreach {
+            Copy-Item -Path $_.FullName -Destination (Join-Path $destinationPath ($_.Name + ".data")) -Force           
+        }
+    }
+                
+}
+
+
+Function GetPlayerInfoByIndex($index){
+	if($index -eq 0){
+		return "player-1-team-a"
+	} elseif($index -eq 1){
+		return "player-2-team-a"
+	}elseif($index -eq 2){
+		return "player-3-team-a"
+	}elseif($index -eq 3){
+		return "player-1-team-b"
+	}elseif($index -eq 4){
+		return "player-2-team-b"
+	} else {
+		return "player-3-team-b"
+	}
 }
 
 Main

@@ -15,7 +15,7 @@ namespace Dissidia.League.Domain.MongoDB.Repositories.Authentication
         }
 
         public User GetUserByLogin(string username)
-        {
+        {            
             var query = _collection.FindAsync(p => p.Credentials.Username == username);
             query.Wait();
             return query.Result.FirstOrDefault();            

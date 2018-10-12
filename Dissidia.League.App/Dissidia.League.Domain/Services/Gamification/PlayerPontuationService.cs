@@ -21,7 +21,8 @@ using Dissidia.League.Domain.Enums.Matches;
 namespace Dissidia.League.Domain.Services.Gamification
 {
     public class PlayerPontuationService : IPlayerPontuationService
-    {        
+    {
+        private int _allMatches = -1;
         private IMatchRepository _matchRepository;
         private IPlayerResultsRepository _playerResultsRepository;
         private IUserRepository _userRepository;
@@ -216,52 +217,84 @@ namespace Dissidia.League.Domain.Services.Gamification
             return type >= 0;
         }
 
-        public List<ScorePontuation> GetSoloBestDuosPontuation()
+        public List<ScorePontuation> GetSoloBestDuosPontuation(int minMatches, int view)
         {
             var result = new List<ScorePontuation>();
             var matches = _matchRepository.GetAllConcluded();
-
-         
             var last = 1;
             var winners = new List<IGrouping<string, Entities.Match>>();
             var loosers = new List<IGrouping<string, Entities.Match>>();
             for (var i = 0; i < 2; i++)
             {
-                
+
                 winners = matches.GroupBy(p =>
-                    string.Join(",", p.PlayersTeamWinner.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[i] + ","+
-                    string.Join(",", p.PlayersTeamWinner.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[last]
+                    string.Join(",", SelectByView(view, p.PlayersTeamWinner).OrderBy(c => c).ToArray()).Split(',')[i] + "," +
+                    string.Join(",", SelectByView(view, p.PlayersTeamWinner).OrderBy(c => c).ToArray()).Split(',')[last]
                 ).Concat(winners).ToList();
 
                 loosers = matches.GroupBy(p =>
-                    string.Join(",", p.PlayersTeamLooser.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[i] + "," +
-                    string.Join(",", p.PlayersTeamLooser.Select(c => c.Name).OrderBy(c => c).ToArray()).Split(',')[last]
+                    string.Join(",", SelectByView(view, p.PlayersTeamLooser).OrderBy(c => c).ToArray()).Split(',')[i] + "," +
+                    string.Join(",", SelectByView(view, p.PlayersTeamLooser).OrderBy(c => c).ToArray()).Split(',')[last]
                 ).Concat(loosers).ToList();
 
 
                 if (last == 1)
-                {                    
+                {
                     last += 1;
                     i--;
                 }
-            }
-
-            return CalculateSoloScorePontuation(winners, loosers);
+            }            
+            return CheckLimitScores(CalculateSoloScorePontuation(winners, loosers), minMatches);
         }
 
-        public List<ScorePontuation> GetSoloTeamsPontuations()
+        private IEnumerable<string> SelectByView(int view, IEnumerable<PlayerInfo> players)
+        {
+            if(view == ViewEnum.PLAYER)
+            {
+                return players.Select(p => p.Name);
+            }
+            else if(view == ViewEnum.CHAR)
+            {
+                return players.Select(p => ((CharEnum)p.Character).Valor);
+            }
+            else
+            {
+                return players.Select(p => ((CharEnum)p.Character).Role);
+            }
+        }
+
+        private List<ScorePontuation> CheckLimitScores(List<ScorePontuation> scores, int minMatches)
+        {            
+            if (_allMatches != minMatches)
+            {
+                scores = scores.Where(p => p.TotalMatches > minMatches).ToList();
+            }
+            return scores;
+        }
+
+        public List<ScorePontuation> GetSoloBestDuosPontuation(int view)
+        {
+            return GetSoloBestDuosPontuation(_allMatches, view);
+        }
+
+        public List<ScorePontuation> GetSoloTeamsPontuations(int minMatches, int view)
         {
             var result = new List<ScorePontuation>();
             var matches = _matchRepository.GetAllConcluded();
-            
+
             var winners = matches.GroupBy(p =>
-                string.Join(",", p.PlayersTeamWinner.Select(c => c.Name).OrderBy(c => c).ToArray()                
+                string.Join(",", SelectByView(view, p.PlayersTeamWinner).OrderBy(c => c).ToArray()
                 )
             );
             var loosers = matches.GroupBy(p =>
-                string.Join(",", p.PlayersTeamLooser.Select(c => c.Name).OrderBy(c => c).ToArray())
+                string.Join(",", SelectByView(view, p.PlayersTeamLooser).OrderBy(c => c).ToArray())
             );            
-            return CalculateSoloScorePontuation(winners, loosers);
+            return CheckLimitScores(CalculateSoloScorePontuation(winners, loosers), minMatches);            
+        }
+
+        public List<ScorePontuation> GetSoloTeamsPontuations(int view)
+        {
+            return GetSoloTeamsPontuations(_allMatches, view);
         }
 
         private List<ScorePontuation> CalculateSoloScorePontuation(IEnumerable<IGrouping<string, Entities.Match>> winners,
@@ -272,6 +305,39 @@ namespace Dissidia.League.Domain.Services.Gamification
                 .Concat(loosers.Select(p => p.Key))
                 .DistinctBy(p => p);
 
+            var r = new Dictionary<string, dynamic>();
+            winners.ForEach(w =>
+            {
+                var winKey = w.Key + "|w";
+                if (r.ContainsKey(winKey))
+                {
+                    r[winKey] = r[winKey] + w.Count();
+                } else
+                {
+                    r.Add(winKey, w.Count());
+                }
+            });
+            loosers.ForEach(l =>
+            {
+                var lossKey = l.Key + "|l";
+                if (r.ContainsKey(lossKey))
+                {
+                    r[lossKey] = r[lossKey] + l.Count();
+                } else
+                {
+                    r.Add(lossKey, l.Count());
+                }
+            });
+            var oi = new List<ScorePontuation>();
+            r.Keys.Select(p => p.Split('|')[0]).DistinctBy(p => p).ForEach(p =>
+            {
+                var w = 0;
+                var l = 0;
+                if (r.ContainsKey(p + "|w")) { w = r[p + "|w"]; }
+                if (r.ContainsKey(p + "|l")) { l = r[p + "|l"]; }
+                oi.Add(new ScorePontuation(p, w, l, ScoreTypeEnum.TEAM));
+            });
+            /*
             allTeams.ForEach(team =>
             {
                 if(!IsEmptyTeam(team))
@@ -280,8 +346,8 @@ namespace Dissidia.League.Domain.Services.Gamification
                     var l = GetCountByTeam(team, loosers);
                     result.Add(new ScorePontuation(team, w, l, ScoreTypeEnum.TEAM));
                 }                
-            });
-            return result;
+            });*/
+            return oi;
         }
 
         private bool IsEmptyTeam(string team)
@@ -308,5 +374,33 @@ namespace Dissidia.League.Domain.Services.Gamification
             return result;
         }
 
+        public PositionPontuation GetPlayerPositionPontuation(string id)
+        {
+            var username = _userRepository.GetById(id).Credentials.Username;
+            var allMatchesFromThisPlayer = _matchRepository.GetAllMatchesFrom(username);
+            var posicoes = new List<int>() { 0, 0, 0, 0, 0, 0 };            
+            var total = allMatchesFromThisPlayer.Count;
+
+            allMatchesFromThisPlayer.ForEach(match =>
+            {
+                var ordem = match.PlayersTeamLooser.Concat(match.PlayersTeamWinner).OrderByDescending(p => p.Points);
+                posicoes[ordem.ToList().FindIndex(p => p.Name == username)]++;
+                
+            });
+
+            return new PositionPontuation(
+                CalculatePercent(total, posicoes[0]),
+                CalculatePercent(total, posicoes[1]),
+                CalculatePercent(total, posicoes[2]),
+                CalculatePercent(total, posicoes[3]),
+                CalculatePercent(total, posicoes[4]),
+                CalculatePercent(total, posicoes[5])
+                );
+        }
+
+        private int CalculatePercent(int total, int current)
+        {
+            return (current * 100) / total;
+        }
     }
 }

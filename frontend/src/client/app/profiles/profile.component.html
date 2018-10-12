@@ -1,455 +1,498 @@
-<div class="container-fluid main-container">  
+<div class="container-fluid main-container">
     <div [ngBusy]="{busy: busy, template: templateLoading, message: 'Fetching data...'}"></div>
-  <div class="card">
+    <div class="card">
 
-    <div class="toolbar">
+        <div class="toolbar">
 
-      <div class="col-md-9">
-        <h3 class="toolbar-title">
-          Profile
-        </h3>
-      </div>
-    </div>
-    <tabs>        
-        <tab tabTitle="User">
-          <div>
-              <div class="col-md-12">
-                  <div class="col-md-3">
-                    <img class="imgLogo col-md-12" src="{{userLogoImage}}" (click)="modalProfileLogo.open();">
-                    <div style="display: block" class="col-md-12">
-                            <canvas
-                            width="200" height="200"
-                            *ngIf="playerPontuation?.length > 0" baseChart
-                                    [datasets]="radarChartData"
-                                    [labels]="radarChartLabels"
-                                    [chartType]="radarChartType"
-                                    (chartHover)="chartHovered($event)"
-                                    (chartClick)="chartClicked($event)"></canvas>
-                          </div>
-                  </div>
-                  <div class="col-md-9" *ngIf="playerPontuation">
-                        <div class="col-md-12" *ngIf="headerPontuation">                                    
-                            <div class="card-subtitle col-md-3">
-                                <label>Name</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label>Wins</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label>Lose</label>
-                            </div>       
-                            <div class="card-subtitle col-md-1">
-                                <label>Wins%</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label>Lose%</label>
-                            </div>       
-                            <div class="card-subtitle col-md-3">
-                                <label>Total Matches</label>
-                            </div>                               
-                            
-                            <div class="card-subtitle col-md-3">
-                                <label style="color: black">{{headerPontuation.name}}</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{headerPontuation.wins}}</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{headerPontuation.losts}}</label>
-                            </div>        
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{headerPontuation.percentualWins}}</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{headerPontuation.percentualLosts}}</label>
-                            </div>        
-                            <div class="card-subtitle col-md-2">
-                                <label style="color: black">{{headerPontuation.totalMatches}}</label>
-                            </div>                               
-                        </div>
-                        <hr>
-                        <div class="align-radios" *ngIf="filtroPlayer">
-                            <mat-radio-group class="example-radio-group" [(ngModel)]="filtroPlayer" >
-                                <mat-radio-button class="example-radio-button" [value]="3"  [checked]="checked(3)">
-                                    All
-                                </mat-radio-button>
-                                <mat-radio-button class="example-radio-button" [value]="1"  [checked]="checked(1)">
-                                    Characters
-                                </mat-radio-button>
-                                <mat-radio-button class="example-radio-button" [value]="2" [checked]="checked(2)">
-                                    Roles
-                                </mat-radio-button>
-                            </mat-radio-group>
-                        </div>
-                        <hr />
-                        <div class="col-md-4 mdp-with-lb">
-                            <label>
-                                From
-                            </label>
-                            <my-date-picker name="dataInicio" [locale]="pt-br" (dateChanged)="onDateInicialChanged($event)" [selDate]="selectedDateDe"
-                                [options]="myDatePickerOptions">
-                            </my-date-picker>
+            <div class="col-md-9">
+                <h3 class="toolbar-title">
+                    Profile
+                </h3>
+            </div>
+        </div>
+        <tabs>
+            <tab tabTitle="User">
+                <div>
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <img class="imgLogo col-md-12" src="{{userLogoImage}}" (click)="modalProfileLogo.open();">
+                            <div style="display: block" class="col-md-12">
+                                <canvas width="200" height="200" *ngIf="playerPontuation?.length > 0" baseChart [datasets]="radarChartData" [labels]="radarChartLabels"
+                                        [chartType]="radarChartType" (chartHover)="chartHovered($event)" (chartClick)="chartClicked($event)"></canvas>
                             </div>
-                    
+                            <hr />
+                            <div *ngIf="positionScores" class="col-md-12">
+                                <div class="col-md-6">
+                                    <h3 style="color: black">Position</h3>
+                                </div>
+                                <div class="col-md-6">
+                                        <h3 style="color: black">%Times</h3>
+                                </div>
+                                <hr />
+                                <div class="card-subtitle" class="col-md-6">
+                                    <label>First</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{positionScores.first}} %
+                                </div>
+                                <hr />
+                                <div class="card-subtitle" class="col-md-6">
+                                        <label>Second</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{positionScores.second}} %
+                                </div>
+                                <hr />
+                                <div class="card-subtitle" class="col-md-6">
+                                        <label>Third</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{positionScores.third}} %
+                                </div>
+                                <hr />
+                                <div class="card-subtitle" class="col-md-6">
+                                        <label>Fourth</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{positionScores.fourth}} %
+                                </div>
+                                <hr />
+                                <div class="card-subtitle" class="col-md-6">
+                                        <label>Fifth</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{positionScores.fifth}} %
+                                </div>
+                                <hr />
+                                <div class="card-subtitle" class="col-md-6">
+                                    <label>Sixth</label>
+                                </div>
+                                <div class="col-md-6">
+                                    {{positionScores.sixth}} %
+                                </div>
+                                <!-- Buscar o dado -->
+                            </div>
+                        </div>
+                        <div class="col-md-9" *ngIf="playerPontuation">
+                            <div class="col-md-12" *ngIf="headerPontuation">
+                                <div class="card-subtitle col-md-3">
+                                    <label>Name</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Wins</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Lose</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Wins%</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Lose%</label>
+                                </div>
+                                <div class="card-subtitle col-md-3">
+                                    <label>Total Matches</label>
+                                </div>
+
+                                <div class="card-subtitle col-md-3">
+                                    <label style="color: black">{{headerPontuation.name}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{headerPontuation.wins}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{headerPontuation.losts}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{headerPontuation.percentualWins}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{headerPontuation.percentualLosts}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-2">
+                                    <label style="color: black">{{headerPontuation.totalMatches}}</label>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="align-radios" *ngIf="filtroPlayer">
+                                <mat-radio-group class="example-radio-group" [(ngModel)]="filtroPlayer">
+                                    <mat-radio-button class="example-radio-button" [value]="3" [checked]="checked(3)">
+                                        All
+                                    </mat-radio-button>
+                                    <mat-radio-button class="example-radio-button" [value]="1" [checked]="checked(1)">
+                                        Characters
+                                    </mat-radio-button>
+                                    <mat-radio-button class="example-radio-button" [value]="2" [checked]="checked(2)">
+                                        Roles
+                                    </mat-radio-button>
+                                </mat-radio-group>
+                            </div>
+                            <hr />
                             <div class="col-md-4 mdp-with-lb">
-                            <label>
-                                Until
-                            </label>
-                            <my-date-picker name="dataFim" [locale]="pt-br" (dateChanged)="onDateFinalChanged($event)" [selDate]="selectedDateAte" [options]="myDatePickerOptions">
-                            </my-date-picker>
-                        </div>                        
-                        <table *ngIf="playerPontuation" class="table order-table">
+                                <label>
+                                    From
+                                </label>
+                                <my-date-picker name="dataInicio" [locale]="pt-br" (dateChanged)="onDateInicialChanged($event)" [selDate]="selectedDateDe"
+                                    [options]="myDatePickerOptions">
+                                </my-date-picker>
+                            </div>
+
+                            <div class="col-md-4 mdp-with-lb">
+                                <label>
+                                    Until
+                                </label>
+                                <my-date-picker name="dataFim" [locale]="pt-br" (dateChanged)="onDateFinalChanged($event)" [selDate]="selectedDateAte" [options]="myDatePickerOptions">
+                                </my-date-picker>
+                            </div>
+                            <table *ngIf="playerPontuation" class="table order-table">
                                 <tr>
-                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'name')" [ngClass]="{ 'asc': sortingDesc['name'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
-                                    <div>
-                                      <label>Name</label>
-                                    </div>
-                          
-                                    <span class="order-icons-wrapper">
-                                      <i class="fa fa-chevron-up order-icons"></i>
-                                      <i class="fa fa-chevron-down order-icons"></i>
-                                    </span>
-                                  </th>
-                          
-                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'wins')" [ngClass]="{ 'asc': sortingDesc['wins'], 'desc': !sortingDesc['wins'], 'active': selectTableRow == 'wins' }">
-                                    <div>
-                                      <label>Wins</label>
-                                    </div>
-                          
-                                    <span class="order-icons-wrapper">
-                                      <i class="fa fa-chevron-up order-icons"></i>
-                                      <i class="fa fa-chevron-down order-icons"></i>
-                                    </span>
-                                  </th>
-                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'losts')" [ngClass]="{ 'asc': sortingDesc['losts'], 'desc': !sortingDesc['losts'], 'active': selectTableRow == 'losts' }">
-                                    <div>
-                                      <label>Losts</label>
-                                    </div>
-                          
-                                    <span class="order-icons-wrapper">
-                                      <i class="fa fa-chevron-up order-icons"></i>
-                                      <i class="fa fa-chevron-down order-icons"></i>
-                                    </span>
-                                  </th>
-                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['percentualWins'], 'desc': !sortingDesc['percentualWins'], 'active': selectTableRow == 'percentualWins' }">
-                                    <div>
-                                      <label>%Wins</label>
-                                    </div>
-                          
-                                    <span class="order-icons-wrapper">
-                                      <i class="fa fa-chevron-up order-icons"></i>
-                                      <i class="fa fa-chevron-down order-icons"></i>
-                                    </span>
-                                  </th>
-                                  <th style='width:150px;' (click)="SortList(playerPontuation, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['percentualLosts'], 'desc': !sortingDesc['percentualLosts'], 'active': selectTableRow == 'percentualLosts' }">
-                                      <div>
-                                        <label>%Losts</label>
-                                      </div>
-                            
-                                      <span class="order-icons-wrapper">
-                                        <i class="fa fa-chevron-up order-icons"></i>
-                                        <i class="fa fa-chevron-down order-icons"></i>
-                                      </span>
+                                    <th style='width:150px;' (click)="SortList(playerPontuation, 'name')" [ngClass]="{ 'asc': sortingDesc['name'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
+                                        <div>
+                                            <label>Name</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+
+                                    <th style='width:150px;' (click)="SortList(playerPontuation, 'wins')" [ngClass]="{ 'asc': sortingDesc['wins'], 'desc': !sortingDesc['wins'], 'active': selectTableRow == 'wins' }">
+                                        <div>
+                                            <label>Wins</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(playerPontuation, 'losts')" [ngClass]="{ 'asc': sortingDesc['losts'], 'desc': !sortingDesc['losts'], 'active': selectTableRow == 'losts' }">
+                                        <div>
+                                            <label>Losts</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(playerPontuation, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['percentualWins'], 'desc': !sortingDesc['percentualWins'], 'active': selectTableRow == 'percentualWins' }">
+                                        <div>
+                                            <label>%Wins</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(playerPontuation, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['percentualLosts'], 'desc': !sortingDesc['percentualLosts'], 'active': selectTableRow == 'percentualLosts' }">
+                                        <div>
+                                            <label>%Losts</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
                                     </th>
                                     <th style='width:150px;' (click)="SortList(playerPontuation, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['totalMatches'], 'desc': !sortingDesc['totalMatches'], 'active': selectTableRow == 'totalMatches' }">
                                         <div>
-                                          <label>Total</label>
+                                            <label>Total</label>
                                         </div>
-                              
+
                                         <span class="order-icons-wrapper">
-                                          <i class="fa fa-chevron-up order-icons"></i>
-                                          <i class="fa fa-chevron-down order-icons"></i>
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
                                         </span>
-                                      </th>
-                                  <th>
-                                  </th>
+                                    </th>
+                                    <th>
+                                    </th>
                                 </tr>
-                          
+
                                 <div *ngIf="playerPontuation.length == 0">
-                                        <img src="assets/chocobo-full.gif">
-                                        <h1 class="loading-venda">No matches found.</h1>                                        
-                                    </div>
+                                    <img src="assets/chocobo-full.gif">
+                                    <h1 class="loading-venda">No matches found.</h1>
+                                </div>
                                 <tr *ngFor='let usuario of playerPontuation' (click)="onSelect(usuario)" [class.selected]="usuario === selectedUser">
-                                  <td>{{usuario.name}}</td>
-                                  <td>{{usuario.wins}}</td>
-                                  <td>{{usuario.losts}}</td>
-                                  <td>{{usuario.percentualWins}}</td>
-                                  <td>{{usuario.percentualLosts}}</td>
-                                  <td>{{usuario.totalMatches}}</td>                                  
+                                    <td>{{usuario.name}}</td>
+                                    <td>{{usuario.wins}}</td>
+                                    <td>{{usuario.losts}}</td>
+                                    <td>{{usuario.percentualWins}}</td>
+                                    <td>{{usuario.percentualLosts}}</td>
+                                    <td>{{usuario.totalMatches}}</td>
                                 </tr>
-                              </table>
-                                                                           
-                  </div>
-                  
-                  <div class="col-md-12">
-                      <hr>
-                  </div>
-                  <div class="col-md-12">
-                        <div class="card-subtitle" class="col-md-1">
-                            <label>Type </label>
-                        </div>                  
-                        <div class="col-md-2">
-                            <select *ngIf="charEnums" (change)="onChangeCharFilter($event.target.value)" [(ngModel)]="selectedChar">                                    
-                                <option value="-1" selected>PLAYER</option>
-                                <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}}C - {{c.valor}}</option>                                
-                                <option value="-2">1R - VANGUARD</option>
-                                <option value="-3">2R - ASSASSIN</option>
-                                <option value="-4">3R - MARKSMEN</option>
-                                <option value="-5">4R - SPECIALIST</option>                                
-                            </select>                                                    
-                        </div>
-                        <div class="card-subtitle" class="col-md-1">
-                                <label>Period</label>
-                            </div>                  
-                        <div class="col-md-2">
-                            <select (change)="onChangeFilter($event.target.value)">                                
-                                <option value="1" selected>Last 7 days</option>
-                                <option value="2">Last Two Weeks</option>
-                                <option value="3">Last Three Weeks</option>
-                                <option value="4">Last Three Months</option>
-                                <option value="5">All time</option>                        
-                            </select>
-                        </div>
-                        
-                  </div>
-                  <div class="col-md-9 col-md-offset-1">
-                    <div style="display: block;">
-                    <canvas baseChart width="800" height="300"
-                                [datasets]="lineChartData"
-                                [labels]="lineChartLabels"
-                                [options]="lineChartOptions"
-                                [colors]="lineChartColors"
-                                [legend]="lineChartLegend"
-                                [chartType]="lineChartType"
-                                (chartHover)="chartHovered($event)"
-                                (chartClick)="chartClicked($event)"></canvas>
-                    </div>
-                  </div>
+                            </table>
 
+                        </div>
 
-                </div>                
-          </div>
-        </tab>
-          
-        <tab tabTitle="Team">
-          <div *ngIf="currentTeam == null">            
-            <div class="col-md-3">
-              <div class="col-md-12"></div>
-              <div class="col-md-12"></div>
-              <div class="col-md-12"></div>
-              <div class="col-md-12"></div>
-              <div class="col-md-12"></div>
-              <div class="col-md-12"></div>
-              <img id="center-match" src="assets/characters/kupo.gif">
-            </div>  
-            <div class="col-md-9">
-                <div class="col-md-12">
-                    <h3 style="color:black  " class="">You don't have a team Yet</h3>                
-                </div>                          
-                <div  class="col-md-12">
-                    <h3 style="color:purple">Team Rules</h3>                                
-                </div>                          
-                <div class="col-md-12">
-                  <h4 style="color:purple" class="col-md-12">User can only have one team </h4>                
-                  <h4 style="color:purple" class="col-md-12">Every team match will counting for your current team </h4>                
-                  <h4 style="color:purple" class="col-md-12">Once you join a team you'll be able to invite or quit the team </h4>                
-                  <h4 style="color:purple" class="col-md-12">The team needs to have a minimum of 3 members for registers and scrim schedule</h4>                
-                  <h4 style="color:purple" class="col-md-12">If the last active player quit from the team, the team becames inactive and no one can interact with him anymore</h4>                
-                  <h4 style="color:purple" class="col-md-12">To create a team click on + floating button</h4>                              
-                </div>
-            </div>
-            <div class="container-floating">                
-              <div class="floating-button">
-                <span class="letter">
-                  <div class="t-left t-sm" data-tooltip="Novo usuário">
-                    <button (click)="modalTeam.open();" class="btn-clean">
-                      <span class="letter">
-                        <span class="fa fa-plus"></span>
-                      </span>
-                    </button>
-                  </div>
-                </span>
-              </div>
-            </div>
-          </div>  
-          <div *ngIf="currentTeam">
-            <div class="col-md-12">
-              <div class="col-md-3">
-                  <div class="col-md-12">
-                    <img class="imgLogo" src="{{teamLogoImage}}" (click)="modalUploadLogo.open();">
-                  </div>
-                  <div class="col-md-12">
-                        <div class="card-subtitle col-md-12">
-                            <label>Active Members</label>
-                        </div>       
-                        <div *ngFor="let p of activeMembers">
-                            {{p}}
+                        <div class="col-md-12">
                             <hr>
                         </div>
-                  </div>
-                
-              </div>
-              <div class="col-md-9">
-                    <div class="col-md-12" *ngIf="teamHeaderPontuation">                                    
-                            <div class="card-subtitle col-md-3">
-                                <label>Name</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label>Wins</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label>Lose</label>
-                            </div>       
-                            <div class="card-subtitle col-md-1">
-                                <label>Wins%</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label>Lose%</label>
-                            </div>       
-                            <div class="card-subtitle col-md-3">
-                                <label>Total Matches</label>
-                            </div>                               
-                            
-                            <div class="card-subtitle col-md-3">
-                                <label style="color: black">{{teamHeaderPontuation.name}}</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{teamHeaderPontuation.wins}}</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{teamHeaderPontuation.losts}}</label>
-                            </div>        
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{teamHeaderPontuation.percentualWins}}</label>
-                            </div>             
-                            <div class="card-subtitle col-md-1">
-                                <label style="color: black">{{teamHeaderPontuation.percentualLosts}}</label>
-                            </div>        
-                            <div class="card-subtitle col-md-2">
-                                <label style="color: black">{{teamHeaderPontuation.totalMatches}}</label>
-                            </div>                               
+                        <div class="col-md-12">
+                            <div class="card-subtitle" class="col-md-1">
+                                <label>Type </label>
+                            </div>
+                            <div class="col-md-2">
+                                <select *ngIf="charEnums" (change)="onChangeCharFilter($event.target.value)" [(ngModel)]="selectedChar">
+                                    <option value="-1" selected>PLAYER</option>
+                                    <option *ngFor="let c of charEnums" [value]="c.codigo">{{c.codigo}}C - {{c.valor}}</option>
+                                    <option value="-2">1R - VANGUARD</option>
+                                    <option value="-3">2R - ASSASSIN</option>
+                                    <option value="-4">3R - MARKSMEN</option>
+                                    <option value="-5">4R - SPECIALIST</option>
+                                </select>
+                            </div>
+                            <div class="card-subtitle" class="col-md-1">
+                                <label>Period</label>
+                            </div>
+                            <div class="col-md-2">
+                                <select (change)="onChangeFilter($event.target.value)">
+                                    <option value="1" selected>Last 7 days</option>
+                                    <option value="2">Last Two Weeks</option>
+                                    <option value="3">Last Three Weeks</option>
+                                    <option value="4">Last Three Months</option>
+                                    <option value="5">All time</option>
+                                </select>
+                            </div>
+
                         </div>
-                        <hr>   
-                  <table *ngIf="teamPontuations" class="table order-table">
-                        <tr>
-                          <th style='width:150px;' (click)="SortList(teamPontuations, 'name')" [ngClass]="{ 'asc': sortingDesc['name'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
-                            <div>
-                              <label>Name</label>
+                        <div class="col-md-9 col-md-offset-1">
+                            <div style="display: block;">
+                                <canvas baseChart width="800" height="300" [datasets]="lineChartData" [labels]="lineChartLabels" [options]="lineChartOptions"
+                                    [colors]="lineChartColors" [legend]="lineChartLegend" [chartType]="lineChartType" (chartHover)="chartHovered($event)"
+                                    (chartClick)="chartClicked($event)"></canvas>
                             </div>
-                  
-                            <span class="order-icons-wrapper">
-                              <i class="fa fa-chevron-up order-icons"></i>
-                              <i class="fa fa-chevron-down order-icons"></i>
-                            </span>
-                          </th>
-                  
-                          <th style='width:150px;' (click)="SortList(teamPontuations, 'wins')" [ngClass]="{ 'asc': sortingDesc['wins'], 'desc': !sortingDesc['wins'], 'active': selectTableRow == 'wins' }">
-                            <div>
-                              <label>Wins</label>
-                            </div>
-                  
-                            <span class="order-icons-wrapper">
-                              <i class="fa fa-chevron-up order-icons"></i>
-                              <i class="fa fa-chevron-down order-icons"></i>
-                            </span>
-                          </th>
-                          <th style='width:150px;' (click)="SortList(teamPontuations, 'losts')" [ngClass]="{ 'asc': sortingDesc['losts'], 'desc': !sortingDesc['losts'], 'active': selectTableRow == 'losts' }">
-                            <div>
-                              <label>Losts</label>
-                            </div>
-                  
-                            <span class="order-icons-wrapper">
-                              <i class="fa fa-chevron-up order-icons"></i>
-                              <i class="fa fa-chevron-down order-icons"></i>
-                            </span>
-                          </th>
-                          <th style='width:150px;' (click)="SortList(teamPontuations, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['percentualWins'], 'desc': !sortingDesc['percentualWins'], 'active': selectTableRow == 'percentualWins' }">
-                            <div>
-                              <label>%Wins</label>
-                            </div>
-                  
-                            <span class="order-icons-wrapper">
-                              <i class="fa fa-chevron-up order-icons"></i>
-                              <i class="fa fa-chevron-down order-icons"></i>
-                            </span>
-                          </th>
-                          <th style='width:150px;' (click)="SortList(teamPontuations, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['percentualLosts'], 'desc': !sortingDesc['percentualLosts'], 'active': selectTableRow == 'percentualLosts' }">
-                              <div>
-                                <label>%Losts</label>
-                              </div>
-                    
-                              <span class="order-icons-wrapper">
-                                <i class="fa fa-chevron-up order-icons"></i>
-                                <i class="fa fa-chevron-down order-icons"></i>
-                              </span>
-                            </th>
-                            <th style='width:150px;' (click)="SortList(teamPontuations, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['totalMatches'], 'desc': !sortingDesc['totalMatches'], 'active': selectTableRow == 'totalMatches' }">
-                                <div>
-                                  <label>Total</label>
-                                </div>
-                      
-                                <span class="order-icons-wrapper">
-                                  <i class="fa fa-chevron-up order-icons"></i>
-                                  <i class="fa fa-chevron-down order-icons"></i>
-                                </span>
-                              </th>
-                          <th>
-                          </th>
-                        </tr>                                        
-                        <tr *ngFor='let usuario of teamPontuations'>
-                          <td>{{usuario.name}}</td>
-                          <td>{{usuario.wins}}</td>
-                          <td>{{usuario.losts}}</td>
-                          <td>{{usuario.percentualWins}}</td>
-                          <td>{{usuario.percentualLosts}}</td>
-                          <td>{{usuario.totalMatches}}</td>                                  
-                        </tr>
-                      </table>
-                  
-             </div>
-            </div>
-            <div class="container-floating">            
-                <div class="floating-button">
-                    <span class="letter">
-                    <div class="t-left t-sm" data-tooltip="Invite">
-                        <button (click)="inviteModal.open();" class="btn-clean">
-                        <span class="letter">
-                            <span class="fa fa-plus"></span>
-                        </span>
-                        </button>
+                        </div>
+
+
                     </div>
-                    </span>
                 </div>
-            </div>
-          </div>                          
-        </tab>
-        
+            </tab>
 
-      </tabs>    
-      
-  </div>
+            <tab *ngIf="false" tabTitle="Team">
+                <div *ngIf="currentTeam == null">
+                    <div class="col-md-3">
+                        <div class="col-md-12"></div>
+                        <div class="col-md-12"></div>
+                        <div class="col-md-12"></div>
+                        <div class="col-md-12"></div>
+                        <div class="col-md-12"></div>
+                        <div class="col-md-12"></div>
+                        <img id="center-match" src="assets/characters/kupo.gif">
+                    </div>
+                    <div class="col-md-9">
+                        <div class="col-md-12">
+                            <h3 style="color:black  " class="">You don't have a team Yet</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <h3 style="color:purple">Team Rules</h3>
+                        </div>
+                        <div class="col-md-12">
+                            <h4 style="color:purple" class="col-md-12">User can only have one team </h4>
+                            <h4 style="color:purple" class="col-md-12">Every team match will counting for your current team
+                                </h4>
+                            <h4 style="color:purple" class="col-md-12">Once you join a team you'll be able to invite or quit
+                                the team </h4>
+                            <h4 style="color:purple" class="col-md-12">The team needs to have a minimum of 3 members for
+                                registers and scrim schedule</h4>
+                            <h4 style="color:purple" class="col-md-12">If the last active player quit from the team, the
+                                team becames inactive and no one can interact with him anymore</h4>
+                            <h4 style="color:purple" class="col-md-12">To create a team click on + floating button</h4>
+                        </div>
+                    </div>
+                    <div class="container-floating">
+                        <div class="floating-button">
+                            <span class="letter">
+                                <div class="t-left t-sm" data-tooltip="Novo usuário">
+                                    <button (click)="modalTeam.open();" class="btn-clean">
+                                        <span class="letter">
+                                            <span class="fa fa-plus"></span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="currentTeam">
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <div class="col-md-12">
+                                <img class="imgLogo" src="{{teamLogoImage}}" (click)="modalUploadLogo.open();">
+                            </div>
+                            <div class="col-md-12">
+                                <div class="card-subtitle col-md-12">
+                                    <label>Active Members</label>
+                                </div>
+                                <div *ngFor="let p of activeMembers">
+                                    {{p}}
+                                    <hr>
+                                </div>
+                            </div>
 
-  
+                        </div>
+                        <div class="col-md-9">
+                            <div class="col-md-12" *ngIf="teamHeaderPontuation">
+                                <div class="card-subtitle col-md-3">
+                                    <label>Name</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Wins</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Lose</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Wins%</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label>Lose%</label>
+                                </div>
+                                <div class="card-subtitle col-md-3">
+                                    <label>Total Matches</label>
+                                </div>
+
+                                <div class="card-subtitle col-md-3">
+                                    <label style="color: black">{{teamHeaderPontuation.name}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{teamHeaderPontuation.wins}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{teamHeaderPontuation.losts}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{teamHeaderPontuation.percentualWins}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-1">
+                                    <label style="color: black">{{teamHeaderPontuation.percentualLosts}}</label>
+                                </div>
+                                <div class="card-subtitle col-md-2">
+                                    <label style="color: black">{{teamHeaderPontuation.totalMatches}}</label>
+                                </div>
+                            </div>
+                            <hr>
+                            <table *ngIf="teamPontuations" class="table order-table">
+                                <tr>
+                                    <th style='width:150px;' (click)="SortList(teamPontuations, 'name')" [ngClass]="{ 'asc': sortingDesc['name'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
+                                        <div>
+                                            <label>Name</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+
+                                    <th style='width:150px;' (click)="SortList(teamPontuations, 'wins')" [ngClass]="{ 'asc': sortingDesc['wins'], 'desc': !sortingDesc['wins'], 'active': selectTableRow == 'wins' }">
+                                        <div>
+                                            <label>Wins</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(teamPontuations, 'losts')" [ngClass]="{ 'asc': sortingDesc['losts'], 'desc': !sortingDesc['losts'], 'active': selectTableRow == 'losts' }">
+                                        <div>
+                                            <label>Losts</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(teamPontuations, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['percentualWins'], 'desc': !sortingDesc['percentualWins'], 'active': selectTableRow == 'percentualWins' }">
+                                        <div>
+                                            <label>%Wins</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(teamPontuations, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['percentualLosts'], 'desc': !sortingDesc['percentualLosts'], 'active': selectTableRow == 'percentualLosts' }">
+                                        <div>
+                                            <label>%Losts</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th style='width:150px;' (click)="SortList(teamPontuations, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['totalMatches'], 'desc': !sortingDesc['totalMatches'], 'active': selectTableRow == 'totalMatches' }">
+                                        <div>
+                                            <label>Total</label>
+                                        </div>
+
+                                        <span class="order-icons-wrapper">
+                                            <i class="fa fa-chevron-up order-icons"></i>
+                                            <i class="fa fa-chevron-down order-icons"></i>
+                                        </span>
+                                    </th>
+                                    <th>
+                                    </th>
+                                </tr>
+                                <tr *ngFor='let usuario of teamPontuations'>
+                                    <td>{{usuario.name}}</td>
+                                    <td>{{usuario.wins}}</td>
+                                    <td>{{usuario.losts}}</td>
+                                    <td>{{usuario.percentualWins}}</td>
+                                    <td>{{usuario.percentualLosts}}</td>
+                                    <td>{{usuario.totalMatches}}</td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="container-floating">
+                        <div class="floating-button">
+                            <span class="letter">
+                                <div class="t-left t-sm" data-tooltip="Invite">
+                                    <button (click)="inviteModal.open();" class="btn-clean">
+                                        <span class="letter">
+                                            <span class="fa fa-plus"></span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </tab>
 
 
-  <modal #modalUploadLogo title="Upload imagem" [closeOnOutsideClick]="false">
-      <modal-content class="content">
-        <div class="card-subtitle">
-          <label>Change team image</label>
-        </div>
-        <image-upload [max]="1" [buttonCaption]="'Team Image'" [dropBoxMessage]="'.'"
-          (onFileUploadFinish)="imageUploaded($event)">
-        </image-upload>
-        <div class="button-wrapper">
-            <button (click)="uploadTeamLogo()" class="btn-action">Upload</button>          
-            <button (click)="modalUploadLogo.close()" class="btn-action">Cancelar</button>          
-        </div>
-      </modal-content>
-  </modal>
+        </tabs>
 
-  <modal #inviteModal title="Invite a user" [closeOnOutsideClick]="false">
+    </div>
+
+
+
+
+    <modal #modalUploadLogo title="Upload imagem" [closeOnOutsideClick]="false">
         <modal-content class="content">
-        <div class="col-md-9">
+            <div class="card-subtitle">
+                <label>Change team image</label>
+            </div>
+            <image-upload [max]="1" [buttonCaption]="'Team Image'" [dropBoxMessage]="'.'" (onFileUploadFinish)="imageUploaded($event)">
+            </image-upload>
+            <div class="button-wrapper">
+                <button (click)="uploadTeamLogo()" class="btn-action">Upload</button>
+                <button (click)="modalUploadLogo.close()" class="btn-action">Cancelar</button>
+            </div>
+        </modal-content>
+    </modal>
+
+    <modal #inviteModal title="Invite a user" [closeOnOutsideClick]="false">
+        <modal-content class="content">
+            <div class="col-md-9">
                 <div class="card-subtitle col-md-3">
                     <label>EMAIL</label>
                 </div>
@@ -457,96 +500,94 @@
                     <input type="text" [(ngModel)]="emailToInvite">
                 </div>
             </div>
-          <div class="button-wrapper">
-              <button (click)="invitePlayer()" class="btn-action">Invite</button>                        
-          </div>
-        </modal-content>  
+            <div class="button-wrapper">
+                <button (click)="invitePlayer()" class="btn-action">Invite</button>
+            </div>
+        </modal-content>
     </modal>
 
-  <modal #modalProfileLogo title="Profile Image" [closeOnOutsideClick]="false">
-      <modal-content class="content">
-        <div class="card-subtitle">
-          <label>Change profile image</label>
-        </div>
-        <image-upload [max]="1" [buttonCaption]="'Profile Image'" [dropBoxMessage]="'.'"
-          (onFileUploadFinish)="imageUploaded($event)">
-        </image-upload>
-        <div class="button-wrapper">
-            <button (click)="uploadProfileLogo()" class="btn-action">Upload</button>          
-            <button (click)="modalProfileLogo.close()" class="btn-action">Cancelar</button>          
-        </div>
-      </modal-content>
-
-  </modal>
-
-  <modal #modalTeam title="Team creation" [closeOnOutsideClick]="false">
-      <modal-content class="content">        
-        <div class="col-md-3">
+    <modal #modalProfileLogo title="Profile Image" [closeOnOutsideClick]="false">
+        <modal-content class="content">
             <div class="card-subtitle">
-                <label>Team Logo</label>
+                <label>Change profile image</label>
             </div>
-              <image-upload [max]="1" [buttonCaption]="'Team Image'" [dropBoxMessage]="'.'"
-                (onFileUploadFinish)="imageUploaded($event)">
-              </image-upload>
-        </div>        
-        <div class="col-md-9">
-          <div class="card-subtitle col-md-1">
-              <label>Name*</label>
-          </div>
-          <div class="card-subtitle col-md-4">
-            <input type="text" [(ngModel)]="name">
-          </div>
-
-          <div class="card-subtitle col-md-2">
-              <label>Alias*</label>
-          </div>
-          <div class="card-subtitle col-md-2">
-            <input type="text" [(ngModel)]="alias">
-          </div>
-          <div class="col-md-9">
-              <div class="card-subtitle col-md-3">
-                  <label>Player 1</label>
-              </div>
-              <div class="card-subtitle col-md-9">
-                <input type="text" [(ngModel)]="player1">
-              </div>
-          </div>
-          <div class="col-md-9">
-              <div class="card-subtitle col-md-3">
-                  <label>Player 2</label>
-              </div>
-              <div class="card-subtitle col-md-9">
-                <input type="text" [(ngModel)]="player2">
-              </div>
-          </div>
-          <div class="col-md-9">
-              <div class="card-subtitle col-md-3">
-                  <label>Player 3</label>
-              </div>
-              <div class="card-subtitle col-md-9">
-                <input type="text" [(ngModel)]="player3">
-              </div>
-          </div>
-          <div class="col-md-9">
-              <div class="card-subtitle col-md-3">
-                  <label>Player 4</label>
-              </div>
-              <div class="card-subtitle col-md-9">
-                <input type="text" [(ngModel)]="player4">
-              </div>
-          </div>
-        </div>        
-        
-
-
-        <div class="button-wrapper">
-            <div class="card-subtitle">
-              <label>*Required Fields</label>
+            <image-upload [max]="1" [buttonCaption]="'Profile Image'" [dropBoxMessage]="'.'" (onFileUploadFinish)="imageUploaded($event)">
+            </image-upload>
+            <div class="button-wrapper">
+                <button (click)="uploadProfileLogo()" class="btn-action">Upload</button>
+                <button (click)="modalProfileLogo.close()" class="btn-action">Cancelar</button>
             </div>
-            <button (click)="saveTeam();" class="btn-action">Create</button>          
-            <button (click)="modalTeam.close();" class="btn-action">Cancel</button>          
-        </div>
-      </modal-content>
-  
-  </modal>
+        </modal-content>
+
+    </modal>
+
+    <modal #modalTeam title="Team creation" [closeOnOutsideClick]="false">
+        <modal-content class="content">
+            <div class="col-md-3">
+                <div class="card-subtitle">
+                    <label>Team Logo</label>
+                </div>
+                <image-upload [max]="1" [buttonCaption]="'Team Image'" [dropBoxMessage]="'.'" (onFileUploadFinish)="imageUploaded($event)">
+                </image-upload>
+            </div>
+            <div class="col-md-9">
+                <div class="card-subtitle col-md-1">
+                    <label>Name*</label>
+                </div>
+                <div class="card-subtitle col-md-4">
+                    <input type="text" [(ngModel)]="name">
+                </div>
+
+                <div class="card-subtitle col-md-2">
+                    <label>Alias*</label>
+                </div>
+                <div class="card-subtitle col-md-2">
+                    <input type="text" [(ngModel)]="alias">
+                </div>
+                <div class="col-md-9">
+                    <div class="card-subtitle col-md-3">
+                        <label>Player 1</label>
+                    </div>
+                    <div class="card-subtitle col-md-9">
+                        <input type="text" [(ngModel)]="player1">
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-subtitle col-md-3">
+                        <label>Player 2</label>
+                    </div>
+                    <div class="card-subtitle col-md-9">
+                        <input type="text" [(ngModel)]="player2">
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-subtitle col-md-3">
+                        <label>Player 3</label>
+                    </div>
+                    <div class="card-subtitle col-md-9">
+                        <input type="text" [(ngModel)]="player3">
+                    </div>
+                </div>
+                <div class="col-md-9">
+                    <div class="card-subtitle col-md-3">
+                        <label>Player 4</label>
+                    </div>
+                    <div class="card-subtitle col-md-9">
+                        <input type="text" [(ngModel)]="player4">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="button-wrapper">
+                <div class="card-subtitle">
+                    <label>*Required Fields</label>
+                </div>
+                <button (click)="saveTeam();" class="btn-action">Create</button>
+                <button (click)="modalTeam.close();" class="btn-action">Cancel</button>
+            </div>
+        </modal-content>
+
+    </modal>
 </div>

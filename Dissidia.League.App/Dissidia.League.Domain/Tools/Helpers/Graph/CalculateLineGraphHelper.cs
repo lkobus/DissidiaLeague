@@ -5,6 +5,7 @@ using Dissidia.League.Domain.ValueObjects.Match;
 using Dissidia.League.Domain.ValueObjects.Matche;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -115,6 +116,15 @@ namespace Dissidia.League.Domain.Tools.Helpers.Graph
                 for (int i = 0; i < (7 * 4) * 3; i += 7)
                 {
                     result.Add("W" + GetWeekNumber(DateTime.Now.AddDays(i * -1).ToLocalTime()));
+                }
+                groupResult = matches.GroupBy(p => "W" + GetWeekNumber(p.Match.Date.ToLocalTime())).ToList();
+            } else if(ScoreLineGraphEnum.ALL_TIME == period)
+            {
+                var reference = _start;
+                while(reference < DateTime.Today)
+                {
+                    result.Add("W" + GetWeekNumber(reference.ToLocalTime()));
+                    reference = reference.AddDays(7);
                 }
                 groupResult = matches.GroupBy(p => "W" + GetWeekNumber(p.Match.Date.ToLocalTime())).ToList();
             }

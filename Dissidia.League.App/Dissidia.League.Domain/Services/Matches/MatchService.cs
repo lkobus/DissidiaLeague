@@ -100,8 +100,13 @@ namespace Dissidia.League.Domain.Services.Matches
                         var values = player.Split(';');
                         int points = 0;
                         int.TryParse(values[2], out points);
-                        
-                        var p = new PlayerInfo(CharEnum.UNDEFINED, values[1], points);
+                        var character = values[3];
+                        var currentChar = CharEnum.ToList().FirstOrDefault(c => c.Valor.ToUpper() == character.ToUpper());
+                        if(currentChar == null)
+                        {
+                            currentChar = CharEnum.UNDEFINED;
+                        }
+                        var p = new PlayerInfo(currentChar, values[1], points);
                         if(values[0] == "Derrota")
                         {
                             result.PlayersTeamLooser.Add(p);
@@ -180,7 +185,7 @@ namespace Dissidia.League.Domain.Services.Matches
 
         public void UpdateMatch(List<PlayerInfo> playersTeamWinner, List<PlayerInfo> playersTeamLooser, string userId, string matchId)
         {
-            lock (_lockMatchUpdate)
+            //lock (_lockMatchUpdate)
             {
                 var match = _matchRepository.GetById(matchId);
 

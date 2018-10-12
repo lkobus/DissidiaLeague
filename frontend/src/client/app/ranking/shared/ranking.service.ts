@@ -36,10 +36,13 @@ export class RankingService extends BaseService {
       .catch(this.handleErrorPromise);
   }
 
-  getTeamSoloPontuation(): Promise<PlayerPontuation[]>{
+  getTeamSoloPontuation(minMatches:number, duo:boolean, view:number): Promise<PlayerPontuation[]>{
     var headers = new Headers();
     this.contentTypeApplicationJson(headers);
-    var url = this.BasePath() + "dissidia/team/solo/pontuations";
+    var url = this.BasePath() + "dissidia/team/solo/pontuations/" + minMatches + "/" + view;
+    if(duo){
+      var url = this.BasePath() + "dissidia/team/duo/pontuations/" + minMatches + "/" + view;
+    }    
     return this.http.get(url, { headers: headers })
       .toPromise()
       .then(response => response.json() as PlayerPontuation[])

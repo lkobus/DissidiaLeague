@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using System;
 
 namespace Dissidia.League.Domain.MongoDB.Services
 {
@@ -9,7 +10,7 @@ namespace Dissidia.League.Domain.MongoDB.Services
 
         private MongoDBService(string mongoURL, string databaseName)
         {
-            _client = new MongoClient(mongoURL);
+            _client = new MongoClient(mongoURL);                        
             Database = _client.GetDatabase(databaseName);
         }
 

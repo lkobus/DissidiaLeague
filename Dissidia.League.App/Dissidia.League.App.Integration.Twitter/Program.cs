@@ -50,7 +50,10 @@ namespace Dissidia.League.App.Integration.Twitter
             }
             else
             {
-                using (var browser = new ChromeDriver(@"C:\Projetos\Dissidia\tools"))
+                ChromeOptions options = new ChromeOptions();                
+                options.AddArguments("--lang=pt-BR");
+
+                using (var browser = new ChromeDriver(@"C:\Projetos\Dissidia\tools", options))
                 {
                     browser.Navigate().GoToUrl("https://twitter.com/");
                     Thread.Sleep(2222);
@@ -67,7 +70,7 @@ namespace Dissidia.League.App.Integration.Twitter
                             if (p.Location.X > 100)
                             {
                                 p.Click();
-                                p.SendKeys("leonardo.kobus@hbsis.com.br");
+                                p.SendKeys("leonardo.kobus@benner.com.br");
                             }
 
                         }
@@ -140,7 +143,7 @@ namespace Dissidia.League.App.Integration.Twitter
                             }
 
                         }
-                        Thread.Sleep(5000);
+                        Thread.Sleep(2 * (60 * 1000));
                     }
 
                     Console.ReadKey();

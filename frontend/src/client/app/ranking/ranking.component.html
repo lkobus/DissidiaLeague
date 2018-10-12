@@ -1,32 +1,48 @@
 <div class="container-fluid main-container">  
-
+  <div [ngBusy]="{busy: busy, template: templateLoading, message: 'Fetching data...'}"></div>
   <div class="card">
 
     <div class="toolbar">
 
-      <div class="col-md-9">
+      <div class="col-md-2">
         <h3 class="toolbar-title">
           Players Scores
         </h3>
       </div>
-
-      <div class="col-md-3">
-        <div class="input-with-btn">
-          <input type="text" placeholder="Buscar" ngui-auto-complete [(ngModel)]="inputSearch" [source]="listUsuarios" min-chars=1
-            max-num-list=5 value-formatter="nome" list-formatter="codigo - nome" match-formatted=true display-property-name="nome"
-            (valueChanged)="selectAutoComplete($event)" no-match-found-text="Usuário não encontrado" />
-          <button>
-            <i class="icon-loupe"></i>
-          </button>
+      <div class="col-md-2">
+          <select [(ngModel)]="view">
+              <option selected value="1">Char</option>            
+              <option value="2">Roles</option>              
+              <option value="3">Players</option>              
+          </select>      
         </div>
+      <div class="col-md-2">
+        <select [(ngModel)]="duo">
+            <option value="1">Team</option>
+            <option value="2">Duo</option>            
+        </select>      
       </div>
-
+      <div class="col-md-3">
+          <select [(ngModel)]="inputSearch">
+              <option value="-1">All Matches</option>
+              <option value="10">10+ Total Matches</option>            
+              <option value="20">20+ Total Matches</option>            
+              <option value="50">50+ Total Matches</option>            
+              <option value="100">100+ Total Matches</option>            
+              <option value="200">200+ Total Matches</option>                          
+          </select>      
+      </div>
+      <div class="col-md-2">
+          <button (click)="getMinMatches()">
+              Filtrar <i class="icon-loupe"></i>
+          </button>
+      </div>      
     </div>
 
 
     <table class="table order-table">
       <tr>
-        <th style='width:150px;' (click)="SortList(listUsuarios, 'name')" [ngClass]="{ 'asc': sortingDesc['codigo'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
+        <th style='width:650px;' (click)="SortList(listUsuarios, 'name')" [ngClass]="{ 'asc': sortingDesc['codigo'], 'desc': !sortingDesc['name'], 'active': selectTableRow == 'name' }">
           <div>
             <label>Name</label>
           </div>
@@ -37,7 +53,7 @@
           </span>
         </th>
 
-        <th style='width:150px;' (click)="SortList(listUsuarios, 'wins')" [ngClass]="{ 'asc': sortingDesc['nome'], 'desc': !sortingDesc['nome'], 'active': selectTableRow == 'wins' }">
+        <th style='width:50px;' (click)="SortList(listUsuarios, 'wins')" [ngClass]="{ 'asc': sortingDesc['nome'], 'desc': !sortingDesc['nome'], 'active': selectTableRow == 'wins' }">
           <div>
             <label>Wins</label>
           </div>
@@ -47,7 +63,7 @@
             <i class="fa fa-chevron-down order-icons"></i>
           </span>
         </th>
-        <th style='width:150px;' (click)="SortList(listUsuarios, 'losts')" [ngClass]="{ 'asc': sortingDesc['cpf'], 'desc': !sortingDesc['cpf'], 'active': selectTableRow == 'losts' }">
+        <th style='width:50px;' (click)="SortList(listUsuarios, 'losts')" [ngClass]="{ 'asc': sortingDesc['cpf'], 'desc': !sortingDesc['cpf'], 'active': selectTableRow == 'losts' }">
           <div>
             <label>Losts</label>
           </div>
@@ -57,7 +73,7 @@
             <i class="fa fa-chevron-down order-icons"></i>
           </span>
         </th>
-        <th style='width:150px;' (click)="SortList(listUsuarios, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'percentualWins' }">
+        <th style='width:50px;' (click)="SortList(listUsuarios, 'percentualWins')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'percentualWins' }">
           <div>
             <label>%Wins</label>
           </div>
@@ -67,7 +83,7 @@
             <i class="fa fa-chevron-down order-icons"></i>
           </span>
         </th>
-        <th style='width:150px;' (click)="SortList(listUsuarios, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'percentualLosts' }">
+        <th style='width:50px;' (click)="SortList(listUsuarios, 'percentualLosts')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'percentualLosts' }">
             <div>
               <label>%Losts</label>
             </div>
@@ -77,7 +93,7 @@
               <i class="fa fa-chevron-down order-icons"></i>
             </span>
           </th>
-          <th style='width:150px;' (click)="SortList(listUsuarios, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'totalMatches' }">
+          <th style='width:50px;' (click)="SortList(listUsuarios, 'totalMatches')" [ngClass]="{ 'asc': sortingDesc['perfil'], 'desc': !sortingDesc['perfil'], 'active': selectTableRow == 'totalMatches' }">
               <div>
                 <label>Total</label>
               </div>
@@ -97,36 +113,13 @@
         <td>{{usuario.losts}}</td>
         <td>{{usuario.percentualWins}}</td>
         <td>{{usuario.percentualLosts}}</td>
-        <td>{{usuario.totalMatches}}</td>
-        <td>
-          <a href="" [routerLink]="['/updateUsuario', usuario.id]">
-            <i class="icon-pen-2"></i>
-          </a>
-          <a href="javascript:void(0)" (click)="abrirConfirmacaoExclusao(usuario); $event.stopPropagation()">
-            <i class="icon-x c-error"></i>
-          </a>
-        </td>
+        <td>{{usuario.totalMatches}}</td>        
       </tr>
     </table>
 
     <div class="toolbar-bottom">
       <pagination-controls (pageChange)="p = $event" nextLabel="Próximo" previousLabel="Anterior" maxSize=7 autoHide=true directionLinks=true></pagination-controls>
     </div>
-  </div>
-
-  <div class="container-floating">
-
-    <div class="floating-button">
-      <span class="letter">
-        <div class="t-left t-sm" data-tooltip="Novo usuário">
-          <button [routerLink]="['/addUsuario']" class="btn-clean">
-            <span class="letter">
-              <span class="fa fa-plus"></span>
-            </span>
-          </button>
-        </div>
-      </span>
-    </div>
-  </div>
+  </div>  
 
 </div>

@@ -8,6 +8,7 @@ using Dissidia.League.Domain.Services.Interfaces;
 using Dissidia.League.Domain.Services.Interfaces.AccessControl;
 using Dissidia.League.Domain.Services.Interfaces.Authentication;
 using Dissidia.League.Domain.Services.Interfaces.Dissidia;
+using Dissidia.League.Domain.Services.Interfaces.FaceRecognition;
 using Dissidia.League.Domain.Services.Interfaces.Gamification;
 using Dissidia.League.Domain.Services.Matches;
 
@@ -22,6 +23,9 @@ namespace Dissidia.League.Bootstrap.Injections
         public IUserChangesService UserChangesService { get; private set; }
         public ITeamService Team { get; private set; }
         public ITeamPontuationService TeamPontuation { get; private set; }
+
+        public IFaceRecognitionService FaceRecognition => throw new System.NotImplementedException();
+
         private IInviteService _invite;
 
         public ServicesInjection(IGlobalConfiguration globalConfig, IInjectionRepository repositories)
@@ -29,7 +33,7 @@ namespace Dissidia.League.Bootstrap.Injections
             _invite = new InviteService(globalConfig);
             Match = new MatchService(globalConfig.OCR.ImageFileDirectory, repositories.Match);
             OCR = new MatchOCRService(globalConfig.OCR);
-            PlayerPontuation = new PlayerPontuationService(repositories.PlayersResults, repositories.User, repositories.Match);
+            PlayerPontuation = new PlayerPontuationService(repositories.PlayersResults, repositories.User, repositories.Match);                
             UserChangesService = new UserChangesService(repositories.UserChange);
             
             Team = new TeamService(repositories.Team, _invite, repositories.User);

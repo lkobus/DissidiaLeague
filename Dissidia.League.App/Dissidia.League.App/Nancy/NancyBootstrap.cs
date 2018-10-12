@@ -58,7 +58,7 @@ namespace Dissidia.League.App.Nancy
 
 
             var configurationGlobal = new GlobalConfiguration(
-                new DatabaseConfiguration("Dissidia", "mongodb://localhost"),
+                new DatabaseConfiguration("Dissidia", "mongodb://dissidia.eastus.cloudapp.azure.com"),
                 new OCRConfiguration(@"C:\temp\OCR\Dissidia", @"C:\Users\leonardo.kobus\Desktop\lobby\input"),
                 "http://localhost", @"C:\temp\dissidia\tokenDir");
             var i  = new BoostrapInjection(configurationGlobal);

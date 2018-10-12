@@ -23,6 +23,20 @@ export class MatchesComponent extends BaseTableComponent implements OnInit {
   @ViewChild('modalConfirmar')
   modalConfirmacao: ModalConfirmacaoComponent;
 
+  busy:any;
+  templateLoading: string =
+  '<div class="loading-overlay">' +
+    '<img src="assets/loader.gif" alt="logo Promax" height="194" class="img-loader" />'+
+    '<div class="spinner">'+
+      '<div class="bounce1"></div>'+
+      '<div class="bounce2"></div>'+
+      '<div class="bounce3"></div>'+
+    '</div>'+
+    '<h1 class="loading-venda">' +
+    '{{message}}' +
+    '</h1>' +
+  '</div>';
+
   activePage:number = 1;
   listUsuarios: Match[];
   cacheUsuarios: List<Match>;
@@ -40,7 +54,7 @@ export class MatchesComponent extends BaseTableComponent implements OnInit {
   }
 
   getUsuarios(): void {    
-    this.matchService
+    this.busy = this.matchService
     .getMatches()
     .then(usuarios => {
       this.cacheUsuarios = new List(usuarios);

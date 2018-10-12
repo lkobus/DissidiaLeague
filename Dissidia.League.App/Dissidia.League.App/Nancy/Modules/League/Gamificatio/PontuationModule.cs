@@ -1,4 +1,5 @@
 ﻿using Dissidia.League.App.Nancy.DTO;
+using Dissidia.League.App.Nancy.DTO.Dissidia;
 using Dissidia.League.App.Nancy.EndpointsConfiguration;
 using Dissidia.League.Domain.Infrastructure.Interfaces.Injection;
 using Dissidia.League.Domain.Services.Interfaces.Gamification;
@@ -32,7 +33,26 @@ namespace Dissidia.League.App.Nancy.Modules.League.Gamificatio
 
             Get[EndpointConfigurationEnum.GET_SOLO_TEAM_PONTUATION] = p =>
             {
-                var result = _playerPontuation.GetSoloTeamsPontuations().Select(c => new PlayerPontuationDTO(c))
+                int view = Convert.ToInt32(p.view.Value);
+                int minMatches = Convert.ToInt32(p.minMatches.Value);
+                var result = _playerPontuation.GetSoloTeamsPontuations(minMatches, view).Select(c => new PlayerPontuationDTO(c))
+                .OrderByDescending(c => c.TotalMatches)
+                .ToList();
+                return Response.AsJson(result);
+            };
+
+            Get[EndpointConfigurationEnum.GET_POSITION_PONTUATION] = p =>
+            {
+                var id = p.id.Value.ToString();
+                var pontuation = injection.Services.PlayerPontuation.GetPlayerPositionPontuation(id);
+                return Response.AsJson(new PositionDTO(pontuation));                
+            };
+
+            Get[EndpointConfigurationEnum.GET_DUO_TEAM_PONTUATION] = p =>
+            {
+                int view = Convert.ToInt32(p.view.Value);
+                int minMatches = Convert.ToInt32(p.minMatches.Value);
+                var result = _playerPontuation.GetSoloBestDuosPontuation(minMatches, view).Select(c => new PlayerPontuationDTO(c))                
                 .OrderByDescending(c => c.TotalMatches)
                 .ToList();
                 return Response.AsJson(result);

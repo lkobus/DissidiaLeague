@@ -57,7 +57,12 @@ namespace Dissidia.League.App.Helper.FaceRecognition
             });
 
             var ordenered = res2.Where(p => p.Probability > 50).OrderByDescending(p => p.Probability).ToList();
+            if (!Directory.Exists(outputResult))
+            {
+                Directory.CreateDirectory(outputResult);
+            }
 
+            ordenered.ForEach(p => System.IO.File.WriteAllText(Path.Combine(outputResult, "face."+ p.Referencia + ".data"), p.Character));
 
             var oi = "";
         }

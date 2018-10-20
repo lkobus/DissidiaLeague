@@ -38,6 +38,7 @@ namespace Dissidia.League.Domain.Enums
         public static CharEnum ACE = new CharEnum(29, "Ace", RolesEnum.MASKSMEN);
         public static CharEnum RAMZA = new CharEnum(30, "Ramza", RolesEnum.SPECIALIST);
         public static CharEnum RINOA = new CharEnum(31, "Rinoa", RolesEnum.MASKSMEN);
+        public static CharEnum KAM = new CharEnum(32, "KAM", RolesEnum.SPECIALIST);
         public static CharEnum UNDEFINED = new CharEnum(0, "UNDEFINED", RolesEnum.UNDEFINIED);
 
         public string Role { get; private set; }
